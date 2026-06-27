@@ -1,0 +1,294 @@
+
+// SELL SCREEN — MATERIAL 3 DARK
+
+// BACKGROUND
+Background = #0D1117
+Surface = #171C22
+SurfaceElevated = #1C2330
+
+CardBackground = #151B24
+InputSurface = #111823
+
+BorderSoft = #28303C
+Divider = #242C36
+
+Shadow = #00000040
+
+// TEXT
+TextPrimary = #F5F7FA
+TextSecondary = #A5AFBA
+TextMuted = #747E89
+
+// SELL FLOW (GREEN)
+PrimaryGreen = #54D548
+PrimaryGreenDark = #3DBA3B
+PrimaryGreenLight = #85F07E
+
+SuccessGreen = #45D86E
+ProfitGreen = #59E05E
+
+ProfitCardBg = #13231A
+ProfitCardBorder = #2FA84F
+
+// PRICE
+SuggestedPrice = #45D86E
+PurchasePrice = #D7DCE3
+TaxNegative = #C8D0DA
+
+FinalProfit = #5EF267
+
+// SLIDER
+SliderActive = #54D548
+SliderInactive = #3A404A
+SliderThumb = #F8FAFC
+
+// CONDITION
+ConditionYellowBg = #836114
+ConditionYellowText = #FFE59A
+
+ConditionGreenBg = #1E7A39
+ConditionGreenText = #DAFFE1
+
+ConditionRedBg = #8A2E2E
+ConditionRedText = #FFD0D0
+
+// BUTTON
+SellButton = #54D548
+SellButtonPressed = #41BE3F
+SellButtonText = #FFFFFF
+
+// ICONS
+ProfitIcon = #4FD55A
+InfoIcon = #AEB6C0
+
+// SMALL FOOTER
+FooterText = #7D8793
+
+23 Haz 2026 Sal 22:41 tarihinde Enes Duvan <enesduvan0@gmail.com> şunu yazdı:
+// REPAIR SCREEN — MATERIAL 3 DARK
+
+// BACKGROUND
+Background = #0D1117
+Surface = #171C22
+SurfaceElevated = #1C2330
+
+CardBackground = #151B24
+SelectedCard = #1B222D
+
+BorderSoft = #28313D
+Divider = #242B36
+
+Shadow = #00000045
+
+// TEXT
+TextPrimary = #F5F7FA
+TextSecondary = #A4ADB8
+TextMuted = #737D88
+
+// BRAND
+PrimaryOrange = #FF7A1A
+PrimaryOrangeDark = #E76809
+PrimaryOrangeLight = #FFA24D
+
+SelectionBorder = #FF7A1A
+
+// SUCCESS / PROFIT
+SuccessGreen = #45D86E
+SuccessGreenDark = #2FA84F
+SuccessGreenSoft = #C7FFD4
+
+// WARNING / CONDITION
+ConditionYellowBg = #826114
+ConditionYellowText = #FFE59B
+
+// RISK
+RiskHigh = #F24F4F
+RiskMedium = #FFA03A
+RiskLow = #4FD36A
+
+RiskTrack = #323A45
+
+// REPAIR OPTIONS
+ApprenticeCard = #171C23
+MasterCard = #1B222D
+
+ApprenticeAccent = #6F7782
+MasterAccent = #FF7A1A
+
+// PRICE
+RepairCostCheap = #45D86E
+RepairCostExpensive = #FF8A2A
+
+// BUTTON
+RepairButton = #FF7A1A
+RepairButtonPressed = #E76809
+RepairButtonText = #FFFFFF
+
+// INFO AREA
+InfoBoxBg = #161D27
+InfoIcon = #FF9A36
+
+// NAVIGATION
+NavSelected = #FF7A1A
+NavUnselected = #8A9099
+NavBackground = #121821
+
+23 Haz 2026 Sal 22:39 tarihinde Enes Duvan <enesduvan0@gmail.com> şunu yazdı:
+// NEGOTIATION CHAT — MATERIAL 3 DARK
+
+// BACKGROUND
+Background = #0C1016
+Surface = #171C23
+SurfaceElevated = #1E2530
+
+CardBackground = #151B24
+InputBackground = #111722
+
+BorderSoft = #27303C
+Divider = #242C36
+
+Shadow = #00000040
+
+// TEXT
+TextPrimary = #F5F7FA
+TextSecondary = #A6AFBA
+TextMuted = #727C89
+
+// BRAND
+PrimaryOrange = #FF7A1A
+PrimaryOrangeDark = #E76809
+PrimaryOrangeLight = #FFA14A
+
+// CHAT
+SellerBubble = #202732
+SellerText = #EEF2F7
+
+PlayerBubble = #FF7A1A
+PlayerText = #FFFFFF
+
+BubbleTimestamp = #8A939F
+
+// INPUT
+InputStroke = #303948
+InputPlaceholder = #727B87
+
+// SELLER MOOD
+MoodGood = #31C95D
+MoodNeutral = #FFB938
+MoodBad = #F04D4D
+
+MoodTrack = #323B47
+
+// AGREEMENT AREA
+DealSuccessBg = #11271A
+DealSuccessBorder = #2FA84F
+DealSuccessText = #73F294
+
+PurchaseButton = #1D2D20
+PurchaseText = #63E881
+
+// QUICK OFFER CHIPS
+OfferChipBg = #202733
+OfferChipText = #D7DEE7
+
+// SEND BUTTON
+SendButton = #FF7A1A
+SendButtonPressed = #E76809
+SendButtonText = #FFFFFF
+
+23 Haz 2026 Sal 22:37 tarihinde Enes Duvan <enesduvan0@gmail.com> şunu yazdı:
+// INVENTORY SCREEN — DARK THEME
+
+Background = #0D1117 // Ana arka plan
+Surface = #171C22 // Kart zemini
+SurfaceElevated = #1D2430 // Üst bilgi kartları
+
+CardBorder = #262E3A
+Divider = #232A35
+
+// TEXT
+TextPrimary = #F3F5F8
+TextSecondary = #9EA7B2
+TextMuted = #727A85
+
+// BRAND / ACCENT
+PrimaryOrange = #FF7A1A
+PrimaryOrangeDark = #E76809
+PrimaryOrangeSoft = #FFA860
+
+// INVENTORY VALUE
+ProfitGreen = #45D86E
+ProfitGreenDark = #2DBE58
+ProfitGreenSoft = #B8FFD0
+
+// STORAGE BAR
+StorageTrack = #2D3440
+StorageProgress = #FF8B2D
+
+// SELL BUTTON
+SellButton = #2FA84F
+SellButtonPressed = #258742
+SellText = #FFFFFF
+
+// REPAIR BUTTON
+RepairButton = #232A35
+RepairIcon = #B7C0CB
+RepairText = #E4E8EC
+
+// CONDITION BADGES
+ConditionPerfectBg = #1F7A3A
+ConditionPerfectTx = #DBFFE3
+
+ConditionScratchBg = #846314
+ConditionScratchTx = #FFE59A
+
+ConditionRepairBg = #8B2E2E
+ConditionRepairTx = #FFD0D0
+
+// NAVIGATION
+NavSelected = #FF7A1A
+NavUnselected = #8A9099
+NavBackground = #121821
+
+// SHADOW
+SoftShadow = #00000045
+
+22 Haz 2026 Pzt 21:29 tarihinde Enes Duvan <sadetenesduvan66@gmail.com> şunu yazdı:
+// DARK THEME
+
+Background = #0E1116 // Ana arka plan
+Surface = #171C23 // Kart zemini
+SurfaceVariant = #202733 // Hover / secondary yüzey
+
+PrimaryOrange = #FF7A1A // Pazarlık Yap butonu
+PrimaryOrangeDark = #E76809 // Pressed state
+PrimaryOrangeSoft = #FFB067 // Badge / accent
+
+TextPrimary = #F5F7FA // Ana yazı
+TextSecondary = #A3ADB8 // İkincil yazı
+TextMuted = #6F7782
+
+BorderSoft = #2A313D
+Shadow = #00000040
+
+// Condition Badges
+ConditionPerfectBg = #1E7A39
+ConditionPerfect = #D7FFE0
+
+ConditionScratchBg = #7A6112
+ConditionScratch = #FFE28A
+
+ConditionRepairBg = #8A2D2D
+ConditionRepair = #FFC5C5
+
+// Top Bar
+MoneyGreen = #7CFF9A // İstersen para rengi
+ReputationGold = #FFC83D
+LevelBadgeBg = #2B1E12
+
+// Bottom Navigation
+NavSelected = #FF7A1A
+NavUnselected = #8A9099
+
+FAB = #FF7A1A
+FABIcon = #FFFFFF

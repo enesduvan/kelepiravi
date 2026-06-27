@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi
+package com.enesduvan.kelepiravi.screen
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,36 +7,44 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable // Tıklama özelliği için gerekli import
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind // Kesik çizgiler için gerekli import
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.enesduvan.kelepiravi.MarketItem
+import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.database.DEFAULT_USER_ID
+import com.enesduvan.kelepiravi.database.DatabaseKelepiravi
+import com.enesduvan.kelepiravi.database.INITIAL_BALANCE
+import com.enesduvan.kelepiravi.database.KelepiraviDatabaseProvider
+import kotlinx.coroutines.launch
 
 // Tema Renkleri
 import com.enesduvan.kelepiravi.ui.theme.BalanceGreen
@@ -44,8 +52,6 @@ import com.enesduvan.kelepiravi.ui.theme.BuyButton
 import com.enesduvan.kelepiravi.ui.theme.BuyButtonText
 import com.enesduvan.kelepiravi.ui.theme.CloseBg
 import com.enesduvan.kelepiravi.ui.theme.CloseIcon
-import com.enesduvan.kelepiravi.ui.theme.ConditionBrokenBg
-import com.enesduvan.kelepiravi.ui.theme.ConditionBrokenText
 import com.enesduvan.kelepiravi.ui.theme.ConditionPerfect
 import com.enesduvan.kelepiravi.ui.theme.ConditionPerfectBg
 import com.enesduvan.kelepiravi.ui.theme.ConditionRepair
@@ -58,8 +64,6 @@ import com.enesduvan.kelepiravi.ui.theme.KelepiraviTheme
 import com.enesduvan.kelepiravi.ui.theme.MarketBorderSoft
 import com.enesduvan.kelepiravi.ui.theme.MarketTextPrimary
 import com.enesduvan.kelepiravi.ui.theme.MarketTextSecondary
-import com.enesduvan.kelepiravi.ui.theme.NegotiateBg
-import com.enesduvan.kelepiravi.ui.theme.NegotiateText
 import com.enesduvan.kelepiravi.ui.theme.PriceText
 import com.enesduvan.kelepiravi.ui.theme.TipBg
 import com.enesduvan.kelepiravi.ui.theme.TipBorder
@@ -90,7 +94,27 @@ fun Greeting2(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ProductDetailBottomSheetContent(item: MarketItem, onClose: () -> Unit) {
+fun ProductDetailBottomSheetContent(
+    item: MarketItem,
+    onClose: () -> Unit,
+    onPurchaseSuccess: (MarketItem) -> Unit = {}
+) {
+    // Veritabanı ve Coroutine Tanımlamaları
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val kelepiraviDao = remember(context) {
+        KelepiraviDatabaseProvider.getDatabase(context).kelepiraviDao()
+    }
+
+    // Veritabanındaki değişimleri canlı dinlemek için Flow -> State dönüşümü
+    val allInventories by kelepiraviDao.getAllInventories().collectAsState(initial = emptyList())
+    val currentUserData = allInventories.firstOrNull { it.id == DEFAULT_USER_ID }
+
+    // Veritabanından gelen anlık bakiye (Eğer veri henüz yoksa varsayılan olarak 25000.0 gösterir)
+    val guncelBakiyeStr = formatBalance(currentUserData?.balance ?: INITIAL_BALANCE)
+
+    // Kondisyon Badge Renk Belirleme Mantığı
     val (badgeBg, badgeText) = when {
         item.condition.contains("Kusursuz") || item.condition.contains("Temiz") -> ConditionPerfectBg to ConditionPerfect
         item.condition.contains("Tamir") || item.condition.contains("Bantlı") -> ConditionRepairBg to ConditionRepair
@@ -109,7 +133,7 @@ fun ProductDetailBottomSheetContent(item: MarketItem, onClose: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.Top
         ) {
-            // Sol Taraf: Ürün Görseli (Padding tamamen silindi, Crop yapıldı!)
+            // Sol Taraf: Ürün Görseli
             Box(
                 modifier = Modifier
                     .weight(0.40f)
@@ -121,7 +145,7 @@ fun ProductDetailBottomSheetContent(item: MarketItem, onClose: () -> Unit) {
                 Image(
                     painter = getPainterResourceByName(item.imageName),
                     contentDescription = null,
-                    contentScale = ContentScale.Crop, // Kutunun içini boşluksuz tam doldurur
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -198,7 +222,7 @@ fun ProductDetailBottomSheetContent(item: MarketItem, onClose: () -> Unit) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- 2. FİYAT VE BAKİYE KUTUSU ---
+        // --- 2. FİYAT VE BAKİYE KUTUSU (DİNAMİKLEŞTİRİLDİ) ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -218,10 +242,10 @@ fun ProductDetailBottomSheetContent(item: MarketItem, onClose: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(id = R.drawable.ic_money), contentDescription = null, tint = BalanceGreen, modifier = Modifier.size(28.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    // Bakiye yazıları sola hizalandı (Alignment.Start)
                     Column(horizontalAlignment = Alignment.Start) {
                         Text(text = "Bakiye", color = MarketTextSecondary, fontSize = 12.sp)
-                        Text(text = "₺24.850", color = BalanceGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        // Bakiye artık veritabanındaki canlı durumu gösteriyor
+                        Text(text = "₺ $guncelBakiyeStr", color = BalanceGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -255,8 +279,43 @@ fun ProductDetailBottomSheetContent(item: MarketItem, onClose: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
 
         // --- 4. AKSİYON BUTONLARI ---
+        // ASIL SATIN ALMA BUTONU
         Button(
-            onClick = { /* Satın alma işlemleri */ },
+            onClick = {
+                coroutineScope.launch {
+                    val userId = DEFAULT_USER_ID
+                    val urunFiyati = item.salesValue.toDoubleOrNull() ?: 0.0
+
+                    var mevcutVeri = kelepiraviDao.getInventoryById(userId)
+
+                    // Veritabanı ilk kez açıldıysa ve boşsa, varsayılan bir kullanıcı kaydı açıyoruz
+                    if (mevcutVeri == null) {
+                        val ilkKullanici = DatabaseKelepiravi(id = userId, balance = INITIAL_BALANCE, inventory = emptyList())
+                        kelepiraviDao.insertInventory(ilkKullanici)
+                        mevcutVeri = ilkKullanici
+                    }
+
+                    val suAnkiBakiye = mevcutVeri.balance.toDoubleOrNull() ?: 0.0
+
+                    if (suAnkiBakiye >= urunFiyati) {
+                        val yeniBakiye = suAnkiBakiye - urunFiyati
+                        val yeniEnvanterListesi = mevcutVeri.inventory.toMutableList()
+                        yeniEnvanterListesi.add(item)
+
+                        val guncelVeri = mevcutVeri.copy(
+                            balance = yeniBakiye.toString(),
+                            inventory = yeniEnvanterListesi
+                        )
+
+                        // Veritabanı güncelleniyor (Ekrandaki bakiye otomatik olarak değişecek)
+                        kelepiraviDao.updateInventory(guncelVeri)
+                        onPurchaseSuccess(item)
+
+                        // Satın alma bitince sayfayı kapatmak için tetikliyoruz
+                        onClose()
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth().height(54.dp),
             colors = ButtonDefaults.buttonColors(containerColor = BuyButton),
             shape = RoundedCornerShape(12.dp)
@@ -268,8 +327,9 @@ fun ProductDetailBottomSheetContent(item: MarketItem, onClose: () -> Unit) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // PAZARLIK YAP BUTONU
         Button(
-            onClick = { /* Pazarlık Yap */ },
+            onClick = { /* Pazarlık Yap İşlemleri */ },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(54.dp)
@@ -280,7 +340,7 @@ fun ProductDetailBottomSheetContent(item: MarketItem, onClose: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             Text(text = "Pazarlık Yap", color = BalanceGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.weight(1f))
-            Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null, tint = BalanceGreen)
+            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = BalanceGreen)
         }
 
         // --- 5. KAPATMA (X) BUTONU ---

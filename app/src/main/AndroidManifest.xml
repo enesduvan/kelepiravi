@@ -24,13 +24,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HomeScreen"
+            android:name=".screen.HomeScreen"
             android:exported="false"
             android:label="@string/title_activity_home_screen"
             android:theme="@style/Theme.Kelepiravi"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".MarketBottomSheet"
+            android:name=".screen.MarketBottomSheet"
             android:exported="false"
             android:label="@string/title_activity_market_bottom_sheet"
             android:theme="@style/Theme.Kelepiravi"
