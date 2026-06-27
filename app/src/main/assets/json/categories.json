@@ -1,0 +1,7 @@
+[
+  { "id": "electronics", "name": "Elektronik Cihazlar", "icon": "📱" },
+  { "id": "home_appliances", "name": "Ev Aletleri", "icon": "☕" },
+  { "id": "accessories", "name": "Aksesuarlar & Giyim", "icon": "⌚" },
+  { "id": "toys", "name": "Oyuncak & Koleksiyon", "icon": "🦆" },
+  { "id": "sports", "name": "Spor & Hobi", "icon": "🚲" }
+]

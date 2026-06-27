@@ -1,0 +1,217 @@
+[
+  {
+    "id": 1,
+    "asset": "rubber_duck",
+    "name": "Klasik Plastik Ördek",
+    "category": "toys",
+    "basePrice": 80,
+    "rarity": 1,
+    "variants": [
+      "rubber_duck_1", "rubber_duck_2", "rubber_duck_3", "rubber_duck_4", 
+      "rubber_duck_5", "rubber_duck_6", "rubber_duck_7"
+    ]
+  },
+  {
+    "id": 2,
+    "asset": "rubber_duck_egg",
+    "name": "Yumurtadan Çıkan Ördek",
+    "category": "toys",
+    "basePrice": 120,
+    "rarity": 2,
+    "variants": [
+      "rubber_duck_egg_1", "rubber_duck_egg_2", "rubber_duck_egg_3", 
+      "rubber_duck_egg_4", "rubber_duck_egg_5"
+    ]
+  },
+  {
+    "id": 3,
+    "asset": "smartphone_clean",
+    "name": "Akıllı Telefon (Temiz)",
+    "category": "electronics",
+    "basePrice": 12000,
+    "rarity": 3,
+    "variants": [
+      "smartphone_clean_1", "smartphone_clean_2", "smartphone_clean_3", 
+      "smartphone_clean_4", "smartphone_clean_5", "smartphone_clean_6", 
+      "smartphone_clean_7", "smartphone_clean_8", "smartphone_clean_9", "smartphone_clean_10"
+    ]
+  },
+  {
+    "id": 4,
+    "asset": "smartphone_cracked",
+    "name": "Akıllı Telefon (Ekranı Kırık)",
+    "category": "electronics",
+    "basePrice": 4500,
+    "rarity": 1,
+    "variants": [
+      "smartphone_cracked_1", "smartphone_cracked_2", "smartphone_cracked_3", 
+      "smartphone_cracked_4", "smartphone_cracked_5", "smartphone_cracked_6", 
+      "smartphone_cracked_7", "smartphone_cracked_8", "smartphone_cracked_9", "smartphone_cracked_10"
+    ]
+  },
+  {
+    "id": 5,
+    "asset": "smartphone_scratched",
+    "name": "Akıllı Telefon (Çizik Kasa)",
+    "category": "electronics",
+    "basePrice": 8500,
+    "rarity": 2,
+    "variants": [
+      "smartphone_scratched_1", "smartphone_scratched_2", "smartphone_scratched_3"
+    ]
+  },
+  {
+    "id": 6,
+    "asset": "smartphone_dirty",
+    "name": "Akıllı Telefon (Bakımsız)",
+    "category": "electronics",
+    "basePrice": 7000,
+    "rarity": 2,
+    "variants": [
+      "smartphone_dirty_1", "smartphone_dirty_2", "smartphone_dirty_3", "smartphone_dirty_4"
+    ]
+  },
+  {
+    "id": 7,
+    "asset": "smartphone_melted_back",
+    "name": "Akıllı Telefon (Arkası Yanık)",
+    "category": "electronics",
+    "basePrice": 2500,
+    "rarity": 1,
+    "variants": [
+      "smartphone_melted_back"
+    ]
+  },
+  {
+    "id": 8,
+    "asset": "tablet_galaxy",
+    "name": "10 inç Android Tablet",
+    "category": "electronics",
+    "basePrice": 5000,
+    "rarity": 2,
+    "variants": [
+      "tablet_galaxy"
+    ]
+  },
+  {
+    "id": 9,
+    "asset": "tablet_scratched",
+    "name": "Tablet (Kılcal Çizikli)",
+    "category": "electronics",
+    "basePrice": 3200,
+    "rarity": 1,
+    "variants": [
+      "tablet_scratched_1", "tablet_scratched_2"
+    ]
+  },
+  {
+    "id": 10,
+    "asset": "blender",
+    "name": "Mutfak Blender",
+    "category": "home_appliances",
+    "basePrice": 950,
+    "rarity": 1,
+    "variants": [
+      "blender_1", "blender_2", "blender_3", "blender_4", "blender_5"
+    ]
+  },
+  {
+    "id": 11,
+    "asset": "coffee_maker",
+    "name": "Filtre Kahve Makinesi",
+    "category": "home_appliances",
+    "basePrice": 2200,
+    "rarity": 2,
+    "variants": [
+      "coffee_maker_1", "coffee_maker_2"
+    ]
+  },
+  {
+    "id": 12,
+    "asset": "mini_fridge",
+    "name": "Mini Buzdolabı",
+    "category": "home_appliances",
+    "basePrice": 3800,
+    "rarity": 2,
+    "variants": [
+      "mini_fridge_1", "mini_fridge_2", "mini_fridge_3"
+    ]
+  },
+  {
+    "id": 13,
+    "asset": "headphones_duct_tape",
+    "name": "Oyuncu Kulaklığı (Bantlı)",
+    "category": "accessories",
+    "basePrice": 450,
+    "rarity": 1,
+    "variants": [
+      "headphones_duct_tape_1", "headphones_duct_tape_2", "headphones_duct_tape_3"
+    ]
+  },
+  {
+    "id": 14,
+    "asset": "classic_watch",
+    "name": "Deri Kordonlu Klasik Saat",
+    "category": "accessories",
+    "basePrice": 1500,
+    "rarity": 2,
+    "variants": [
+      "classic_watch_1", "classic_watch_2", "classic_watch_3"
+    ]
+  },
+  {
+    "id": 15,
+    "asset": "classic_bicycle",
+    "name": "Şehir Bisikleti",
+    "category": "sports",
+    "basePrice": 4800,
+    "rarity": 3,
+    "variants": [
+      "classic_bicycle_1"
+    ]
+  },
+  {
+    "id": 16,
+    "asset": "canvas_backpack",
+    "name": "Kanvas Sırt Çantası",
+    "category": "accessories",
+    "basePrice": 650,
+    "rarity": 1,
+    "variants": [
+      "canvas_backpack_1", "canvas_backpack_2"
+    ]
+  },
+  {
+    "id": 17,
+    "asset": "dirty_jersey",
+    "name": "İkinci El Forma",
+    "category": "sports",
+    "basePrice": 300,
+    "rarity": 1,
+    "variants": [
+      "dirty_jersey_19"
+    ]
+  },
+  {
+    "id": 18,
+    "asset": "gamepad_broken",
+    "name": "Ortadan Kırık Gamepad",
+    "category": "electronics",
+    "basePrice": 150,
+    "rarity": 1,
+    "variants": [
+      "gamepad_broken_1"
+    ]
+  },
+  {
+    "id": 19,
+    "asset": "monitor_cracked",
+    "name": "Oyuncu Monitörü (Paneli Kırık)",
+    "category": "electronics",
+    "basePrice": 1200,
+    "rarity": 1,
+    "variants": [
+      "monitor_cracked_1", "monitor_cracked_2", "monitor_cracked_3"
+    ]
+  }
+]

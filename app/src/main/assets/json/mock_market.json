@@ -1,0 +1,626 @@
+[
+  {
+    "condition": "Temiz",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Klasik Plastik Ördek",
+    "salesValue": "64",
+    "estimatedValue": "80",
+    "imageName": "rubber_duck_1"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Klasik Plastik Ördek",
+    "salesValue": "64",
+    "estimatedValue": "80",
+    "imageName": "rubber_duck_2"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Klasik Plastik Ördek",
+    "salesValue": "64",
+    "estimatedValue": "80",
+    "imageName": "rubber_duck_3"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Klasik Plastik Ördek",
+    "salesValue": "64",
+    "estimatedValue": "80",
+    "imageName": "rubber_duck_4"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Klasik Plastik Ördek",
+    "salesValue": "64",
+    "estimatedValue": "80",
+    "imageName": "rubber_duck_5"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Klasik Plastik Ördek",
+    "salesValue": "64",
+    "estimatedValue": "80",
+    "imageName": "rubber_duck_6"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Klasik Plastik Ördek",
+    "salesValue": "64",
+    "estimatedValue": "80",
+    "imageName": "rubber_duck_7"
+  },
+  {
+    "condition": "Yarım Kırık",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Yumurtadan Çıkan Ördek",
+    "salesValue": "96",
+    "estimatedValue": "120",
+    "imageName": "rubber_duck_egg_1"
+  },
+  {
+    "condition": "Yarım Kırık",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Yumurtadan Çıkan Ördek",
+    "salesValue": "96",
+    "estimatedValue": "120",
+    "imageName": "rubber_duck_egg_2"
+  },
+  {
+    "condition": "Yarım Kırık",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Yumurtadan Çıkan Ördek",
+    "salesValue": "96",
+    "estimatedValue": "120",
+    "imageName": "rubber_duck_egg_3"
+  },
+  {
+    "condition": "Yarım Kırık",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Yumurtadan Çıkan Ördek",
+    "salesValue": "96",
+    "estimatedValue": "120",
+    "imageName": "rubber_duck_egg_4"
+  },
+  {
+    "condition": "Yarım Kırık",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Yumurtadan Çıkan Ördek",
+    "salesValue": "96",
+    "estimatedValue": "120",
+    "imageName": "rubber_duck_egg_5"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_1"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_2"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_3"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_4"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_5"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_6"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_7"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_8"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_9"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_10"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_11"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_clean_12"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_1"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_2"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_3"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_4"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_5"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_6"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_7"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_8"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_9"
+  },
+  {
+    "condition": "Kırık Ekran",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "smartphone_cracked_10"
+  },
+  {
+    "condition": "Çizik Kasa",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "6800",
+    "estimatedValue": "8500",
+    "imageName": "smartphone_scratched_1"
+  },
+  {
+    "condition": "Çizik Kasa",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "6800",
+    "estimatedValue": "8500",
+    "imageName": "smartphone_scratched_2"
+  },
+  {
+    "condition": "Çizik Kasa",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "6800",
+    "estimatedValue": "8500",
+    "imageName": "smartphone_scratched_3"
+  },
+  {
+    "condition": "Bakımsız",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "5600",
+    "estimatedValue": "7000",
+    "imageName": "smartphone_dirty_1"
+  },
+  {
+    "condition": "Bakımsız",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "5600",
+    "estimatedValue": "7000",
+    "imageName": "smartphone_dirty_2"
+  },
+  {
+    "condition": "Bakımsız",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "5600",
+    "estimatedValue": "7000",
+    "imageName": "smartphone_dirty_3"
+  },
+  {
+    "condition": "Bakımsız",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "5600",
+    "estimatedValue": "7000",
+    "imageName": "smartphone_dirty_4"
+  },
+  {
+    "condition": "Arkası Yanık",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon",
+    "salesValue": "2000",
+    "estimatedValue": "2500",
+    "imageName": "smartphone_melted_back"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "10 inç Android Tablet",
+    "salesValue": "4000",
+    "estimatedValue": "5000",
+    "imageName": "tablet_galaxy"
+  },
+  {
+    "condition": "Kılcal Çizikli",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Tablet",
+    "salesValue": "2560",
+    "estimatedValue": "3200",
+    "imageName": "tablet_scratched_1"
+  },
+  {
+    "condition": "Kılcal Çizikli",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Tablet",
+    "salesValue": "2560",
+    "estimatedValue": "3200",
+    "imageName": "tablet_scratched_2"
+  },
+  {
+    "condition": "Az Kullanılmış",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Mutfak Blender",
+    "salesValue": "760",
+    "estimatedValue": "950",
+    "imageName": "blender_1"
+  },
+  {
+    "condition": "Az Kullanılmış",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Mutfak Blender",
+    "salesValue": "760",
+    "estimatedValue": "950",
+    "imageName": "blender_2"
+  },
+  {
+    "condition": "Az Kullanılmış",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Mutfak Blender",
+    "salesValue": "760",
+    "estimatedValue": "950",
+    "imageName": "blender_3"
+  },
+  {
+    "condition": "Az Kullanılmış",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Mutfak Blender",
+    "salesValue": "760",
+    "estimatedValue": "950",
+    "imageName": "blender_4"
+  },
+  {
+    "condition": "Az Kullanılmış",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Mutfak Blender",
+    "salesValue": "760",
+    "estimatedValue": "950",
+    "imageName": "blender_5"
+  },
+  {
+    "condition": "Kutusu Yok",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Filtre Kahve Makinesi",
+    "salesValue": "1760",
+    "estimatedValue": "2200",
+    "imageName": "coffee_maker_1"
+  },
+  {
+    "condition": "Kutusu Yok",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Filtre Kahve Makinesi",
+    "salesValue": "1760",
+    "estimatedValue": "2200",
+    "imageName": "coffee_maker_2"
+  },
+  {
+    "condition": "Kutusu Yok",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Filtre Kahve Makinesi",
+    "salesValue": "1760",
+    "estimatedValue": "2200",
+    "imageName": "coffee_maker_3"
+  },
+  {
+    "condition": "Kutusu Yok",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Filtre Kahve Makinesi",
+    "salesValue": "1760",
+    "estimatedValue": "2200",
+    "imageName": "coffee_maker_4"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Mini Buzdolabı",
+    "salesValue": "3040",
+    "estimatedValue": "3800",
+    "imageName": "mini_fridge_1"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Mini Buzdolabı",
+    "salesValue": "3040",
+    "estimatedValue": "3800",
+    "imageName": "mini_fridge_2"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Mini Buzdolabı",
+    "salesValue": "3040",
+    "estimatedValue": "3800",
+    "imageName": "mini_fridge_3"
+  },
+  {
+    "condition": "Bantlı (Tamirli)",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Oyuncu Kulaklığı",
+    "salesValue": "360",
+    "estimatedValue": "450",
+    "imageName": "headphones_duct_tape_1"
+  },
+  {
+    "condition": "Bantlı (Tamirli)",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Oyuncu Kulaklığı",
+    "salesValue": "360",
+    "estimatedValue": "450",
+    "imageName": "headphones_duct_tape_2"
+  },
+  {
+    "condition": "Bantlı (Tamirli)",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Oyuncu Kulaklığı",
+    "salesValue": "360",
+    "estimatedValue": "450",
+    "imageName": "headphones_duct_tape_3"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Deri Kordonlu Klasik Saat",
+    "salesValue": "1200",
+    "estimatedValue": "1500",
+    "imageName": "classic_watch_1"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Deri Kordonlu Klasik Saat",
+    "salesValue": "1200",
+    "estimatedValue": "1500",
+    "imageName": "classic_watch_2"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Deri Kordonlu Klasik Saat",
+    "salesValue": "1200",
+    "estimatedValue": "1500",
+    "imageName": "classic_watch_3"
+  },
+  {
+    "condition": "Bakımsız",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Şehir Bisikleti",
+    "salesValue": "3840",
+    "estimatedValue": "4800",
+    "imageName": "classic_bicycle_1"
+  },
+  {
+    "condition": "Yıpranmış",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Kanvas Sırt Çantası",
+    "salesValue": "520",
+    "estimatedValue": "650",
+    "imageName": "canvas_backpack_1"
+  },
+  {
+    "condition": "Yıpranmış",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Kanvas Sırt Çantası",
+    "salesValue": "520",
+    "estimatedValue": "650",
+    "imageName": "canvas_backpack_2"
+  },
+  {
+    "condition": "Yıkanması Lazım",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "İkinci El Forma",
+    "salesValue": "240",
+    "estimatedValue": "300",
+    "imageName": "dirty_jersey_1"
+  },
+  {
+    "condition": "Yıkanması Lazım",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "İkinci El Forma",
+    "salesValue": "240",
+    "estimatedValue": "300",
+    "imageName": "dirty_jersey_2"
+  },
+  {
+    "condition": "Ortadan Kırık",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Oyun Kolu (Gamepad)",
+    "salesValue": "120",
+    "estimatedValue": "150",
+    "imageName": "gamepad_broken_1"
+  },
+  {
+    "condition": "Ortadan Kırık",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Oyun Kolu (Gamepad)",
+    "salesValue": "120",
+    "estimatedValue": "150",
+    "imageName": "gamepad_broken_2"
+  },
+  {
+    "condition": "Paneli Kırık",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Oyuncu Monitörü",
+    "salesValue": "960",
+    "estimatedValue": "1200",
+    "imageName": "monitor_cracked_1"
+  },
+  {
+    "condition": "Paneli Kırık",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Oyuncu Monitörü",
+    "salesValue": "960",
+    "estimatedValue": "1200",
+    "imageName": "monitor_cracked_2"
+  },
+  {
+    "condition": "Paneli Kırık",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Oyuncu Monitörü",
+    "salesValue": "960",
+    "estimatedValue": "1200",
+    "imageName": "monitor_cracked_3"
+  },
+  {
+    "condition": "Paslı",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Elektrikli Scooter",
+    "salesValue": "2400",
+    "estimatedValue": "3000",
+    "imageName": "electric_scooter_1"
+  },
+  {
+    "condition": "Işıklı",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "UFO Oyuncak",
+    "salesValue": "360",
+    "estimatedValue": "450",
+    "imageName": "ufo_toy_1"
+  },
+  {
+    "condition": "Işıklı",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "UFO Oyuncak",
+    "salesValue": "360",
+    "estimatedValue": "450",
+    "imageName": "ufo_toy_2"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Oyuncu Laptopu",
+    "salesValue": "20000",
+    "estimatedValue": "25000",
+    "imageName": "laptop_clean_1"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Oyuncu Laptopu",
+    "salesValue": "20000",
+    "estimatedValue": "25000",
+    "imageName": "laptop_clean_2"
+  }
+]
