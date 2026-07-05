@@ -142,7 +142,7 @@ object EconomyEngine {
         inventory.sumOf { it.purchasePrice.ifEmpty { it.salesValue }.toDoubleOrNull() ?: 0.0 }
 
     /**
-     * Portföy kâr/zarar yüzdesi.
+     * Portföy kâr/zarar yüzdesi..
      */
     fun calculatePortfolioROI(inventory: List<MarketItem>): Double {
         val investment = calculateTotalInvestment(inventory)
