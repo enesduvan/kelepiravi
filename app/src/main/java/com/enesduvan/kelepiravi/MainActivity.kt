@@ -4,37 +4,35 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.enesduvan.kelepiravi.screen.AppRoot
+import androidx.activity.viewModels
+import com.enesduvan.kelepiravi.data.local.AppDatabaseProvider
+import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.ui.market.MarketViewModel
+import com.enesduvan.kelepiravi.ui.market.MarketViewModelFactory
+import com.enesduvan.kelepiravi.ui.shared.AppRoot
 import com.enesduvan.kelepiravi.ui.theme.KelepiraviTheme
 
 class MainActivity : ComponentActivity() {
+
+    /**
+     * Manuel DI zinciri:
+     * AppDatabaseProvider → KelepiraviDao → KelepiraviRepository → MarketViewModel
+     */
+    private val viewModel: MarketViewModel by viewModels {
+        MarketViewModelFactory(
+            repository = KelepiraviRepository(
+                dao = AppDatabaseProvider.getDatabase(applicationContext).kelepiraviDao()
+            )
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             KelepiraviTheme {
-                AppRoot()
+                AppRoot(viewModel = viewModel)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    KelepiraviTheme {
-        Greeting("Android")
     }
 }

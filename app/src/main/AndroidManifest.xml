@@ -19,22 +19,9 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".screen.HomeScreen"
-            android:exported="false"
-            android:label="@string/title_activity_home_screen"
-            android:theme="@style/Theme.Kelepiravi"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".screen.MarketBottomSheet"
-            android:exported="false"
-            android:label="@string/title_activity_market_bottom_sheet"
-            android:theme="@style/Theme.Kelepiravi"
-            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

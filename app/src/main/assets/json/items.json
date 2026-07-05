@@ -213,5 +213,93 @@
     "variants": [
       "monitor_cracked_1", "monitor_cracked_2", "monitor_cracked_3"
     ]
+  },
+  {
+    "id": 20,
+    "asset": "vr_headset_clean",
+    "name": "VR Gözlük (Temiz)",
+    "category": "electronics",
+    "basePrice": 6000,
+    "rarity": 3,
+    "variants": [
+      "vr_headset_clean_1"
+    ]
+  },
+  {
+    "id": 21,
+    "asset": "vr_headset_scratched",
+    "name": "VR Gözlük (Çizik)",
+    "category": "electronics",
+    "basePrice": 4000,
+    "rarity": 2,
+    "variants": [
+      "vr_headset_scratched_1"
+    ]
+  },
+  {
+    "id": 22,
+    "asset": "mech_keyboard_clean",
+    "name": "Mekanik Klavye (Temiz)",
+    "category": "electronics",
+    "basePrice": 1500,
+    "rarity": 2,
+    "variants": [
+      "mech_keyboard_clean_1"
+    ]
+  },
+  {
+    "id": 23,
+    "asset": "mech_keyboard_missing_key",
+    "name": "Mekanik Klavye (Tuşsuz)",
+    "category": "electronics",
+    "basePrice": 600,
+    "rarity": 1,
+    "variants": [
+      "mech_keyboard_missing_key_1"
+    ]
+  },
+  {
+    "id": 24,
+    "asset": "acoustic_guitar_clean",
+    "name": "Akustik Gitar (Temiz)",
+    "category": "hobby",
+    "basePrice": 2000,
+    "rarity": 2,
+    "variants": [
+      "acoustic_guitar_clean_1"
+    ]
+  },
+  {
+    "id": 25,
+    "asset": "acoustic_guitar_broken_string",
+    "name": "Akustik Gitar (Teli Kopuk)",
+    "category": "hobby",
+    "basePrice": 900,
+    "rarity": 1,
+    "variants": [
+      "acoustic_guitar_broken_string_1"
+    ]
+  },
+  {
+    "id": 26,
+    "asset": "leather_jacket_clean",
+    "name": "Deri Ceket (Temiz)",
+    "category": "clothing",
+    "basePrice": 3500,
+    "rarity": 2,
+    "variants": [
+      "leather_jacket_clean_1"
+    ]
+  },
+  {
+    "id": 27,
+    "asset": "leather_jacket_torn",
+    "name": "Deri Ceket (Yırtık)",
+    "category": "clothing",
+    "basePrice": 800,
+    "rarity": 1,
+    "variants": [
+      "leather_jacket_torn_1"
+    ]
   }
 ]
