@@ -1,0 +1,1682 @@
+Tamam 🤠 Buradan sonrası artık “gerçekten oturup geliştirmeye başlama” bölümü.
+Bu bölümde:
+ilk commit
+sprint sistemi
+günlük çalışma planı
+release hazırlığı
+ne zaman duracağını
+tanımlıyoruz.
+FLIPPING MASTER
+Execution Document
+PART 6
+━━━━━━━━━━━━━━━━━━━━━━
+45 — İLK REPOSITORY
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+Projeyi ilk günden düzenli kurmak.
+Repository:
+flipping-master
+Branch:
+main
+develop
+Kurallar:
+main
+yayına yakın
+develop
+geliştirme
+YASAK:
+tek branch.
+━━━━━━━━━━━━━━━━━━━━━━
+46 — İLK COMMIT YAPISI
+━━━━━━━━━━━━━━━━━━━━━━
+Commit:
+Initial Project Setup
+İçerik:
+✓ Compose
+✓ Theme
+✓ Navigation
+✓ Room
+✓ Hilt
+✓ Packages
+Sonraki:
+Home Screen
+Sonraki:
+Market
+Sonraki:
+Inventory
+Kural:
+tek commit
+tek amaç
+YASAK:
+100 dosya.
+━━━━━━━━━━━━━━━━━━━━━━
+47 — SPRINT SİSTEMİ
+━━━━━━━━━━━━━━━━━━━━━━
+Sprint:
+3 gün
+Her sprint:
+Planla
+↓
+Yap
+↓
+Test
+↓
+Bitir
+Örnek:
+SPRINT 1
+Market
+—
+SPRINT 2
+Inventory
+—
+SPRINT 3
+Repair
+—
+SPRINT 4
+Save
+Kural:
+Sprint bitmeden yeni fikir YOK.
+━━━━━━━━━━━━━━━━━━━━━━
+48 — GÜNLÜK ÇALIŞMA MODELİ
+━━━━━━━━━━━━━━━━━━━━━━
+1 saat
+↓
+Kod
+30 dk
+↓
+Test
+15 dk
+↓
+Not
+15 dk
+↓
+Temizlik
+Toplam:
+2 saat
+YASAK:
+8 saat asset.
+━━━━━━━━━━━━━━━━━━━━━━
+49 — GÜNLÜK LOG
+━━━━━━━━━━━━━━━━━━━━━━
+Her gün yaz:
+Bugün:
+✓ ne yaptım
+✓ ne bozuldu
+✓ yarın ne var
+Örnek:
+20 Haziran
+✓ Market kartı
+✓ Save bozuldu
+→ Yarın düzelt
+━━━━━━━━━━━━━━━━━━━━━━
+50 — İLK OYNANABİLİR BUILD
+━━━━━━━━━━━━━━━━━━━━━━
+Şart:
+Oyuncu:
+ürün görmeli
+↓
+satın almalı
+↓
+envantere almalı
+↓
+satmalı
+↓
+para artmalı
+UI kötü olabilir.
+Önemli değil.
+━━━━━━━━━━━━━━━━━━━━━━
+51 — TEST KURALI
+━━━━━━━━━━━━━━━━━━━━━━
+Kural:
+Yeni özellik
+↓
+manuel test
+↓
+merge
+Checklist:
+Alış
+Satış
+Tamir
+Save
+Refresh
+Crash
+━━━━━━━━━━━━━━━━━━━━━━
+52 — DEBUG MENÜSÜ
+━━━━━━━━━━━━━━━━━━━━━━
+EKLE:
++100000 TL
+Reset
+Event Trigger
+Spawn Item
+Repair Success
+Sebep:
+Test.
+Yayın öncesi kapat.
+━━━━━━━━━━━━━━━━━━━━━━
+53 — RELEASE CANDIDATE
+━━━━━━━━━━━━━━━━━━━━━━
+RC1:
+tam oynanır
+↓
+RC2:
+bug düzelt
+↓
+RC3:
+yayın
+YASAK:
+RC sırasında özellik.
+━━━━━━━━━━━━━━━━━━━━━━
+54 — MAĞAZA SAYFASI
+━━━━━━━━━━━━━━━━━━━━━━
+İkon:
+temiz
+Basit
+Store açıklaması:
+İlk satır önemli.
+Örnek:
+Kelepir bul.
+Pazarlık yap.
+Kar et.
+━━━━━━━━━━━━━━━━━━━━━━
+55 — YAYIN GÜNÜ
+━━━━━━━━━━━━━━━━━━━━━━
+Yap:
+yükle
+kontrol et
+bekle
+YAPMA:
+yorum yenile
+puan takip
+panik update
+━━━━━━━━━━━━━━━━━━━━━━
+56 — İLK 7 GÜN
+━━━━━━━━━━━━━━━━━━━━━━
+Bak:
+kaç kişi açtı
+kaç dakika oynadı
+nerede çıktı
+YOK:
+yeni sistem
+━━━━━━━━━━━━━━━━━━━━━━
+57 — PROJEYİ ÖLDÜRECEK ŞEYLER
+━━━━━━━━━━━━━━━━━━━━━━
+Asset bağımlılığı
+UI takıntısı
+Scope creep
+Mükemmeliyetçilik
+3 gün kod yazmamak
+En tehlikeli:
+“bir özellik daha”
+━━━━━━━━━━━━━━━━━━━━━━
+58 — SON KARARLAR
+━━━━━━━━━━━━━━━━━━━━━━
+✓ Offline
+✓ Room
+✓ Compose
+✓ WEBP
+✓ Rewarded
+✓ Overlay
+✓ Procedural
+✓ Mizah (seyrek)
+✓ 400+ asset
+✓ MVP küçük
+━━━━━━━━━━━━━━━━━━━━━━
+59 — PROJE TANIMI
+━━━━━━━━━━━━━━━━━━━━━━
+Flipping Master:
+İkinci el ticaret simülasyonu.
+Amaç:
+Kar etmek değil.
+Akıllı hissettirmek.
+━━━━━━━━━━━━━━━━━━━━━━
+PART 6 SONU
+━━━━━━━━━━━━━━━━━━━━━━
+SONRA:
+EKLER
+A — JSON Şablonları
+B — Room Entity
+C — İlk Ekran Wireframe
+D — MVP ChecklistVe burada bir karar daha bırakıyorum:
+Artık yeni asset üretmek yerine ilk commit zamanı daha yakın görünüyor 🤠Tamam 🤠 Buradan sonrası artık “kod yazarken kavga çıkmasın” bölümü.
+Bu bölüm bence gelecekteki sana en çok teşekkür ettirecek bölüm.
+FLIPPING MASTER
+Technical Design Document
+PART 5
+━━━━━━━━━━━━━━━━━━━━━━
+33 — KOD STANDARTLARI
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+6 ay sonra
+kodu görünce korkmamak.
+Kurallar:
+1
+UI
+iş yapmaz.
+—
+2
+ViewModel
+UI bilmez.
+—
+3
+Repository
+ekran bilmez.
+—
+4
+Database
+tek kaynak.
+—
+5
+Fonksiyon:
+maks
+30 satır.
+━━━━━━━━━━━━━━━━━━━━━━
+İSİMLENDİRME
+━━━━━━━━━━━━━━━━━━━━━━
+DOĞRU
+ItemCard
+GenerateMarketItems
+InventoryRepository
+YANLIŞ
+helper
+data
+test2
+newItem
+━━━━━━━━━━━━━━━━━━━━━━
+DOSYA KURALI
+━━━━━━━━━━━━━━━━━━━━━━
+Bir dosya:
+tek görev.
+Örnek:
+HomeScreen.kt
+MarketRepository.kt
+RepairViewModel.kt
+YASAK:
+800 satır.
+━━━━━━━━━━━━━━━━━━━━━━
+34 — STATE KURALLARI
+━━━━━━━━━━━━━━━━━━━━━━
+State:
+immutable
+Örnek:
+data class UiState
+loading
+items
+error
+selected
+Kural:
+event
+↓
+viewmodel
+↓
+state
+↓
+ui
+YASAK:
+UI içinde veri değiştirme.
+━━━━━━━━━━━━━━━━━━━━━━
+35 — NAVIGATION
+━━━━━━━━━━━━━━━━━━━━━━
+Tek yön.
+Home
+↓
+Inventory
+↓
+Sell
+↓
+Back
+Route:
+home
+inventory
+repair
+profile
+YASAK:
+Screen→Screen veri taşıma.
+ID taşı.
+━━━━━━━━━━━━━━━━━━━━━━
+36 — HATA YÖNETİMİ
+━━━━━━━━━━━━━━━━━━━━━━
+Kural:
+Crash
+oyuncunun suçu değil.
+Her kritik işlem:
+try
+↓
+rollback
+Örnek:
+alış başarısız
+↓
+para geri
+Satış başarısız
+↓
+ürün geri
+━━━━━━━━━━━━━━━━━━━━━━
+37 — TEKNİK BORÇ LİSTESİ
+━━━━━━━━━━━━━━━━━━━━━━
+BUNLARI ERTELE:
+Firebase
+Leaderboard
+Cloud Save
+Online Market
+Canlı İhale
+Çoklu Dil
+Bildirim
+A/B Test
+━━━━━━━━━━━━━━━━━━━━━━
+KABUL EDİLEN BORÇ
+━━━━━━━━━━━━━━━━━━━━━━
+JSON item listesi
+Basit ekonomi
+Tek reklam
+Statik event
+Kural:
+MVP'de
+mükemmel yok.
+━━━━━━━━━━━━━━━━━━━━━━
+38 — YAYIN SONRASI İLK 30 GÜN
+━━━━━━━━━━━━━━━━━━━━━━
+GÜN 1–3
+Crash düzelt.
+—
+GÜN 4–10
+Ekonomi.
+—
+GÜN 10–20
+UI.
+—
+GÜN 20–30
+Yeni içerik.
+YASAK:
+Yeni mod.
+━━━━━━━━━━━━━━━━━━━━━━
+39 — İLK GÜNCELLEME
+━━━━━━━━━━━━━━━━━━━━━━
+HEDEF:
+daha fazla derinlik.
+EKLENEBİLİR:
+Yeni item
+Yeni event
+Yeni tamir
+Yeni satıcı
+YOK:
+online
+chat
+sezon
+━━━━━━━━━━━━━━━━━━━━━━
+40 — V2
+━━━━━━━━━━━━━━━━━━━━━━
+Sadece şu şartla:
+Retention iyi.
+V2 adayları:
+Koleksiyon
+Açık artırma
+Depo
+Özel müşteri
+Nadir ürün
+━━━━━━━━━━━━━━━━━━━━━━
+41 — OYUNCU DAVRANIŞI
+━━━━━━━━━━━━━━━━━━━━━━
+Beklenen:
+İlk gün:
+15–30 dk
+İlk hafta:
+3–5 oturum
+Başarı:
+Oyuncu:
+“bir ilan daha”
+demesi.
+Başarısızlık:
+“her şey aynı”
+demesi.
+━━━━━━━━━━━━━━━━━━━━━━
+42 — KIRMIZI ÇİZGİLER
+━━━━━━━━━━━━━━━━━━━━━━
+ASLA:
+5000 asset
+zorunlu reklam
+online zorunluluğu
+gacha
+günlük görev
+enerji sistemi
+ASLA.
+━━━━━━━━━━━━━━━━━━━━━━
+43 — PROJE BİTİŞ TANIMI
+━━━━━━━━━━━━━━━━━━━━━━
+Bitmiş demek:
+Kod yazmak istememen.
+Yeni özellik istememen.
+Kendin 1 saat oynayabilmen.
+3 arkadaşın tekrar açması.
+Yoksa bitmemiş.
+━━━━━━━━━━━━━━━━━━━━━━
+44 — GELECEKTEKİ ENES'E NOT
+━━━━━━━━━━━━━━━━━━━━━━
+Bir gün:
+“bir özellik daha ekleyeyim”
+diyeceksin.
+Dur.
+Önce yayınla.
+Çünkü yayınlanmamış mükemmel oyun
+=
+yok.
+Yayınlanmış iyi oyun
+«»
+yayınlanmamış mükemmel oyun.
+━━━━━━━━━━━━━━━━━━━━━━
+PART 5 SONU
+━━━━━━━━━━━━━━━━━━━━━━
+SONRA:
+46 GDD Finalizasyonu
+47 Günlük çalışma planı
+48 İlk commit yapısı
+49 Sprint sistemi
+50 Release CandidateBir de artık ciddi söylüyorum:
+Bu belgeyle birlikte yarın yeni özellik konuşmak yerine ilk ekranı kodlamaya başlaman daha mantıklı noktaya geldin 🤠Tamam 🤠 Buradan sonrası artık “yayına çıkacak uygulama” tarafı.
+Bu bölümde asset üretimi → performans → APK → test → yayın → ilk kullanıcılar var.
+FLIPPING MASTER
+Technical Design Document
+PART 4
+━━━━━━━━━━━━━━━━━━━━━━
+22 — İÇERİK ÜRETİM PIPELINE
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+Yeni içerik eklemek
+kod yazmak olmamalı.
+Yeni ürün:
+resim ekle
++
+json satırı ekle
+oyunda hazır.
+Akış:
+AI
+↓
+Seç
+↓
+WEBP
+↓
+Assets
+↓
+JSON
+↓
+Market
+━━━━━━━━━━━━━━━━━━━━━━
+ÜRÜN EKLEME AKIŞI
+━━━━━━━━━━━━━━━━━━━━━━
+1
+Görsel üret
+↓
+2
+Dosya adı ver
+↓
+3
+WEBP çevir
+↓
+4
+Kategori klasörü
+↓
+5
+JSON kayıt
+↓
+6
+Test
+━━━━━━━━━━━━━━━━━━━━━━
+ÖRNEK
+━━━━━━━━━━━━━━━━━━━━━━
+Görsel:
+office_laptop_012.webp
+JSON:
+{
+"id":124,
+"asset":"office_laptop_012",
+"category":"electronics",
+"basePrice":22000,
+"rarity":2
+}
+Sonuç:
+Oyunda hazır.
+━━━━━━━━━━━━━━━━━━━━━━
+23 — ASSET OPTİMİZASYONU
+━━━━━━━━━━━━━━━━━━━━━━
+Kurallar:
+PNG YOK.
+WEBP.
+Boyut:
+512×512
+Kategori:
+Normal:
+512
+Rare:
+768
+Maks:
+100 KB
+Hedef:
+400 ürün
+≈
+40–80 MB
+━━━━━━━━━━━━━━━━━━━━━━
+GÖRSEL KALİTE
+━━━━━━━━━━━━━━━━━━━━━━
+Kurallar:
+şeffaf arka plan
+tek obje
+ortalanmış
+aynı açı
+gölge düşük
+━━━━━━━━━━━━━━━━━━━━━━
+24 — PERFORMANS
+━━━━━━━━━━━━━━━━━━━━━━
+HEDEF:
+60 FPS
+Kurallar:
+Liste:
+LazyColumn
+Grid:
+LazyVerticalGrid
+Animasyon:
+maks
+300ms
+YASAK:
+büyük bitmap
+sürekli recomposition
+gereksiz state
+━━━━━━━━━━━━━━━━━━━━━━
+RESİM YÜKLEME
+━━━━━━━━━━━━━━━━━━━━━━
+Öneri:
+Coil
+Kurallar:
+memory cache
+disk cache
+thumbnail
+Örnek:
+Liste
+↓
+küçük
+Detay
+↓
+yüksek
+━━━━━━━━━━━━━━━━━━━━━━
+25 — SAVE SİSTEMİ
+━━━━━━━━━━━━━━━━━━━━━━
+Save:
+otomatik
+Trigger:
+alış
+satış
+tamir
+event
+Çıkışta save YOK.
+Her işlem sonrası.
+Yedek:
+7 save
+Tut:
+son durum
+Rollback:
+1 geri
+━━━━━━━━━━━━━━━━━━━━━━
+26 — HATA SİSTEMİ
+━━━━━━━━━━━━━━━━━━━━━━
+Crash
+↓
+log
+↓
+geri yükle
+Kurallar:
+oyuncu item kaybetmez.
+Koruma:
+transaction
+Örnek:
+satış yarım kaldı
+↓
+iptal
+━━━━━━━━━━━━━━━━━━━━━━
+27 — TEST PLANI
+━━━━━━━━━━━━━━━━━━━━━━
+TEST 1
+20 dk
+ilk kullanıcı
+Amaç:
+oyunu anlıyor mu
+—
+TEST 2
+1 saat
+ekonomi
+Amaç:
+para kırılıyor mu
+—
+TEST 3
+3 saat
+tekrar
+Amaç:
+sıkıcı mı
+—
+TEST 4
+10 saat
+save
+Amaç:
+çöküyor mu
+━━━━━━━━━━━━━━━━━━━━━━
+28 — APK BOYUTU
+━━━━━━━━━━━━━━━━━━━━━━
+HEDEF:
+150 MB altı
+Kurallar:
+Asset:
+80 MB
+Kod:
+20 MB
+Room:
+5 MB
+Cache:
+40 MB
+YASAK:
+300 MB+
+━━━━━━━━━━━━━━━━━━━━━━
+29 — PLAY STORE HAZIRLIK
+━━━━━━━━━━━━━━━━━━━━━━
+Yapılacak:
+icon
+banner
+ekran görüntüsü
+privacy
+reklam bildirimi
+test
+store açıklaması
+━━━━━━━━━━━━━━━━━━━━━━
+STORE GÖRSELLERİ
+━━━━━━━━━━━━━━━━━━━━━━
+1
+İlan Akışı
+2
+Tamir
+3
+Büyük Kar
+4
+Envanter
+━━━━━━━━━━━━━━━━━━━━━━
+30 — ANALYTICS
+━━━━━━━━━━━━━━━━━━━━━━
+Şimdilik:
+lokal
+Ölç:
+kaç satış
+kaç tamir
+kaç reklam
+kaç çıkış
+YOK:
+kişisel veri
+━━━━━━━━━━━━━━━━━━━━━━
+31 — İLK 1000 KULLANICI
+━━━━━━━━━━━━━━━━━━━━━━
+AMAÇ:
+para değil
+geri bildirim
+Kurallar:
+ilk gün reklam agresif değil
+puan isteme yok
+hata düzelt
+İzle:
+ilk 10 dk
+nerede çıkıyorlar
+━━━━━━━━━━━━━━━━━━━━━━
+32 — ÇIKIŞ KRİTERİ
+━━━━━━━━━━━━━━━━━━━━━━
+Bunlar sağlandıysa yayın:
+✓ oyun kapanmıyor
+✓ ekonomi bozulmuyor
+✓ reklam çalışıyor
+✓ save güvenli
+✓ 60 dk eğlenceli
+✓ APK makul
+Yoksa yayınlama.
+━━━━━━━━━━━━━━━━━━━━━━
+PART 4 SONU
+━━━━━━━━━━━━━━━━━━━━━━
+SONRA:
+33 Kod Standartları
+34 Teknik Borç
+35 Yayın Sonrası Yol Haritası
+36 V2 ÖzellikleriBu arada bir not bırakıyorum gelecekteki sana:
+Şu an yeni özellik ekleme dönemini geçtin. Şu anki en büyük risk:
+> asset üretmeye devam edip oyunu kurmamak.
+400 asset → yeterli. Artık ekranları ayağa kaldırma zamanı 🤠Tamam 🤠 Buradan sonrası oyunun kalbi.
+Bu bölümden sonra teoriden çıkıp “nasıl çalışacak?” seviyesine iniyoruz.
+FLIPPING MASTER
+Technical Design Document
+PART 3
+━━━━━━━━━━━━━━━━━━━━━━
+16 — UI MİMARİSİ
+━━━━━━━━━━━━━━━━━━━━━━
+Kural:
+Tek ekranda tek amaç.
+Karmaşa yok.
+Ekranlar:
+Home
+Inventory
+Repair
+Sell
+Profile
+Bottom Navigation:
+🏠 Ana Sayfa
+📦 Envanter
+🔧 Tamir
+🏪 Dükkan
+👤 Profil
+━━━━━━━━━━━━━━━━━━━━━━
+HOME SCREEN
+━━━━━━━━━━━━━━━━━━━━━━
+Görev:
+İlan göstermek.
+Üst:
+Bakiye
+İtibar
+Seviye
+—
+Orta:
+İlan Listesi
+—
+Alt:
+Bottom Navigation
+Kart:
+[RESİM]
+Başlık
+Durum
+Fiyat
+Satıcı
+Buton
+İlan Sayısı:
+İlk sürüm:
+15
+Refresh:
+manuel
+━━━━━━━━━━━━━━━━━━━━━━
+INVENTORY
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+Oyuncunun sahip olduğu ürünler.
+Görünüm:
+2 sütun grid
+Kart:
+Resim
+Kondisyon
+Alış
+Tahmini satış
+Aksiyon:
+SAT
+TAMİR
+SİL
+Sırala:
+Yeni
+Pahalı
+Hasarlı
+━━━━━━━━━━━━━━━━━━━━━━
+REPAIR SCREEN
+━━━━━━━━━━━━━━━━━━━━━━
+Tamir:
+Çırak
+Usta
+Göster:
+Tamir maliyeti
+Başarı oranı
+Tahmini sonuç
+Buton:
+Tamir Et
+Animasyon:
+2 saniye
+Sonuç:
+Başarılı
+Başarısız
+━━━━━━━━━━━━━━━━━━━━━━
+PROFILE
+━━━━━━━━━━━━━━━━━━━━━━
+İçerik:
+Toplam Kar
+Toplam Satış
+En Büyük Kar
+Seviye
+Oynama Süresi
+━━━━━━━━━━━━━━━━━━━━━━
+17 — EKONOMİ MOTORU
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+Oyuncu sürekli kazanmasın.
+Her satış:
+Kar
+veya
+zarar.
+Formül:
+FinalPrice
+=
+BasePrice
+×
+Condition
+×
+MarketModifier
+×
+Luck
+Örnek:
+12000
+×
+0.72
+×
+1.1
+×
+0.9
+=
+8550
+━━━━━━━━━━━━━━━━━━━━━━
+SATIN ALMA
+━━━━━━━━━━━━━━━━━━━━━━
+price
+=
+base
+×
+0.5–0.9
+Riskli:
+×
+0.2–0.5
+Kar garantisi YOK.
+━━━━━━━━━━━━━━━━━━━━━━
+TAMİR
+━━━━━━━━━━━━━━━━━━━━━━
+condition
+30
+↓
+tamir
+↓
+65
+↓
+değer artışı
+Tamir
+asla
+direkt karlı değil.
+Risk olmalı.
+━━━━━━━━━━━━━━━━━━━━━━
+18 — PROCEDURAL ITEM ENGINE
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+Az asset
+çok içerik
+Ürün
+=
+Asset
++ 
+Condition
++ 
+Defect
++ 
+Seller
++ 
+Price
++ 
+Description
+Örnek:
+Asset:
+tablet_04
+Condition:
+62
+Defect:
+screen
+Seller:
+Murat
+Price:
+8700
+Description:
+ekran değişti
+━━━━━━━━━━━━━━━━━━━━━━
+ITEM GENERATOR
+━━━━━━━━━━━━━━━━━━━━━━
+Adım 1
+Kategori seç
+↓
+Adım 2
+Asset seç
+↓
+Adım 3
+Kondisyon
+↓
+Adım 4
+Fiyat
+↓
+Adım 5
+Satıcı
+↓
+Adım 6
+Açıklama
+↓
+Markete koy
+━━━━━━━━━━━━━━━━━━━━━━
+SATICI SİSTEMİ
+━━━━━━━━━━━━━━━━━━━━━━
+seller.json
+Örnek:
+Ali
+Murat
+Ahmet
+Can
+Özellik:
+Pazarlıkçı
+Sabırsız
+Dolandırıcı
+Temiz
+━━━━━━━━━━━━━━━━━━━━━━
+AÇIKLAMA OLUŞTURMA
+━━━━━━━━━━━━━━━━━━━━━━
+Template:
+Abi temiz
+Sadece …
+Hariç
+Örnek:
+Abi temiz kullanıldı.
+Sadece pil değişti.
+Örnek:
+Kardeşim acil.
+Pazarlık yok.
+━━━━━━━━━━━━━━━━━━━━━━
+19 — REKLAM SİSTEMİ
+━━━━━━━━━━━━━━━━━━━━━━
+Kural:
+Zorunlu reklam YOK.
+Yayın:
+Rewarded Only
+Reklam:
+1
+↓
+ödül
+Ödüller:
++1 ilan yenileme
++tamir indirimi
++ek slot
+YASAK:
+Satış sonrası reklam
+Açılış reklamı
+Her ekran reklamı
+Sınır:
+10 dakikada
+maksimum
+1–2 reklam
+━━━━━━━━━━━━━━━━━━━━━━
+20 — EVENT MOTORU
+━━━━━━━━━━━━━━━━━━━━━━
+Event Şansı:
+Satış
+Tamir
+Refresh
+Örnek:
+Dilenci
+Vergi
+Yanlış IBAN
+Şüpheli İlan
+Kural:
+Arka arkaya event yok.
+Cooldown:
+120 saniye
+━━━━━━━━━━━━━━━━━━━━━━
+21 — MVP BİTİŞ KRİTERİ
+━━━━━━━━━━━━━━━━━━━━━━
+Aşağıdakiler çalışıyorsa:
+✓ İlan
+✓ Alış
+✓ Envanter
+✓ Satış
+✓ Tamir
+✓ Save
+✓ Reklam
+✓ Ekonomi
+→ MVP hazır.
+YENİ ÖZELLİK EKLEME.
+ÖNCE TEST.
+━━━━━━━━━━━━━━━━━━━━━━
+PART 3 SONU
+━━━━━━━━━━━━━━━━━━━━━━
+Sonraki:
+22 Veri Üretim Pipeline
+23 Performans
+24 APK Boyutu
+25 Yayın Hazırlığı
+26 İlk 1000 kullanıcı planıŞu an geldiğimiz noktada artık elinde “oyun fikri” değil, uygulanabilir teknik plan oluşmaya başladı 🤠
+Tamam 🤠 O zaman artık “oyun fikri” modundan çıkıyoruz.
+Buradan sonrası: Gerçek proje yapısı.
+FLIPPING MASTER
+Technical Design Document
+PART 2
+━━━━━━━━━━━━━━━━━━━━━━
+07 — TEKNİK KARARLAR
+━━━━━━━━━━━━━━━━━━━━━━
+Platform:
+Android
+Dil:
+Kotlin
+UI:
+Jetpack Compose
+Mimari:
+MVVM
+Veri:
+Room
+Asenkron:
+Coroutines
+Dependency:
+Hilt
+Navigation:
+Navigation Compose
+Local Storage:
+Room + Assets
+Image:
+WEBP
+Minimum SDK:
+26
+Hedef:
+60 FPS
+Offline-first
+Karar:
+Sunucu YOK.
+İlk sürüm tamamen cihaz içinde.
+━━━━━━━━━━━━━━━━━━━━━━
+08 — PROJE KLASÖR YAPISI
+━━━━━━━━━━━━━━━━━━━━━━
+app/
+data/
+database/
+dao/
+entity/
+repository/
+domain/
+model/
+ui/
+screens/
+components/
+navigation/
+viewmodel/
+assets/
+items/
+overlays/
+json/
+utils/
+ads/
+analytics/
+Örnek:
+app/
+ui/
+screens/
+home/
+inventory/
+repair/
+sell/
+profile/
+━━━━━━━━━━━━━━━━━━━━━━
+09 — ROOM DATABASE
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+Oyuncu verisi
++
+Envanter
++
+Market
++
+Save
+saklamak.
+Database:
+AppDatabase
+Tablolar:
+Player
+Inventory
+Market
+Transactions
+Events
+━━━━━━━━━━━━━━━━━━━━━━
+PLAYER ENTITY
+━━━━━━━━━━━━━━━━━━━━━━
+data class Player
+id
+money
+level
+reputation
+inventorySlots
+playTime
+createdAt
+Örnek:
+money=4800
+level=2
+reputation=12
+━━━━━━━━━━━━━━━━━━━━━━
+INVENTORY ENTITY
+━━━━━━━━━━━━━━━━━━━━━━
+data class InventoryItem
+id
+assetId
+title
+category
+condition
+purchasePrice
+estimatedPrice
+owned
+defects
+purchaseDate
+Örnek:
+assetId:
+office_laptop_002
+condition:
+64
+defects:
+battery
+━━━━━━━━━━━━━━━━━━━━━━
+MARKET ENTITY
+━━━━━━━━━━━━━━━━━━━━━━
+MarketItem
+listingId
+assetId
+sellerName
+price
+condition
+trustScore
+expiresAt
+riskLevel
+Örnek:
+seller:
+Murat34
+risk:
+LOW
+━━━━━━━━━━━━━━━━━━━━━━
+TRANSACTION ENTITY
+━━━━━━━━━━━━━━━━━━━━━━
+transactionId
+itemId
+buyPrice
+sellPrice
+profit
+date
+Amaç:
+istatistik
+━━━━━━━━━━━━━━━━━━━━━━
+10 — JSON SİSTEMİ
+━━━━━━━━━━━━━━━━━━━━━━
+JSON
+Sabit veri
+Room
+Oyuncu verisi
+JSON:
+items.json
+events.json
+dialogs.json
+categories.json
+Örnek:
+items.json
+{
+"id":12,
+"category":"phone",
+"basePrice":18000,
+"asset":"phone_02"
+}
+YASAK:
+save.json
+inventory.json
+player.json
+bunlar Room.
+━━━━━━━━━━━━━━━━━━━━━━
+11 — ASSET SİSTEMİ
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+Resim tekrarını azaltmak.
+Yapı:
+Asset
++
+Condition
++
+Overlay
++
+Metadata
+Örnek:
+phone_12.webp
+condition=72
+defect=screen
+risk=low
+UI:
+📱
+⚠️ Ekran
+Tamir Görmüş
+━━━━━━━━━━━━━━━━━━━━━━
+12 — REPOSITORY KATMANI
+━━━━━━━━━━━━━━━━━━━━━━
+Amaç:
+UI
+ile
+Database
+ayrı.
+Repository:
+MarketRepository
+InventoryRepository
+PlayerRepository
+RepairRepository
+Örnek:
+MarketRepository
+generateItems()
+buyItem()
+sellItem()
+refresh()
+━━━━━━━━━━━━━━━━━━━━━━
+13 — VIEWMODEL
+━━━━━━━━━━━━━━━━━━━━━━
+HomeViewModel
+ilanlar
+InventoryViewModel
+envanter
+RepairViewModel
+tamir
+PlayerViewModel
+oyuncu
+Kurallar:
+UI
+DB görmeyecek.
+UI
+ViewModel konuşacak.
+━━━━━━━━━━━━━━━━━━━━━━
+14 — STATE YÖNETİMİ
+━━━━━━━━━━━━━━━━━━━━━━
+StateFlow
+Örnek:
+UiState
+Loading
+Success
+Error
+Empty
+YASAK:
+Global mutable state.
+━━━━━━━━━━━━━━━━━━━━━━
+15 — İLK KOD GÜNLERİ
+━━━━━━━━━━━━━━━━━━━━━━
+GÜN 1
+Compose
+Navigation
+Theme
+—
+GÜN 2
+Room
+Player
+—
+GÜN 3
+Home Screen
+—
+GÜN 4
+Market
+—
+GÜN 5
+Envanter
+—
+GÜN 6
+Satış
+—
+GÜN 7
+Tamir
+HEDEF:
+İlk haftada
+alış-satış çalışmalı.
+━━━━━━━━━━━━━━━━━━━━━━
+PART 2 SONU
+━━━━━━━━━━━━━━━━━━━━━━
+Sonraki:
+16 UI Yapısı
+17 Ekonomi
+18 Procedural Generation
+19 Reklam Sistemi
+20 YayınŞimdi artık baya gerçek projeye dönüştü.
+Bir sonraki bölümde bence en kritik yer geliyor: Procedural item generation + ekonomi + reklam entegrasyonu. 🤠Tamam 🤠 Başlıyoruz. Ama bunu fikir listesi değil, gerçekten geliştirme sırasında açıp bakacağın belge gibi yazacağım.
+Bu Bölüm 1 olacak.
+FLIPPING MASTER
+Product + Technical Design Document
+Version 1.0 (Draft)
+PART 1
+━━━━━━━━━━━━━━━━━━━━━━
+01 — PROJE VİZYONU
+━━━━━━━━━━━━━━━━━━━━━━
+Flipping Master; oyuncunun düşük sermayeyle ikinci el piyasasına girip, ürün avlayarak, pazarlık yaparak, risk alarak ve satış yaparak büyüdüğü mobil ticaret simülasyonudur.
+Temel ilham:
+- Türk ikinci el kültürü
+- ilan uygulamaları
+- pazarlık kültürü
+- küçük riskler
+- ilerleme hissi
+Ana amaç:
+Oyuncunun sürekli:
+“Bir ilan daha bakayım”
+demesini sağlamak.
+Temel duygu akışı:
+Kar
+↓
+Risk
+↓
+Kayıp
+↓
+Öğrenme
+↓
+Büyüme
+↓
+Tekrar
+Platform:
+Android
+Teknik:
+Offline-first
+UI:
+Jetpack Compose
+Veri:
+Room Database
+Görseller:
+AI + procedural sistem
+━━━━━━━━━━━━━━━━━━━━━━
+02 — TASARIM FELSEFESİ
+━━━━━━━━━━━━━━━━━━━━━━
+Bu oyun:
+oyuncuya para vermez.
+Oyuncuya:
+kazandığını hissettirir.
+Kurallar:
+1. 
+İlk 3 dakikada oyuncu kar edecek.
+2. 
+İlk 20 dakikada oyuncu zarar görecek.
+3. 
+İlk 60 dakikada tüm sistemler açılmayacak.
+4. 
+Mizah oynanışın önüne geçmeyecek.
+5. 
+Reklam hiçbir zaman zorunlu olmayacak.
+6. 
+Oyuncu başarısız olabilecek.
+7. 
+Her sistem tek cümlede açıklanabilir olacak.
+━━━━━━━━━━━━━━━━━━━━━━
+03 — MVP SINIRI
+━━━━━━━━━━━━━━━━━━━━━━
+V1 yayın hedefi:
+VAR:
+✓ İlan Akışı
+✓ Envanter
+✓ Pazarlık
+✓ Tamir
+✓ İtibar
+✓ Basit Ekonomi
+✓ Kondisyon Sistemi
+✓ Procedural Item
+✓ Ödüllü Reklam
+✓ Offline Save
+YOK:
+✗ Koleksiyon
+✗ Zamazon
+✗ Açık Artırma
+✗ Firebase
+✗ Premium Paket
+✗ Sosyal Sistem
+Not:
+Yeni sistem eklemek yerine
+mevcut sistemi derinleştir.
+━━━━━━━━━━━━━━━━━━━━━━
+04 — OYUN DÖNGÜSÜ
+━━━━━━━━━━━━━━━━━━━━━━
+Oyuncu Döngüsü:
+İlan Gör
+↓
+Pazarlık Yap
+↓
+Satın Al
+↓
+Kontrol Et
+↓
+Tamir Et
+↓
+Satışa Çıkar
+↓
+Kar Et
+↓
+Büyü
+↓
+Tekrar
+Döngü süresi:
+30 saniye
+—
+3 dakika
+Hedef:
+Oyuncu her oturumda
+10–30 işlem yapabilsin.
+━━━━━━━━━━━━━━━━━━━━━━
+05 — İLK 60 DAKİKA
+━━━━━━━━━━━━━━━━━━━━━━
+0–10 dk
+İlk Kar
+—
+10–20 dk
+İlk Risk
+—
+20–30 dk
+İlk Hata
+—
+30–45 dk
+Sistemi Öğrenme
+—
+45–60 dk
+İlk Başarı
+Beklenen durum:
+Para:
+50.000 civarı
+Depo:
+Açılmış
+Oyuncu:
+geri dönmek istiyor.
+━━━━━━━━━━━━━━━━━━━━━━
+06 — ASSET STRATEJİSİ
+━━━━━━━━━━━━━━━━━━━━━━
+Karar:
+Hasarlı asset üretimi DURDURULDU.
+Yeni sistem:
+Base Asset
++
+Condition
++
+Metadata
+Final Item
+Örnek:
+office_laptop.webp
++
+condition=SCRATCHED
++
+defect=battery
+=
+Çizik Oyuncu Laptopu
+Asset Yapısı:
+assets/
+electronics/
+home/
+gaming/
+vehicles/
+rare/
+Format:
+WEBP
+Hedef:
+300–500 temiz ürün.
+Hasarlar:
+Overlay
++
+ikon
++
+metin
+ile gösterilecek.
+━━━━━━━━━━━━━━━━━━━━━━
+PART 1 SONU
+━━━━━━━━━━━━━━━━━━━━━━
+Sonraki bölüm:
+07 Data Model
+08 Room Database
+09 Dosya Yapısı
+10 Compose Mimarisi
+11 İlk Kod Günleri
+12 Geliştirme TakvimiBence burada artık proje “fikir” olmaktan çıkıp ürüne dönmeye başladı 🤠 Yarın PART 2’de teknik tarafa ineriz.
+FLIPPING MASTER — İLK 60 DAKİKA DENEYİM SENARYOSU (V1)
+00:00 – AÇILIŞ
+Siyah ekran.
+Yazı:
+“Cebinde son 500 TL kaldı.”
+Alt:
+[İşe Başla]
+Küçük yazı:
+“İnsanlar çöp görür. Sen fırsat gör.”
+—
+00:30 – İLK İLAN
+Ekranı kırık telefon.
+Piyasa:
+4.500
+İlan:
+700
+Görev:
+İlk pazarlığını yap.
+Satıcı:
+“Pazarlık olur ama öldürme.”
+Oyuncu:
+550 teklif.
+Kabul.
+Para:
+500 → 0
+Oyuncu ilk kez korkuyor.
+—
+02:00 – İLK KARAR
+Envanter.
+Seçenek:
+SAT
+TAMİR ET
+Çırak:
+400 (%75)
+Usta:
+1200 (kilitli)
+Oyuncu tamiri seçiyor.
+Başarılı.
+Telefon:
+3900 değer.
+—
+04:00 – İLK SATIŞ
+Satış.
+Para:
+0 → 3800
+Animasyon.
+Para sesi.
+Başarı ekranı.
+Yazı:
+“İlk karını yaptın.”
+—
+06:00 – SERBEST OYUN BAŞLIYOR
+3 ilan gelir.
+Birisi normal.
+Birisi çok pahalı.
+Birisi çok ucuz.
+Oyuncu seçiyor.
+—
+08:00 – İLK HATA
+Oyuncu pahalı ürün alıyor.
+Satamıyor.
+Öğreniyor:
+Her ürün alınmaz.
+—
+10:00 – İLK ŞÜPHE
+Yeni ilan.
+“Şifre unutuldu.”
+Fiyat aşırı ucuz.
+Oyuncu alıyor.
+Risk sistemi arka planda açılıyor.
+—
+12:00 – İLK GERİLİM
+Ekspertiz.
+800 TL.
+Sonuç:
+Face ID bozuk.
+Ürün değeri düştü.
+Oyuncu ilk kaybı görüyor.
+—
+15:00 – İLK BÜYÜK KAR
+Tamir başarılı.
+Satış.
+Para:
+15.000
+Yeni ekran açılır.
+DEPO
+3 slot.
+—
+18:00 – İLK DOLANDIRICI
+Mesaj.
+“Kargola EFT geçiyorum.”
+Seçenek.
+Gönder.
+Önce para.
+Elden.
+Oyuncu karar verir.
+—
+20:00 – HEDEF VERİLİR
+Görev:
+20.000 TL ol.
+Ödül:
+Yeni ilan kategorisi.
+—
+25:00 – İLK AKIŞ
+Artık görev yok.
+Oyuncu:
+ilan
+pazarlık
+tamir
+satış
+yapıyor.
+Sistem öğreniliyor.
+—
+30:00 – İLK BÜYÜK HATA
+Oyuncu hızlı kar için risk alıyor.
+Tamir başarısız.
+Ürün çöp.
+Para düşüyor.
+Yazı:
+“Her ucuz ürün fırsat değildir.”
+—
+35:00 – TOPARLANMA
+Küçük satışlar.
+Oyuncu güvenli oynuyor.
+İlk strateji oluşuyor.
+—
+40:00 – İTİBAR AÇILIYOR
+Yeni sekme.
+İTİBAR
+Açıklama:
+“Dürüst satıcı daha iyi müşteri çeker.”
+Şimdilik:
+0/100
+—
+45:00 – İLK BÜYÜK SATIŞ
+Oyuncu:
+iyi pazarlık
+başarılı tamir
+doğru satış
+yapar.
+Para:
+50.000
+Yeni badge.
+SEVİYE:
+DÜKKAN
+AÇILDI
+—
+50:00 – İLK EKONOMİ DARBESİ
+Bilgilendirme.
+Artık giderlerin var.
+Depo:
+1000
+Vergi:
+Kapalı
+Oyuncu büyümenin bedelini görüyor.
+—
+55:00 – OYUN KENDİNİ GÖSTERİYOR
+İlan gelir.
+“ACİL SATILIK”
+Aşırı ucuz.
+Oyuncu durur.
+İlk dakikadaki gibi atlamaz.
+Düşünür.
+—
+60:00 – OTURUM SONU
+Özet ekranı:
+Toplam Kar
+Başarılı Satış
+Kandırılma
+En Büyük Kar
+Alt yazı:
+“Yarın yeni fırsatlar gelecek.”
+Çıkış.
