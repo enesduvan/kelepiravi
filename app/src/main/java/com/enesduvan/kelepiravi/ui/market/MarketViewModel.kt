@@ -24,6 +24,12 @@ data class PlayerState(
     val balance: String = INITIAL_BALANCE,
     val inventory: List<MarketItem> = emptyList(),
     val currentDay: Int = 1,
+    val xp: Int = 0,
+    val level: Int = 1,
+    val totalProfit: Double = 0.0,
+    val itemsBought: Int = 0,
+    val itemsSold: Int = 0,
+    val unlockedAchievements: String = "",
     // Türetilmiş ekonomi değerleri — her güncelleme hesaplanır
     val portfolioValue: Double = 0.0,
     val totalInvestment: Double = 0.0,
@@ -56,6 +62,18 @@ data class BargainState(
     val suggestedPrice: Double = 0.0
 )
 
+data class SellBargainState(
+    val item: MarketItem,
+    val messages: List<BargainMessage> = emptyList(),
+    val buyerPatience: Int = 100, // 0 - 100
+    val buyerMood: String = "Kararsız", // Mutlu, Kararsız, Gergin, Sinirli
+    val isDealClosed: Boolean = false,
+    val isFailed: Boolean = false,
+    val agreedPrice: Double = 0.0,
+    val baseSellPrice: Double = 0.0,
+    val lastBuyerOffer: Double? = null
+)
+
 // ─── ViewModel ───────────────────────────────────────────────────────────────
 
 class MarketViewModel(
@@ -71,6 +89,12 @@ class MarketViewModel(
                 balance = entity?.balance ?: INITIAL_BALANCE,
                 inventory = inventory,
                 currentDay = entity?.currentDay ?: 1,
+                xp = entity?.xp ?: 0,
+                level = entity?.level ?: 1,
+                totalProfit = entity?.totalProfit ?: 0.0,
+                itemsBought = entity?.itemsBought ?: 0,
+                itemsSold = entity?.itemsSold ?: 0,
+                unlockedAchievements = entity?.unlockedAchievements ?: "",
                 portfolioValue = EconomyEngine.calculatePortfolioValue(inventory),
                 totalInvestment = EconomyEngine.calculateTotalInvestment(inventory),
                 portfolioROI = EconomyEngine.calculatePortfolioROI(inventory)
@@ -89,9 +113,13 @@ class MarketViewModel(
     private val _dayEvent = MutableStateFlow<DailyEvent?>(null)
     val dayEvent: StateFlow<DailyEvent?> = _dayEvent.asStateFlow()
 
-    /** Aktif pazarlık seansı */
+    /** Aktif pazarlık seansı (Alış) */
     private val _bargainState = MutableStateFlow<BargainState?>(null)
     val bargainState: StateFlow<BargainState?> = _bargainState.asStateFlow()
+
+    /** Aktif pazarlık seansı (Satış) */
+    private val _sellBargainState = MutableStateFlow<SellBargainState?>(null)
+    val sellBargainState: StateFlow<SellBargainState?> = _sellBargainState.asStateFlow()
 
     init {
         viewModelScope.launch { repository.initializePlayerIfNeeded() }
@@ -103,6 +131,14 @@ class MarketViewModel(
             marketItems = MarketGenerator.generateItems(12),
             isRefreshing = false,
             selectedCategory = "Tümü"
+        )
+    }
+
+    fun loadMoreItems() {
+        val currentItems = _uiState.value.marketItems
+        val newItems = MarketGenerator.generateItems(12)
+        _uiState.value = _uiState.value.copy(
+            marketItems = currentItems + newItems
         )
     }
 
@@ -132,6 +168,30 @@ class MarketViewModel(
 
     fun sellItem(item: MarketItem) {
         viewModelScope.launch { repository.sellItem(item) }
+    }
+
+    fun calculateRepairCost(item: MarketItem): Double {
+        val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
+        if (currentMultiplier >= 1.0) return 0.0
+        val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+        val baseVal = currentVal / currentMultiplier
+        val gain = baseVal - currentVal
+        return gain * 0.60
+    }
+
+    fun repairItem(item: MarketItem) {
+        viewModelScope.launch {
+            val cost = calculateRepairCost(item)
+            val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
+            val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+            val baseVal = currentVal / currentMultiplier
+            
+            val newItem = item.copy(
+                condition = "Kusursuz Temiz",
+                estimatedValue = baseVal.toString()
+            )
+            repository.updateInventoryItem(item, newItem, cost)
+        }
     }
 
     fun getSellPrice(item: MarketItem): Double = repository.calculateSellPrice(item)
@@ -277,6 +337,117 @@ class MarketViewModel(
                     marketItems = _uiState.value.marketItems.filterNot { it.itemName == itemToBuy.itemName && it.sellerName == itemToBuy.sellerName }
                 )
                 closeBargain()
+            }
+        }
+    }
+
+    // 🤝 Satış Pazarlık (Sell Bargain) Mantığı 🤝
+
+    fun startSellBargain(item: MarketItem) {
+        val baseSellPrice = repository.calculateSellPrice(item)
+        // Alıcı %10-%20 daha düşük bir fiyattan kapıyı açar
+        val initialOffer = baseSellPrice * (0.80 + Math.random() * 0.10)
+        
+        val initialMsg = BargainMessage(
+            text = "Selam, ${item.itemName} için ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialOffer.toString())} verebilirim. Ne dersin?",
+            isFromPlayer = false,
+            timestamp = getCurrentTime()
+        )
+        _sellBargainState.value = SellBargainState(
+            item = item,
+            messages = listOf(initialMsg),
+            baseSellPrice = baseSellPrice
+        )
+    }
+
+    fun closeSellBargain() {
+        _sellBargainState.value = null
+    }
+
+    fun sendSellOffer(offerAmount: Double) {
+        val state = _sellBargainState.value ?: return
+        if (state.isDealClosed || state.isFailed) return
+
+        val playerMsg = BargainMessage(
+            text = "₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(offerAmount.toString())} olursa hemen senin.",
+            isFromPlayer = true,
+            timestamp = getCurrentTime()
+        )
+
+        val updatedMessages = state.messages.toMutableList()
+        updatedMessages.add(playerMsg)
+
+        val basePrice = state.baseSellPrice
+        val ratio = offerAmount / basePrice
+
+        var newPatience = state.buyerPatience
+        val buyerResponseText: String
+        var isDealClosed = false
+        var isFailed = false
+        var agreedPrice = 0.0
+        var lastBuyerOffer: Double? = null
+
+        if (ratio <= 1.05) {
+            buyerResponseText = "Harika! Bu fiyata anlaştık."
+            isDealClosed = true
+            agreedPrice = offerAmount
+            newPatience += 10
+        } else if (ratio <= 1.15) {
+            val counterOffer = offerAmount * 0.95
+            lastBuyerOffer = counterOffer
+            buyerResponseText = "₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(counterOffer.toString())} yaparsak el sıkışırız."
+            newPatience -= 10
+        } else if (ratio <= 1.30) {
+            val counterOffer = basePrice * 1.05
+            lastBuyerOffer = counterOffer
+            buyerResponseText = "Çok istedin. En fazla ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(counterOffer.toString())} veririm."
+            newPatience -= 25
+        } else {
+            buyerResponseText = "Hadi canım sende, piyasası o kadar değil!"
+            newPatience -= 40
+        }
+
+        if (newPatience <= 0) {
+            newPatience = 0
+            isFailed = true
+            updatedMessages.add(
+                BargainMessage(text = "Bu fiyata olmaz, ben vazgeçtim!", isFromPlayer = false, timestamp = getCurrentTime())
+            )
+        } else {
+            val buyerMsg = BargainMessage(
+                text = buyerResponseText,
+                isFromPlayer = false,
+                timestamp = getCurrentTime()
+            )
+            updatedMessages.add(buyerMsg)
+        }
+
+        val mood = when {
+            newPatience >= 80 -> "Mutlu"
+            newPatience >= 50 -> "Kararsız"
+            newPatience >= 20 -> "Gergin"
+            else -> "Sinirli"
+        }
+
+        _sellBargainState.value = state.copy(
+            messages = updatedMessages,
+            buyerPatience = newPatience,
+            buyerMood = mood,
+            isDealClosed = isDealClosed,
+            isFailed = isFailed,
+            agreedPrice = agreedPrice,
+            lastBuyerOffer = lastBuyerOffer
+        )
+    }
+
+    fun sellAgreedItem() {
+        val state = _sellBargainState.value ?: return
+        if (!state.isDealClosed) return
+
+        viewModelScope.launch {
+            val success = repository.sellItem(state.item, state.agreedPrice)
+            if (success) {
+                closeSellBargain()
             }
         }
     }

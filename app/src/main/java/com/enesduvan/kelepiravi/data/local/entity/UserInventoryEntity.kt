@@ -12,5 +12,11 @@ data class UserInventoryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val balance: String,
     val inventory: List<MarketItem>,
-    val currentDay: Int = 1           // Oyun günü — v2 migration ile eklendi
+    val currentDay: Int = 1,          // v2 migration
+    val xp: Int = 0,                  // v3
+    val level: Int = 1,               // v3
+    val totalProfit: Double = 0.0,    // v3
+    val itemsBought: Int = 0,         // v3
+    val itemsSold: Int = 0,           // v3
+    val unlockedAchievements: String = "" // v4, comma-separated IDs
 )

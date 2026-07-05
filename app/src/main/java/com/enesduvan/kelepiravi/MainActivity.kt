@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.enesduvan.kelepiravi.data.local.AppDatabaseProvider
 import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
 import com.enesduvan.kelepiravi.ui.market.MarketViewModel
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {

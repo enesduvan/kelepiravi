@@ -84,11 +84,11 @@ fun MarketScreen(viewModel: MarketViewModel) {
     android.util.Log.d("Kelepiravi", "MarketScreen is composing")
 
     Box(
-        modifier = Modifier.fillMaxSize().background(Color.Red)
+        modifier = Modifier.fillMaxSize()
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            containerColor = Color.Red,
+            containerColor = Background,
             topBar = {
                 Column {
                     Row(
@@ -97,13 +97,13 @@ fun MarketScreen(viewModel: MarketViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("?$balanceText", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+                            Text("₺$balanceText", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
                             if (playerState.inventory.isNotEmpty()) {
                                 val roi = playerState.portfolioROI
                                 val roiColor = if (roi >= 0) MoneyGreen else Color(0xFFFF6B6B)
                                 val roiSign = if (roi >= 0) "+" else ""
                                 Text(
-                                    "Portföy ROI: ${roiSign}%${roi}",
+                                    "Portföy ROI: ${roiSign}${String.format(java.util.Locale.US, "%.2f", roi)}%",
                                     color = roiColor,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
@@ -190,7 +190,8 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit) {
             .padding(vertical = 8.dp)
             .clickable { onClick(item) },
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Surface)
+        colors = CardDefaults.cardColors(containerColor = Surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -244,7 +245,7 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit) {
 
             Column(horizontalAlignment = Alignment.End) {
                 Text("İstenen", color = TextSecondary, fontSize = 10.sp)
-                Text("?${item.salesValue}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                Text("₺${item.salesValue}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
             }
         }
     }
@@ -275,7 +276,7 @@ fun DayEventDialog(event: DailyEvent, onDismiss: () -> Unit) {
                         .border(2.dp, PrimaryOrange, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("??", fontSize = 28.sp)
+                    Text("🎁", fontSize = 28.sp)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(event.title, color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)

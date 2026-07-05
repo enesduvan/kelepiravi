@@ -32,139 +32,139 @@ import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
 
+private val RED = Color(0xFFFF6B6B)
+private val RED_DARK = Color(0xFF3A1A1A)
+private val GREEN_DARK = Color(0xFF1A3A1A)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
+fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainState) {
+    var offerText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
-    var offerText by remember { mutableStateOf(bargainState.suggestedPrice.toInt().toString()) }
 
-    // Otomatik aşağı kaydırma
-    LaunchedEffect(bargainState.messages.size) {
-        if (bargainState.messages.isNotEmpty()) {
-            listState.animateScrollToItem(bargainState.messages.size - 1)
+    // Ekran açıldığında son mesaja scroll
+    LaunchedEffect(sellBargainState.messages.size) {
+        if (sellBargainState.messages.isNotEmpty()) {
+            listState.animateScrollToItem(sellBargainState.messages.size - 1)
         }
     }
 
-    // Geri tuşuna basıldığında
     BackHandler {
-        viewModel.closeBargain()
+        viewModel.closeSellBargain()
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = Background,
         topBar = {
             TopAppBar(
-                title = { Text("Pazarlık", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                title = { Text("Pazarlık Masası", fontWeight = FontWeight.Bold, fontSize = 18.sp) },
                 navigationIcon = {
-                    IconButton(onClick = { viewModel.closeBargain() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
+                    IconButton(onClick = { viewModel.closeSellBargain() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Surface)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Surface,
+                    titleContentColor = TextPrimary,
+                    navigationIconContentColor = TextPrimary
+                )
             )
         },
+        containerColor = Background,
         bottomBar = {
-            if (bargainState.isDealClosed) {
-                // Anlaşma sağlandı, Satın Al butonu
-                Column(
-                    modifier = Modifier
-                        .background(Surface)
-                        .navigationBarsPadding()
-                        .imePadding()
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(Color(0xFF1A3A1A)).border(1.dp, MoneyGreen.copy(0.4f), RoundedCornerShape(12.dp)).padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier
+                    .background(Surface)
+                    .navigationBarsPadding()
+                    .imePadding()
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                if (sellBargainState.isDealClosed) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(GREEN_DARK).padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            // Icon omitted, text only is fine
-                            Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
-                        }
+                        Text("🤝 Anlaşma Sağlandı!", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text("Anlaşılan Fiyat: ₺${formatBalance(sellBargainState.agreedPrice.toString())}", color = Color.White, fontSize = 14.sp)
                         Button(
-                            onClick = { viewModel.buyAgreedItem() },
+                            onClick = { viewModel.sellAgreedItem() },
                             colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                            modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Satın Al", color = Color.Black, fontWeight = FontWeight.Bold)
+                            Text("Eşyayı Sat", color = Color.Black, fontWeight = FontWeight.Bold)
                         }
                     }
-                }
-            } else if (bargainState.isFailed) {
-                // Satıcı masadan kalktı
-                Column(
-                    modifier = Modifier
-                        .background(Surface)
-                        .navigationBarsPadding()
-                        .imePadding()
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Satıcı masadan kalktı.", color = Color(0xFFFF6B6B), fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Button(
-                        onClick = { viewModel.closeBargain() },
-                        colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
-                        modifier = Modifier.fillMaxWidth()
+                } else if (sellBargainState.isFailed) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(RED_DARK).padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("Geri Dön", color = TextPrimary)
+                        Text("💥 Pazarlık Çöktü", color = RED, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text("Alıcı masadan kalktı. Artık bu kişiye satamazsınız.", color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center)
+                        Button(
+                            onClick = { viewModel.closeSellBargain() },
+                            colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("Geri Dön", color = TextPrimary, fontWeight = FontWeight.Bold)
+                        }
                     }
-                }
-            } else {
-                // Teklif giriş alanı
-                Column(
-                    modifier = Modifier
-                        .background(Surface)
-                        .navigationBarsPadding()
-                        .imePadding()
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text("Teklifinizi girin", color = TextSecondary, fontSize = 13.sp)
-                        Text("Önerilen: ₺${formatBalance(bargainState.suggestedPrice.toString())}", color = MoneyGreen, fontSize = 13.sp)
+                } else {
+                    // Teklif Giriş Alanı
+                    val currentBase = sellBargainState.baseSellPrice
+                    val lastOffer = sellBargainState.lastBuyerOffer
+
+                    if (lastOffer != null) {
+                        Button(
+                            onClick = { viewModel.sendSellOffer(lastOffer) },
+                            modifier = Modifier.fillMaxWidth().height(48.dp).padding(bottom = 8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = GREEN_DARK),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("Teklifi Kabul Et: ₺${formatBalance(lastOffer.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        SellQuickOfferButton("₺${formatBalance((currentBase).toString())}") {
+                            viewModel.sendSellOffer(currentBase)
+                        }
+                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.05).toString())}") {
+                            viewModel.sendSellOffer(currentBase * 1.05)
+                        }
+                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.15).toString())}") {
+                            viewModel.sendSellOffer(currentBase * 1.15)
+                        }
                     }
 
                     OutlinedTextField(
                         value = offerText,
-                        onValueChange = { offerText = it.filter { char -> char.isDigit() } },
+                        onValueChange = { if (it.all { char -> char.isDigit() }) offerText = it },
                         modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("Kendi teklifini gir...", color = TextMuted) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        leadingIcon = { Text("₺", color = TextSecondary) },
+                        shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = PrimaryOrange,
-                            unfocusedBorderColor = SurfaceVariant,
+                            unfocusedBorderColor = BorderSoft,
                             focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            cursorColor = PrimaryOrange
-                        ),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp)
+                            unfocusedTextColor = TextPrimary
+                        )
                     )
-
-                    androidx.compose.foundation.lazy.LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        item { QuickOfferButton("-500") { val v = offerText.toIntOrNull() ?: 0; offerText = maxOf(0, v - 500).toString() } }
-                        item { QuickOfferButton("-100") { val v = offerText.toIntOrNull() ?: 0; offerText = maxOf(0, v - 100).toString() } }
-                        item { QuickOfferButton("-50") { val v = offerText.toIntOrNull() ?: 0; offerText = maxOf(0, v - 50).toString() } }
-                        item { QuickOfferButton("+50") { val v = offerText.toIntOrNull() ?: 0; offerText = (v + 50).toString() } }
-                        item { QuickOfferButton("+100") { val v = offerText.toIntOrNull() ?: 0; offerText = (v + 100).toString() } }
-                        item { QuickOfferButton("+250") { val v = offerText.toIntOrNull() ?: 0; offerText = (v + 250).toString() } }
-                        item { QuickOfferButton("+500") { val v = offerText.toIntOrNull() ?: 0; offerText = (v + 500).toString() } }
-                    }
-
+                    Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = {
-                            val offer = offerText.toDoubleOrNull() ?: 0.0
-                            if (offer > 0) {
-                                viewModel.sendOffer(offer)
+                            val offer = offerText.toDoubleOrNull()
+                            if (offer != null && offer > 0) {
+                                offerText = ""
+                                viewModel.sendSellOffer(offer)
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(48.dp),
@@ -176,7 +176,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                         Text("Teklif Gönder", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     }
                     Text(
-                        "Teklifleriniz sadece siz ve satıcı tarafından görülür.",
+                        "Teklifleriniz sadece siz ve alıcı tarafından görülür.",
                         color = TextSecondary, fontSize = 11.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center
                     )
                 }
@@ -184,7 +184,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
         }
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            // ── Üst Kart: Ürün ve Satıcı Durumu ──────────────────────
+            // ─── Üst Kart: Ürün ve Alıcı Durumu ─────────────────────────────────────
             Row(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -196,7 +196,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = getPainterResourceByName(bargainState.item.imageName),
+                        painter = getPainterResourceByName(sellBargainState.item.imageName),
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier.fillMaxSize()
@@ -204,23 +204,23 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                 }
 
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(bargainState.item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(sellBargainState.item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(painterResource(id = R.drawable.person), contentDescription = null, tint = TextSecondary, modifier = Modifier.size(14.dp))
-                        Text(bargainState.item.sellerName, color = TextSecondary, fontSize = 13.sp)
+                        Text("Alıcı", color = TextSecondary, fontSize = 13.sp)
                     }
-                    Text("₺${formatBalance(bargainState.item.salesValue)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
-                    Text("İlan Fiyatı", color = TextSecondary, fontSize = 11.sp)
+                    Text("₺${formatBalance(sellBargainState.baseSellPrice.toString())}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("Değeri", color = TextSecondary, fontSize = 11.sp)
                 }
 
-                // Satıcı Modu (Sabır / Patience)
-                val emoji = when (bargainState.sellerMood) {
+                // Alıcı Modu (Sabır / Patience)
+                val emoji = when (sellBargainState.buyerMood) {
                     "Mutlu" -> "😊"
-                    "Kararsız" -> "😐"
-                    "Gergin" -> "😠"
+                    "Kararsız" -> "🤔"
+                    "Gergin" -> "😬"
                     else -> "😡"
                 }
-                val moodColor = when (bargainState.sellerMood) {
+                val moodColor = when (sellBargainState.buyerMood) {
                     "Mutlu" -> MoneyGreen
                     "Kararsız" -> PrimaryOrange
                     "Gergin" -> Color(0xFFFF6B6B)
@@ -232,14 +232,14 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Text("Satıcı Modu", color = TextSecondary, fontSize = 10.sp)
+                    Text("Alıcı Modu", color = TextSecondary, fontSize = 10.sp)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(emoji, fontSize = 20.sp)
-                        Text(bargainState.sellerMood, color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(sellBargainState.buyerMood, color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                     // Basit sabır barı
                     Row(modifier = Modifier.width(60.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(SurfaceVariant)) {
-                        Box(modifier = Modifier.fillMaxWidth(bargainState.sellerPatience / 100f).fillMaxHeight().background(moodColor))
+                        Box(modifier = Modifier.fillMaxWidth(sellBargainState.buyerPatience / 100f).fillMaxHeight().background(moodColor))
                     }
                 }
             }
@@ -247,19 +247,19 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
             // Güvenli Pazarlık Ayırıcı
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
-                Text("   Güvenli Pazarlık   ", color = TextSecondary, fontSize = 12.sp)
+                Text("   Güvenli Satış Pazarlığı   ", color = TextSecondary, fontSize = 12.sp)
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
             }
 
-            // ── Chat Alanı ──────────────────────────────────────────
+            // ─── Chat Alanı ──────────────────────────────────────────────────────────
             LazyColumn(
                 state = listState,
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(bargainState.messages) { msg ->
-                    ChatBubble(msg)
+                items(sellBargainState.messages) { msg ->
+                    SellChatBubble(msg)
                 }
             }
         }
@@ -267,7 +267,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
 }
 
 @Composable
-fun QuickOfferButton(text: String, onClick: () -> Unit) {
+fun SellQuickOfferButton(text: String, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
@@ -280,7 +280,7 @@ fun QuickOfferButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun ChatBubble(msg: BargainMessage) {
+fun SellChatBubble(msg: BargainMessage) {
     val isPlayer = msg.isFromPlayer
     Row(
         modifier = Modifier.fillMaxWidth(),

@@ -23,7 +23,23 @@ private val MIGRATION_1_2 = object : Migration(1, 2) {
     }
 }
 
-@Database(entities = [UserInventoryEntity::class], version = 2, exportSchema = false)
+private val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN xp INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN level INTEGER NOT NULL DEFAULT 1")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN totalProfit REAL NOT NULL DEFAULT 0.0")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN itemsBought INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN itemsSold INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
+private val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN unlockedAchievements TEXT NOT NULL DEFAULT ''")
+    }
+}
+
+@Database(entities = [UserInventoryEntity::class], version = 4, exportSchema = false)
 @TypeConverters(MarketItemConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun kelepiraviDao(): KelepiraviDao
@@ -41,7 +57,7 @@ object AppDatabaseProvider {
                 AppDatabase::class.java,
                 "kelepiravi-database"
             )
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                 .build()
                 .also { instance = it }
         }

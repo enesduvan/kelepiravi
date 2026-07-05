@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.market.MarketViewModel
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
@@ -147,59 +148,25 @@ fun InventoryScreen(viewModel: MarketViewModel) {
         }
 
         if (inventoryItems.isEmpty()) {
-            item { EmptyInventory() }
+            item {
+                EmptyStateIndicator(
+                    iconRes = R.drawable.envanter,
+                    title = "Envanterin Tam Takır!",
+                    description = "Hemen Market'e git ve kelepir eşyalar avla.",
+                    modifier = Modifier.height(300.dp)
+                )
+            }
         } else {
             items(items = inventoryItems) { item ->
-                InventoryItemCard(item = item, onSellClick = { itemToSell = item })
+                InventoryItemCard(
+                    item = item,
+                    sellPrice = viewModel.getSellPrice(item),
+                    onSellClick = { viewModel.startSellBargain(it) }
+                )
             }
         }
     }
-
-    // ── Satış Onay Dialog'u ───────────────────────────────────────────────────
-    itemToSell?.let { item ->
-        val sellPrice = viewModel.getSellPrice(item)
-        val purchasePrice = item.purchasePrice.ifEmpty { item.salesValue }.toDoubleOrNull() ?: 0.0
-        val profit = sellPrice - purchasePrice
-        val isProfit = profit >= 0
-
-        AlertDialog(
-            onDismissRequest = { itemToSell = null },
-            containerColor = Surface,
-            title = { Text("Satışı Onayla", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 18.sp) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(item.itemName, color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text("Kondisyon: ${item.condition}", color = TextSecondary, fontSize = 14.sp)
-                    Text("Alış: ₺${formatBalance(purchasePrice.toString())}", color = TextSecondary, fontSize = 14.sp)
-                    Text("Satış fiyatı: ₺${formatBalance(sellPrice.toString())}", color = MoneyGreen, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                    Row(
-                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp))
-                            .background(if (isProfit) GREEN_DARK else RED_DARK).padding(10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(if (isProfit) "Kâr" else "Zarar", color = if (isProfit) MoneyGreen else RED, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(
-                            "${if (isProfit) "+" else ""}₺${formatBalance(profit.toString())}",
-                            color = if (isProfit) MoneyGreen else RED, fontWeight = FontWeight.ExtraBold, fontSize = 14.sp
-                        )
-                    }
-                    if (item.purchaseDate.isNotEmpty()) {
-                        Text("Alış tarihi: ${item.purchaseDate}", color = TextMuted, fontSize = 12.sp)
-                    }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = { viewModel.sellItem(item); itemToSell = null },
-                    colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
-                    shape = RoundedCornerShape(10.dp)
-                ) { Text("Sat", color = Color.Black, fontWeight = FontWeight.Bold) }
-            },
-            dismissButton = {
-                TextButton(onClick = { itemToSell = null }) { Text("Vazgeç", color = TextSecondary) }
-            }
-        )
-    }
+    // Satış dialog'u artık kullanılmıyor, yerine SellBargainScreen açılıyor (AppRoot üzerinden).
 }
 
 // ─── Portföy Stat Kutusu ──────────────────────────────────────────────────────
@@ -226,28 +193,10 @@ private fun InventoryStatBox(title: String, value: String, valueColor: Color, mo
     }
 }
 
-// ─── Boş Envanter ────────────────────────────────────────────────────────────
-
-@Composable
-private fun EmptyInventory() {
-    Box(
-        modifier = Modifier.fillMaxWidth().height(220.dp).clip(RoundedCornerShape(20.dp))
-            .background(Surface).border(1.dp, BorderSoft, RoundedCornerShape(20.dp)).padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(painter = painterResource(id = R.drawable.envanter), contentDescription = null, tint = TextMuted, modifier = Modifier.size(42.dp))
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("Henüz ürün yok", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text("Pazardan bir ürün alınca burada görünecek.", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
-        }
-    }
-}
-
 // ─── Envanter Kartı ──────────────────────────────────────────────────────────
 
 @Composable
-private fun InventoryItemCard(item: MarketItem, onSellClick: () -> Unit) {
+private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: (MarketItem) -> Unit) {
     val (badgeBg, badgeText) = when {
         item.condition.contains("Kusursuz") || item.condition.contains("Temiz") -> ConditionPerfectBg to ConditionPerfect
         item.condition.contains("Tamir") || item.condition.contains("Bantlı")   -> ConditionRepairBg to ConditionRepair
@@ -263,7 +212,12 @@ private fun InventoryItemCard(item: MarketItem, onSellClick: () -> Unit) {
     val hasDailyChange = dailyChange != 0.0
     val isDailyPositive = dailyChange > 0
 
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), colors = CardDefaults.cardColors(containerColor = Surface)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
         // Günlük değişim şeridi — kart üstünde renkli ince bar
         if (hasDailyChange) {
             Box(
@@ -328,12 +282,12 @@ private fun InventoryItemCard(item: MarketItem, onSellClick: () -> Unit) {
             // Butonlar
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(
-                    onClick = onSellClick,
-                    colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                    onClick = { onSellClick(item) },
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
                     shape = RoundedCornerShape(14.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     modifier = Modifier.height(36.dp)
-                ) { Text("Sat", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                ) { Text("Pazarlık Yap", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
 
                 Button(
                     onClick = { /* Tamir — Sprint 5 */ },

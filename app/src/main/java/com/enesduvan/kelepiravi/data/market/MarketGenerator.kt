@@ -191,6 +191,10 @@ object MarketGenerator {
 
     // ─── Üretim Motoru ────────────────────────────────────────────────────────
 
+    fun getConditionMultiplier(name: String): Double {
+        return CONDITIONS.find { it.label == name }?.valueMultiplier ?: 1.0
+    }
+
     fun generateItems(count: Int = 12): List<MarketItem> = (1..count).map { generateOne() }
 
     private fun generateOne(): MarketItem {
