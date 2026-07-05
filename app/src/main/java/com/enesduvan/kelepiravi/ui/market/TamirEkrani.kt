@@ -20,10 +20,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
+import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.theme.*
 
 @Composable
@@ -50,7 +52,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(repairableItems) { item ->
+                items(items = repairableItems, key = { marketItemKey(it) }) { item ->
                     RepairItemCard(item, viewModel, playerState.balance)
                 }
             }
@@ -65,7 +67,7 @@ fun RepairItemCard(item: MarketItem, viewModel: MarketViewModel, currentBalance:
     val canAfford = balanceDouble >= cost
     
     val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
-    val expectedGain = (cost / 0.60) // based on our formula gain * 0.60 = cost
+    val expectedGain = cost / GameConstants.REPAIR_COST_GAIN_RATE
     val expectedVal = currentVal + expectedGain
 
     Row(

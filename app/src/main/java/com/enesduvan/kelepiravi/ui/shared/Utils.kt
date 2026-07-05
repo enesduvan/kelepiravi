@@ -27,6 +27,19 @@ fun formatBalance(balance: String): String {
 }
 
 /** Assets klasöründeki JSON dosyasından MarketItem listesi okur. */
+fun formatBalance(amount: Double): String = formatBalance(amount.toString())
+
+fun marketItemKey(item: MarketItem): String {
+    return listOf(
+        item.itemName,
+        item.sellerName,
+        item.purchaseDate,
+        item.imageName,
+        item.salesValue,
+        item.estimatedValue
+    ).joinToString("|")
+}
+
 fun loadJsonFromAssets(context: Context, fileName: String): List<MarketItem> {
     return try {
         val jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }

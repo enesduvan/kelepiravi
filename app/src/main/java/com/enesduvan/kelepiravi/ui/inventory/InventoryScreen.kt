@@ -19,20 +19,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +45,7 @@ import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.market.MarketViewModel
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
+import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.theme.Background
 import com.enesduvan.kelepiravi.ui.theme.BorderSoft
 import com.enesduvan.kelepiravi.ui.theme.ConditionPerfect
@@ -78,8 +74,6 @@ fun InventoryScreen(viewModel: MarketViewModel) {
     val inventoryItems = playerState.inventory
     val roi = playerState.portfolioROI
     val roiPositive = roi >= 0
-
-    var itemToSell by remember { mutableStateOf<MarketItem?>(null) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(Background),
@@ -157,7 +151,7 @@ fun InventoryScreen(viewModel: MarketViewModel) {
                 )
             }
         } else {
-            items(items = inventoryItems) { item ->
+            items(items = inventoryItems, key = { marketItemKey(it) }) { item ->
                 InventoryItemCard(
                     item = item,
                     sellPrice = viewModel.getSellPrice(item),

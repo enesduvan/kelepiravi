@@ -1,5 +1,6 @@
 package com.enesduvan.kelepiravi.data.market
 
+import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -86,7 +87,8 @@ object EconomyEngine {
         val rng = Random.Default
 
         // %25 ihtimalle günlük olay tetiklenir
-        val event: DailyEvent? = if (rng.nextDouble() < 0.25) EVENTS.random(rng) else null
+        val event: DailyEvent? =
+            if (rng.nextDouble() < GameConstants.DAILY_EVENT_CHANCE) EVENTS.random(rng) else null
 
         val updatedInventory = inventory.map { item ->
             val volatility = CATEGORY_VOLATILITY[item.category] ?: DEFAULT_VOLATILITY
@@ -94,7 +96,7 @@ object EconomyEngine {
             // Kondisyon bias
             val bias = CONDITION_BIAS
                 .firstOrNull { (keyword, _) -> item.condition.contains(keyword) }?.second
-                ?: -0.02
+                ?: GameConstants.DEFAULT_CONDITION_BIAS
 
             // Temel günlük değişim: rastgele salınım + kondisyon eğilimi
             val baseChange = (rng.nextDouble() * 2.0 - 1.0) * volatility + bias
@@ -108,13 +110,16 @@ object EconomyEngine {
             }
 
             // Toplam değişim: -35% ile +50% arasında sıkıştırılır
-            val totalChange = (baseChange + eventEffect).coerceIn(-0.35, 0.50)
+            val totalChange = (baseChange + eventEffect).coerceIn(
+                GameConstants.MIN_DAILY_CHANGE,
+                GameConstants.MAX_DAILY_CHANGE
+            )
 
             val currentValue = item.estimatedValue.toDoubleOrNull() ?: 100.0
             val originalPurchase = item.purchasePrice.toDoubleOrNull()
 
             // Yeni değer: orijinal alış fiyatının %10'unun altına düşemez
-            val floor = (originalPurchase ?: currentValue) * 0.10
+            val floor = (originalPurchase ?: currentValue) * GameConstants.PURCHASE_VALUE_FLOOR_RATIO
             val newValue = (currentValue * (1.0 + totalChange)).coerceAtLeast(floor)
 
             // Günlük % değişim (1 ondalık)

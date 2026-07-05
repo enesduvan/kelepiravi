@@ -1,5 +1,6 @@
 package com.enesduvan.kelepiravi.data.market
 
+import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -192,10 +193,12 @@ object MarketGenerator {
     // ─── Üretim Motoru ────────────────────────────────────────────────────────
 
     fun getConditionMultiplier(name: String): Double {
-        return CONDITIONS.find { it.label == name }?.valueMultiplier ?: 1.0
+        return CONDITIONS.find { it.label == name }?.valueMultiplier
+            ?: GameConstants.PERFECT_CONDITION_MULTIPLIER
     }
 
-    fun generateItems(count: Int = 12): List<MarketItem> = (1..count).map { generateOne() }
+    fun generateItems(count: Int = GameConstants.MARKET_BATCH_SIZE): List<MarketItem> =
+        (1..count).map { generateOne() }
 
     private fun generateOne(): MarketItem {
         val rng = Random.Default
@@ -204,13 +207,18 @@ object MarketGenerator {
 
         // Tahmini değer: baz aralıkta ±%15 varyans
         val baseValue = rng.nextInt(product.baseMinValue, product.baseMaxValue)
-        val variance = (baseValue * 0.15 * (rng.nextDouble() - 0.5)).roundToInt()
-        val estimatedValue = maxOf(50, baseValue + variance)
+        val variance = (
+            baseValue *
+                GameConstants.MARKET_VALUE_VARIANCE_RATE *
+                (rng.nextDouble() - 0.5)
+            ).roundToInt()
+        val estimatedValue = maxOf(GameConstants.MARKET_MIN_ITEM_VALUE, baseValue + variance)
 
         // Piyasa fiyatı: her zaman tahmini değerden ucuz
-        val salesRatio = 0.50 + rng.nextDouble() * 0.40
+        val salesRatio = GameConstants.MARKET_MIN_SALES_RATIO +
+            rng.nextDouble() * GameConstants.MARKET_SALES_RATIO_RANGE
         val salesValue = (estimatedValue * salesRatio * condition.valueMultiplier)
-            .roundToInt().coerceAtLeast(30)
+            .roundToInt().coerceAtLeast(GameConstants.MARKET_MIN_SALES_VALUE)
 
         // Kondisyona uygun gerçek drawable seç
         val pool = IMAGE_POOLS[product.imageKey]

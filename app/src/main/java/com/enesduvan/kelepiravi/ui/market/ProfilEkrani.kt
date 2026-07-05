@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.market.AchievementManager
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.theme.*
@@ -32,8 +33,8 @@ fun ProfilEkrani(viewModel: MarketViewModel) {
     val itemsBought = playerState.itemsBought
     val itemsSold = playerState.itemsSold
 
-    val requiredXp = (level) * (level + 1) * 50
-    val currentLevelBaseXp = (level - 1) * level * 50
+    val requiredXp = level * (level + 1) * GameConstants.XP_LEVEL_FACTOR
+    val currentLevelBaseXp = (level - 1) * level * GameConstants.XP_LEVEL_FACTOR
     val targetProgress = (xp - currentLevelBaseXp).toFloat() / (requiredXp - currentLevelBaseXp).coerceAtLeast(1).toFloat()
     
     val animatedProgress by animateFloatAsState(
@@ -127,7 +128,10 @@ fun ProfilEkrani(viewModel: MarketViewModel) {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        items(AchievementManager.ALL_ACHIEVEMENTS.size) { index ->
+        items(
+            count = AchievementManager.ALL_ACHIEVEMENTS.size,
+            key = { index -> AchievementManager.ALL_ACHIEVEMENTS[index].id }
+        ) { index ->
             val ach = AchievementManager.ALL_ACHIEVEMENTS[index]
             val isUnlocked = unlockedIds.contains(ach.id)
             AchievementCard(ach = ach, isUnlocked = isUnlocked)

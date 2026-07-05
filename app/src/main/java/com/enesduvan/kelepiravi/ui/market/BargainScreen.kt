@@ -258,7 +258,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(bargainState.messages) { msg ->
+                items(items = bargainState.messages, key = { it.id }) { msg ->
                     ChatBubble(msg)
                 }
             }

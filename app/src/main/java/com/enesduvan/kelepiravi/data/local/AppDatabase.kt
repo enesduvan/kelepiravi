@@ -10,6 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.enesduvan.kelepiravi.data.local.dao.KelepiraviDao
 import com.enesduvan.kelepiravi.data.local.entity.UserInventoryEntity
 import com.enesduvan.kelepiravi.data.model.MarketItemConverter
+import java.io.File
 
 /**
  * Migration 1 → 2: currentDay kolonu eklendi.
@@ -47,19 +48,78 @@ abstract class AppDatabase : RoomDatabase() {
 
 /** Thread-safe singleton. applicationContext ile çağrılmalı. */
 object AppDatabaseProvider {
+    private const val DATABASE_NAME = "kelepiravi-database"
+    private const val BACKUP_DIR = "database-backups"
+    private const val BACKUP_EXTENSION = ".bak"
+
     @Volatile
     private var instance: AppDatabase? = null
 
     fun getDatabase(context: Context): AppDatabase {
+        val appContext = context.applicationContext
+        restoreBackupIfPrimaryMissing(appContext)
         return instance ?: synchronized(this) {
             instance ?: Room.databaseBuilder(
-                context.applicationContext,
+                appContext,
                 AppDatabase::class.java,
-                "kelepiravi-database"
+                DATABASE_NAME
             )
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addCallback(DatabaseBackupCallback(appContext))
                 .build()
                 .also { instance = it }
         }
+    }
+
+    private class DatabaseBackupCallback(
+        private val context: Context
+    ) : RoomDatabase.Callback() {
+        override fun onOpen(db: SupportSQLiteDatabase) {
+            backupDatabase(context)
+        }
+    }
+
+    private fun backupDatabase(context: Context) {
+        val databaseFile = context.getDatabasePath(DATABASE_NAME)
+        if (!databaseFile.exists()) return
+
+        val backupDirectory = File(context.filesDir, BACKUP_DIR).apply { mkdirs() }
+        databaseFiles(databaseFile).forEach { source ->
+            if (source.exists()) {
+                runCatching {
+                    source.copyTo(
+                        target = File(backupDirectory, source.name + BACKUP_EXTENSION),
+                        overwrite = true
+                    )
+                }
+            }
+        }
+    }
+
+    private fun restoreBackupIfPrimaryMissing(context: Context) {
+        val databaseFile = context.getDatabasePath(DATABASE_NAME)
+        if (databaseFile.exists()) return
+
+        val backupDirectory = File(context.filesDir, BACKUP_DIR)
+        val primaryBackup = File(backupDirectory, DATABASE_NAME + BACKUP_EXTENSION)
+        if (!primaryBackup.exists()) return
+
+        databaseFile.parentFile?.mkdirs()
+        databaseFiles(databaseFile).forEach { target ->
+            val backup = File(backupDirectory, target.name + BACKUP_EXTENSION)
+            if (backup.exists()) {
+                runCatching {
+                    backup.copyTo(target = target, overwrite = true)
+                }
+            }
+        }
+    }
+
+    private fun databaseFiles(databaseFile: File): List<File> {
+        return listOf(
+            databaseFile,
+            File(databaseFile.path + "-wal"),
+            File(databaseFile.path + "-shm")
+        )
     }
 }

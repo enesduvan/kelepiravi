@@ -3,8 +3,8 @@ package com.enesduvan.kelepiravi.ui.market
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.enesduvan.kelepiravi.data.local.entity.DEFAULT_USER_ID
-import com.enesduvan.kelepiravi.data.local.entity.INITIAL_BALANCE
+import com.enesduvan.kelepiravi.data.BargainConstants
+import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.market.EconomyEngine
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 // ─── State Modelleri ──────────────────────────────────────────────────────────
 
 data class PlayerState(
-    val balance: String = INITIAL_BALANCE,
+    val balance: String = GameConstants.INITIAL_BALANCE,
     val inventory: List<MarketItem> = emptyList(),
     val currentDay: Int = 1,
     val xp: Int = 0,
@@ -54,7 +54,7 @@ data class BargainMessage(
 data class BargainState(
     val item: MarketItem,
     val messages: List<BargainMessage> = emptyList(),
-    val sellerPatience: Int = 100, // 0 - 100
+    val sellerPatience: Int = BargainConstants.STARTING_PATIENCE, // 0 - 100
     val sellerMood: String = "Kararsız", // Mutlu, Kararsız, Gergin, Sinirli
     val isDealClosed: Boolean = false,
     val isFailed: Boolean = false,
@@ -65,7 +65,7 @@ data class BargainState(
 data class SellBargainState(
     val item: MarketItem,
     val messages: List<BargainMessage> = emptyList(),
-    val buyerPatience: Int = 100, // 0 - 100
+    val buyerPatience: Int = BargainConstants.STARTING_PATIENCE, // 0 - 100
     val buyerMood: String = "Kararsız", // Mutlu, Kararsız, Gergin, Sinirli
     val isDealClosed: Boolean = false,
     val isFailed: Boolean = false,
@@ -83,10 +83,10 @@ class MarketViewModel(
     val playerState: StateFlow<PlayerState> = repository
         .getPlayerState()
         .map { list ->
-            val entity = list.firstOrNull { it.id == DEFAULT_USER_ID }
+            val entity = list.firstOrNull { it.id == GameConstants.DEFAULT_USER_ID }
             val inventory = entity?.inventory ?: emptyList()
             PlayerState(
-                balance = entity?.balance ?: INITIAL_BALANCE,
+                balance = entity?.balance ?: GameConstants.INITIAL_BALANCE,
                 inventory = inventory,
                 currentDay = entity?.currentDay ?: 1,
                 xp = entity?.xp ?: 0,
@@ -128,7 +128,7 @@ class MarketViewModel(
 
     fun refreshMarket() {
         _uiState.value = _uiState.value.copy(
-            marketItems = MarketGenerator.generateItems(12),
+            marketItems = MarketGenerator.generateItems(GameConstants.MARKET_BATCH_SIZE),
             isRefreshing = false,
             selectedCategory = "Tümü"
         )
@@ -136,7 +136,7 @@ class MarketViewModel(
 
     fun loadMoreItems() {
         val currentItems = _uiState.value.marketItems
-        val newItems = MarketGenerator.generateItems(12)
+        val newItems = MarketGenerator.generateItems(GameConstants.MARKET_BATCH_SIZE)
         _uiState.value = _uiState.value.copy(
             marketItems = currentItems + newItems
         )
@@ -172,11 +172,11 @@ class MarketViewModel(
 
     fun calculateRepairCost(item: MarketItem): Double {
         val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
-        if (currentMultiplier >= 1.0) return 0.0
+        if (currentMultiplier >= GameConstants.PERFECT_CONDITION_MULTIPLIER) return 0.0
         val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
         val baseVal = currentVal / currentMultiplier
         val gain = baseVal - currentVal
-        return gain * 0.60
+        return gain * GameConstants.REPAIR_COST_GAIN_RATE
     }
 
     fun repairItem(item: MarketItem) {
@@ -236,7 +236,7 @@ class MarketViewModel(
         _bargainState.value = BargainState(
             item = item,
             messages = listOf(initialMsg),
-            suggestedPrice = initialPrice * 0.9 // İlk öneri %10 altı
+            suggestedPrice = initialPrice * BargainConstants.BUY_SUGGESTED_RATIO
         )
     }
 
@@ -266,30 +266,30 @@ class MarketViewModel(
         var isFailed = false
         var agreedPrice = 0.0
 
-        if (ratio >= 0.95) {
+        if (ratio >= BargainConstants.BUY_ACCEPT_RATIO) {
             // Çok iyi teklif, hemen kabul et
             sellerResponseText = "Harika teklif, anlaştık!"
             isDealClosed = true
             agreedPrice = offerAmount
-            newPatience += 10
-        } else if (ratio >= 0.85) {
+            newPatience += BargainConstants.PATIENCE_REWARD
+        } else if (ratio >= BargainConstants.BUY_MAYBE_RATIO) {
             // Fena değil, biraz pazarlık
             val chance = kotlin.random.Random.nextDouble()
-            if (chance > 0.4) {
+            if (chance > BargainConstants.BUY_COUNTER_ACCEPT_CHANCE) {
                 sellerResponseText = "Tamam abi, anlaşalım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(offerAmount.toString())} olsun."
                 isDealClosed = true
                 agreedPrice = offerAmount
             } else {
-                val counterOffer = (originalPrice * 0.90).toInt().toDouble()
+                val counterOffer = (originalPrice * BargainConstants.BUY_COUNTER_RATIO).toInt().toDouble()
                 sellerResponseText = "₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(counterOffer.toString())} yapalım ortası olsun."
-                newPatience -= 5
+                newPatience -= BargainConstants.PATIENCE_SMALL_PENALTY
             }
-        } else if (ratio >= 0.70) {
+        } else if (ratio >= BargainConstants.BUY_LOW_RATIO) {
             sellerResponseText = "Çok düşük ya, olmaz. Biraz daha çıkman lazım."
-            newPatience -= 15
+            newPatience -= BargainConstants.PATIENCE_MEDIUM_PENALTY
         } else {
             sellerResponseText = "Ölücülük yapma kardeşim, o fiyata vermem."
-            newPatience -= 30
+            newPatience -= BargainConstants.PATIENCE_LARGE_PENALTY
         }
 
         if (newPatience <= 0) {
@@ -308,9 +308,9 @@ class MarketViewModel(
         }
 
         val mood = when {
-            newPatience >= 80 -> "Mutlu"
-            newPatience >= 50 -> "Kararsız"
-            newPatience >= 20 -> "Gergin"
+            newPatience >= BargainConstants.MOOD_HAPPY_MIN -> "Mutlu"
+            newPatience >= BargainConstants.MOOD_UNSURE_MIN -> "Kararsız"
+            newPatience >= BargainConstants.MOOD_TENSE_MIN -> "Gergin"
             else -> "Sinirli"
         }
 
@@ -346,7 +346,10 @@ class MarketViewModel(
     fun startSellBargain(item: MarketItem) {
         val baseSellPrice = repository.calculateSellPrice(item)
         // Alıcı %10-%20 daha düşük bir fiyattan kapıyı açar
-        val initialOffer = baseSellPrice * (0.80 + Math.random() * 0.10)
+        val initialOffer = baseSellPrice * (
+            BargainConstants.SELL_INITIAL_MIN_RATIO +
+                kotlin.random.Random.nextDouble() * BargainConstants.SELL_INITIAL_RANGE
+            )
         
         val initialMsg = BargainMessage(
             text = "Selam, ${item.itemName} için ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialOffer.toString())} verebilirim. Ne dersin?",
@@ -387,24 +390,24 @@ class MarketViewModel(
         var agreedPrice = 0.0
         var lastBuyerOffer: Double? = null
 
-        if (ratio <= 1.05) {
+        if (ratio <= BargainConstants.SELL_ACCEPT_RATIO) {
             buyerResponseText = "Harika! Bu fiyata anlaştık."
             isDealClosed = true
             agreedPrice = offerAmount
-            newPatience += 10
-        } else if (ratio <= 1.15) {
-            val counterOffer = offerAmount * 0.95
+            newPatience += BargainConstants.PATIENCE_REWARD
+        } else if (ratio <= BargainConstants.SELL_COUNTER_RATIO) {
+            val counterOffer = offerAmount * BargainConstants.SELL_COUNTER_DISCOUNT
             lastBuyerOffer = counterOffer
             buyerResponseText = "₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(counterOffer.toString())} yaparsak el sıkışırız."
-            newPatience -= 10
-        } else if (ratio <= 1.30) {
-            val counterOffer = basePrice * 1.05
+            newPatience -= BargainConstants.PATIENCE_SELL_SMALL_PENALTY
+        } else if (ratio <= BargainConstants.SELL_HIGH_RATIO) {
+            val counterOffer = basePrice * BargainConstants.SELL_ACCEPT_RATIO
             lastBuyerOffer = counterOffer
             buyerResponseText = "Çok istedin. En fazla ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(counterOffer.toString())} veririm."
-            newPatience -= 25
+            newPatience -= BargainConstants.PATIENCE_SELL_MEDIUM_PENALTY
         } else {
             buyerResponseText = "Hadi canım sende, piyasası o kadar değil!"
-            newPatience -= 40
+            newPatience -= BargainConstants.PATIENCE_SELL_LARGE_PENALTY
         }
 
         if (newPatience <= 0) {
@@ -423,9 +426,9 @@ class MarketViewModel(
         }
 
         val mood = when {
-            newPatience >= 80 -> "Mutlu"
-            newPatience >= 50 -> "Kararsız"
-            newPatience >= 20 -> "Gergin"
+            newPatience >= BargainConstants.MOOD_HAPPY_MIN -> "Mutlu"
+            newPatience >= BargainConstants.MOOD_UNSURE_MIN -> "Kararsız"
+            newPatience >= BargainConstants.MOOD_TENSE_MIN -> "Gergin"
             else -> "Sinirli"
         }
 

@@ -39,8 +39,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.model.MarketItem
+import com.enesduvan.kelepiravi.ui.shared.formatBalance
+import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.theme.Background
 import com.enesduvan.kelepiravi.ui.theme.CardSecondary
 import com.enesduvan.kelepiravi.ui.theme.ConditionBrokenBg
@@ -69,9 +72,6 @@ import com.enesduvan.kelepiravi.ui.theme.Surface
 import com.enesduvan.kelepiravi.ui.theme.TextMuted
 import com.enesduvan.kelepiravi.ui.theme.TextPrimary
 import com.enesduvan.kelepiravi.ui.theme.TextSecondary
-import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,9 +79,10 @@ fun MarketScreen(viewModel: MarketViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val playerState by viewModel.playerState.collectAsState()
     val dayEvent by viewModel.dayEvent.collectAsState()
-    val balanceText = formatBalance(playerState.balance.toDoubleOrNull() ?: 0.0)
-    val visibleItems = viewModel.filteredMarketItems(uiState)
-    android.util.Log.d("Kelepiravi", "MarketScreen is composing")
+    val balanceText = remember(playerState.balance) { formatBalance(playerState.balance) }
+    val visibleItems by remember(uiState.marketItems, uiState.selectedCategory) {
+        derivedStateOf { viewModel.filteredMarketItems(uiState) }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -127,12 +128,14 @@ fun MarketScreen(viewModel: MarketViewModel) {
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
                     )
 
-                    val categoriesList = listOf("Tümü", "Elektronik", "Ev Aletleri", "Giyim", "Spor", "Koleksiyon")
+                    val categoriesList = remember {
+                        listOf("Tümü", "Elektronik", "Ev Aletleri", "Giyim", "Spor", "Koleksiyon")
+                    }
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 20.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(categoriesList) { category ->
+                        items(items = categoriesList, key = { it }) { category ->
                             val isSelected = uiState.selectedCategory == category
                             FilterChip(
                                 selected = isSelected,
@@ -161,7 +164,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(items = visibleItems) { item ->
+                items(items = visibleItems, key = { marketItemKey(it) }) { item ->
                     ItemCard(
                         item = item,
                         onClick = { viewModel.startBargain(it) }
@@ -296,9 +299,3 @@ fun DayEventDialog(event: DailyEvent, onDismiss: () -> Unit) {
     }
 }
 
-fun formatBalance(amount: Double): String {
-    val format = NumberFormat.getNumberInstance(Locale("tr", "TR"))
-    format.minimumFractionDigits = 0
-    format.maximumFractionDigits = 0
-    return format.format(amount)
-}

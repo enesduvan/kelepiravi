@@ -258,7 +258,7 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(sellBargainState.messages) { msg ->
+                items(items = sellBargainState.messages, key = { it.id }) { msg ->
                     SellChatBubble(msg)
                 }
             }
