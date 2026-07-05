@@ -1,0 +1,30 @@
+name: Package Chapter Zip
+
+on:
+  workflow_dispatch:
+    inputs:
+      chapter_number:
+        description: 'Chapter number to package'
+        required: true
+        default: '1'
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install zip
+        run: sudo apt-get update && sudo apt-get install -y zip
+
+      - name: Create ZIP
+        run: |
+          ZIP=chapter-${{ inputs.chapter_number }}.zip
+          zip -r "$ZIP" . -x ".git/*" ".github/*" "node_modules/*" "build/*" "bin/*" "obj/*"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chapter-${{ inputs.chapter_number }}
+          path: chapter-${{ inputs.chapter_number }}.zip
