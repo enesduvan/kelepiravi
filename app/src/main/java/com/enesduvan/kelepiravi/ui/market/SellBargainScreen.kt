@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.data.market.SellerPersonality
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
@@ -207,7 +208,8 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                     Text(sellBargainState.item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(painterResource(id = R.drawable.person), contentDescription = null, tint = TextSecondary, modifier = Modifier.size(14.dp))
-                        Text("Alıcı", color = TextSecondary, fontSize = 13.sp)
+                        val personality = SellerPersonality.fromName(sellBargainState.buyerName)
+                        Text("${sellBargainState.buyerName} [${personality.title}]", color = TextSecondary, fontSize = 13.sp)
                     }
                     Text("₺${formatBalance(sellBargainState.baseSellPrice.toString())}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     Text("Değeri", color = TextSecondary, fontSize = 11.sp)

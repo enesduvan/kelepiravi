@@ -15,5 +15,6 @@ data class UserInventoryEntity(
     val totalProfit: Double = 0.0,    // v3
     val itemsBought: Int = 0,         // v3
     val itemsSold: Int = 0,           // v3
-    val unlockedAchievements: String = "" // v4, comma-separated IDs
+    val unlockedAchievements: String = "", // v4, comma-separated IDs
+    val marketTrends: String = ""     // v5, JSON map of Category -> Multiplier
 )

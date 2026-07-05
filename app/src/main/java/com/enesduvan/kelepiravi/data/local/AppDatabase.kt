@@ -40,7 +40,13 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
     }
 }
 
-@Database(entities = [UserInventoryEntity::class], version = 4, exportSchema = false)
+private val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN marketTrends TEXT NOT NULL DEFAULT ''")
+    }
+}
+
+@Database(entities = [UserInventoryEntity::class], version = 5, exportSchema = false)
 @TypeConverters(MarketItemConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun kelepiraviDao(): KelepiraviDao
@@ -64,7 +70,7 @@ object AppDatabaseProvider {
                 AppDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .addCallback(DatabaseBackupCallback(appContext))
                 .build()
                 .also { instance = it }

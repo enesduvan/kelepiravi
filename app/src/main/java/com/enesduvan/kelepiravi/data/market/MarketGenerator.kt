@@ -190,6 +190,8 @@ object MarketGenerator {
         "Son Fiyat Esen", "Hızlı İşlem Korhan", "Her Şey Satılık Özge"
     )
 
+    fun getRandomName(): String = SELLERS.random(Random.Default)
+
     // ─── Üretim Motoru ────────────────────────────────────────────────────────
 
     fun getConditionMultiplier(name: String): Double {
@@ -197,10 +199,13 @@ object MarketGenerator {
             ?: GameConstants.PERFECT_CONDITION_MULTIPLIER
     }
 
-    fun generateItems(count: Int = GameConstants.MARKET_BATCH_SIZE): List<MarketItem> =
-        (1..count).map { generateOne() }
+    fun generateItems(
+        count: Int = GameConstants.MARKET_BATCH_SIZE,
+        marketTrends: Map<String, Double> = emptyMap()
+    ): List<MarketItem> =
+        (1..count).map { generateOne(marketTrends) }
 
-    private fun generateOne(): MarketItem {
+    private fun generateOne(marketTrends: Map<String, Double>): MarketItem {
         val rng = Random.Default
         val product = PRODUCTS.random(rng)
         val condition = CONDITIONS.random(rng)
@@ -212,7 +217,10 @@ object MarketGenerator {
                 GameConstants.MARKET_VALUE_VARIANCE_RATE *
                 (rng.nextDouble() - 0.5)
             ).roundToInt()
-        val estimatedValue = maxOf(GameConstants.MARKET_MIN_ITEM_VALUE, baseValue + variance)
+        
+        // Pazar trend çarpanı: eğer o kategori trend ise fiyat artar/düşer
+        val trendMultiplier = marketTrends[product.category] ?: 1.0
+        val estimatedValue = maxOf(GameConstants.MARKET_MIN_ITEM_VALUE, ((baseValue + variance) * trendMultiplier).roundToInt())
 
         // Piyasa fiyatı: her zaman tahmini değerden ucuz
         val salesRatio = GameConstants.MARKET_MIN_SALES_RATIO +

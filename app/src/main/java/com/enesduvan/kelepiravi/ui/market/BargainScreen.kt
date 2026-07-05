@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.data.market.SellerPersonality
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
@@ -160,6 +161,19 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                         item { QuickOfferButton("+500") { val v = offerText.toIntOrNull() ?: 0; offerText = (v + 500).toString() } }
                     }
 
+                    if (bargainState.lastSellerOffer != null && !bargainState.isDealClosed && !bargainState.isFailed) {
+                        Button(
+                            onClick = {
+                                viewModel.sendOffer(bargainState.lastSellerOffer)
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen)
+                        ) {
+                            Text("Kabul Et (₺${formatBalance(bargainState.lastSellerOffer.toString())})", color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                    }
+
                     Button(
                         onClick = {
                             val offer = offerText.toDoubleOrNull() ?: 0.0
@@ -207,7 +221,8 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     Text(bargainState.item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(painterResource(id = R.drawable.person), contentDescription = null, tint = TextSecondary, modifier = Modifier.size(14.dp))
-                        Text(bargainState.item.sellerName, color = TextSecondary, fontSize = 13.sp)
+                        val personality = SellerPersonality.fromName(bargainState.item.sellerName)
+                        Text("${bargainState.item.sellerName} [${personality.title}]", color = TextSecondary, fontSize = 13.sp)
                     }
                     Text("₺${formatBalance(bargainState.item.salesValue)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     Text("İlan Fiyatı", color = TextSecondary, fontSize = 11.sp)

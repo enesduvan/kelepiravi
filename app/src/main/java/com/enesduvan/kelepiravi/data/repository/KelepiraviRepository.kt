@@ -11,6 +11,8 @@ import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 
 class KelepiraviRepository(
     private val database: AppDatabase
@@ -159,9 +161,15 @@ class KelepiraviRepository(
     suspend fun advanceDay(): DailyEvent? {
         return database.withTransaction {
             val player = getPlayerOrCreate()
-            val (updatedInventory, event) = EconomyEngine.processNewDay(
+            val currentTrends = runCatching {
+                if (player.marketTrends.isBlank()) emptyMap<String, Double>()
+                else Json.decodeFromString<Map<String, Double>>(player.marketTrends)
+            }.getOrDefault(emptyMap())
+
+            val (updatedInventory, newTrends, event) = EconomyEngine.processNewDay(
                 currentDay = player.currentDay,
-                inventory = player.inventory
+                inventory = player.inventory,
+                currentMarketTrends = currentTrends
             )
 
             val currentBalance = player.balance.toDoubleOrNull().orZero()
@@ -170,7 +178,8 @@ class KelepiraviRepository(
                 basePlayer.copy(
                     currentDay = player.currentDay + 1,
                     inventory = updatedInventory,
-                    balance = (currentBalance + GameConstants.DAILY_LOGIN_BONUS).toString()
+                    balance = (currentBalance + GameConstants.DAILY_LOGIN_BONUS).toString(),
+                    marketTrends = Json.encodeToString(newTrends)
                 )
             )
 

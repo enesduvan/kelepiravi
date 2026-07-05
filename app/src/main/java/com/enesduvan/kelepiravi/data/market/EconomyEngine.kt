@@ -78,12 +78,13 @@ object EconomyEngine {
 
     /**
      * Yeni gün işlemcisi.
-     * @return (güncellenmiş envanter, tetiklenen olay ya da null)
+     * @return Triple(güncellenmiş envanter, yeni pazar trendleri, tetiklenen olay ya da null)
      */
     fun processNewDay(
         currentDay: Int,
-        inventory: List<MarketItem>
-    ): Pair<List<MarketItem>, DailyEvent?> {
+        inventory: List<MarketItem>,
+        currentMarketTrends: Map<String, Double>
+    ): Triple<List<MarketItem>, Map<String, Double>, DailyEvent?> {
         val rng = Random.Default
 
         // %25 ihtimalle günlük olay tetiklenir
@@ -131,7 +132,29 @@ object EconomyEngine {
             )
         }
 
-        return updatedInventory to event
+        // Pazar trendlerini de güncelle
+        val newMarketTrends = currentMarketTrends.toMutableMap()
+        CATEGORY_VOLATILITY.keys.forEach { category ->
+            var currentTrend = newMarketTrends[category] ?: 1.0
+            
+            // 1. Mean reversion (normale dönüş) - 1.0'a doğru her gün hafifçe yaklaşır
+            val diffFromNormal = currentTrend - 1.0
+            currentTrend -= diffFromNormal * 0.15 
+            
+            // 2. Rastgele dalgalanma (±2%)
+            val randomDrift = (rng.nextDouble() - 0.5) * 0.04
+            currentTrend += randomDrift
+            
+            // 3. Günlük olay etkisi
+            if (event != null && (event.affectedCategory == null || event.affectedCategory == category)) {
+                currentTrend += event.effectPercent / 100.0
+            }
+            
+            // Limit the multiplier between 0.5 (çöküş) and 2.0 (balon)
+            newMarketTrends[category] = currentTrend.coerceIn(0.5, 2.0)
+        }
+
+        return Triple(updatedInventory, newMarketTrends, event)
     }
 
     /**

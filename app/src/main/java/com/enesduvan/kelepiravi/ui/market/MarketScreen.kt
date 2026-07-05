@@ -31,6 +31,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -69,6 +70,7 @@ import com.enesduvan.kelepiravi.ui.theme.ConditionScratchBg
 import com.enesduvan.kelepiravi.ui.theme.MoneyGreen
 import com.enesduvan.kelepiravi.ui.theme.PrimaryOrange
 import com.enesduvan.kelepiravi.ui.theme.Surface
+import com.enesduvan.kelepiravi.ui.theme.SurfaceVariant
 import com.enesduvan.kelepiravi.ui.theme.TextMuted
 import com.enesduvan.kelepiravi.ui.theme.TextPrimary
 import com.enesduvan.kelepiravi.ui.theme.TextSecondary
@@ -78,7 +80,7 @@ import com.enesduvan.kelepiravi.ui.theme.TextSecondary
 fun MarketScreen(viewModel: MarketViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val playerState by viewModel.playerState.collectAsState()
-    val dayEvent by viewModel.dayEvent.collectAsState()
+    val dailySummary by viewModel.dailySummary.collectAsState()
     val balanceText = remember(playerState.balance) { formatBalance(playerState.balance) }
     val visibleItems by remember(uiState.marketItems, uiState.selectedCategory) {
         derivedStateOf { viewModel.filteredMarketItems(uiState) }
@@ -174,12 +176,67 @@ fun MarketScreen(viewModel: MarketViewModel) {
         }
 
         AnimatedVisibility(
-            visible = dayEvent != null,
+            visible = dailySummary != null,
             enter = fadeIn(tween(300)) + scaleIn(tween(300), initialScale = 0.85f),
             exit = fadeOut(tween(200)) + scaleOut(tween(200))
         ) {
-            dayEvent?.let { event ->
-                DayEventDialog(event = event, onDismiss = { viewModel.dismissDayEvent() })
+            dailySummary?.let { summary ->
+                DailySummaryDialog(summary = summary, onDismiss = { viewModel.dismissDailySummary() })
+            }
+        }
+    }
+}
+
+@Composable
+fun DailySummaryDialog(summary: com.enesduvan.kelepiravi.ui.market.DailySummaryState, onDismiss: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xB3000000))
+            .clickable { onDismiss() },
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Surface)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("${summary.day}. Gün Özeti", color = TextPrimary, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Giriş Bonusu:", color = TextSecondary, fontSize = 14.sp)
+                    Text("+₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(summary.bonusMoney.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Kazanılan XP:", color = TextSecondary, fontSize = 14.sp)
+                    Text("+${summary.xpGained} XP", color = PrimaryOrange, fontWeight = FontWeight.Bold)
+                }
+                
+                if (summary.event != null) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Divider(color = SurfaceVariant)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("📰 Günün Haberi", color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(summary.event.title, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(summary.event.description, color = TextSecondary, fontSize = 13.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                }
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = { onDismiss() },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange)
+                ) {
+                    Text("Güne Başla", color = Color.White, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
@@ -207,7 +264,9 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit) {
                     .background(CardSecondary)
             ) {
                 val context = androidx.compose.ui.platform.LocalContext.current
-                val resId = context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
+                val resId = remember(item.imageName) {
+                    context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
+                }
                 if (resId != 0) {
                     Image(
                         painter = painterResource(id = resId),
@@ -253,49 +312,3 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit) {
         }
     }
 }
-
-@Composable
-fun DayEventDialog(event: DailyEvent, onDismiss: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xB3000000))
-            .clickable { onDismiss() },
-        contentAlignment = Alignment.Center
-    ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Surface)
-        ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .background(PrimaryOrange.copy(alpha = 0.2f), CircleShape)
-                        .border(2.dp, PrimaryOrange, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("🎁", fontSize = 28.sp)
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(event.title, color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(event.description, color = TextSecondary, fontSize = 14.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
-                Spacer(modifier = Modifier.height(24.dp))
-                Button(
-                    onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Tamam", color = Color.Black, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-    }
-}
-
