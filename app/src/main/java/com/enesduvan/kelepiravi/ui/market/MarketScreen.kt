@@ -170,6 +170,8 @@ fun MarketScreen(viewModel: MarketViewModel) {
             val balance = playerState.balance.toDoubleOrNull() ?: 0.0
             LootBoxBottomSheet(
                 playerBalance = balance,
+                inventorySize = playerState.inventory.size,
+                shopLevel = playerState.shopLevel,
                 onDismiss = { viewModel.setLootBoxSheetVisible(false) },
                 onBuy = { type -> viewModel.buyLootBox(type) }
             )

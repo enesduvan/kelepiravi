@@ -19,5 +19,7 @@ data class UserInventoryEntity(
     val marketTrends: String = "",    // v5, JSON map of Category -> Multiplier
     val dailyRepairsUsed: Int = 0,    // v6 — Bugün kullanılan tamir sayısı
     val lastRepairDay: Int = 0,       // v6 — Son tamir günü (günlük sıfırlama için)
-    val dailyRevenue: Double = 0.0    // v7 — Günlük ciro (vergi için)
+    val dailyRevenue: Double = 0.0,   // v7 — Günlük ciro (vergi için)
+    val shopLevel: Int = 1,           // v8 — Dükkan seviyesi (Kapasite)
+    val mechanicLevel: Int = 1        // v8 — Usta becerisi (Tamir)
 )

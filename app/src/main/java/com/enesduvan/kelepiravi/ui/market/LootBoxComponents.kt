@@ -31,9 +31,15 @@ import kotlinx.coroutines.delay
 @Composable
 fun LootBoxBottomSheet(
     playerBalance: Double,
+    inventorySize: Int,
+    shopLevel: Int,
     onDismiss: () -> Unit,
     onBuy: (LootBoxType) -> Unit
 ) {
+    val maxCapacity = 5 + (shopLevel * 5)
+    // Kutu açılımında 2-3 eşya gelebilir, +3 limit kontrolü yapalım
+    val isFull = inventorySize + 3 > maxCapacity
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         containerColor = BottomSheet,
@@ -68,24 +74,36 @@ fun LootBoxBottomSheet(
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (isFull) {
+                Text(
+                    text = "Dükkanında yeterli yer yok! (En az 3 boş yer gerekli)",
+                    color = Color(0xFFFF6B6B),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
 
             LootBoxType.values().forEach { boxType ->
                 val canAfford = playerBalance >= boxType.price
+                val canBuy = canAfford && !isFull
                 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .clickable(enabled = canAfford) { onBuy(boxType) }
+                        .clickable(enabled = canBuy) { onBuy(boxType) }
                         .border(
                             width = 1.dp,
-                            color = if (canAfford) DealGreen.copy(alpha = 0.5f) else BorderSoft,
+                            color = if (canBuy) DealGreen.copy(alpha = 0.5f) else BorderSoft,
                             shape = RoundedCornerShape(16.dp)
                         ),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (canAfford) Card else CardSecondary
+                        containerColor = if (canBuy) Card else CardSecondary
                     )
                 ) {
                     Row(
@@ -102,7 +120,7 @@ fun LootBoxBottomSheet(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = boxType.title,
-                                color = if (canAfford) DealGreen else TextSecondary,
+                                color = if (canBuy) DealGreen else TextSecondary,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -117,7 +135,7 @@ fun LootBoxBottomSheet(
                         Column(horizontalAlignment = Alignment.End) {
                             Text(
                                 text = "₺${formatBalance(boxType.price.toString())}",
-                                color = if (canAfford) TextPrimary else ErrorRed,
+                                color = if (canBuy) TextPrimary else ErrorRed,
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 16.sp
                             )
@@ -195,7 +213,27 @@ fun LootBoxRevealScreen(
                                     .padding(16.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("🎁", fontSize = 24.sp)
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(CardSecondary)
+                                ) {
+                                    val context = androidx.compose.ui.platform.LocalContext.current
+                                    val resId = remember(item.imageName) {
+                                        context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
+                                    }
+                                    if (resId != 0) {
+                                        androidx.compose.foundation.Image(
+                                            painter = androidx.compose.ui.res.painterResource(id = resId),
+                                            contentDescription = item.itemName,
+                                            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    } else {
+                                        Text("🎁", fontSize = 24.sp, modifier = Modifier.align(Alignment.Center))
+                                    }
+                                }
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {
                                     Text(item.itemName, color = TextPrimary, fontWeight = FontWeight.Bold)

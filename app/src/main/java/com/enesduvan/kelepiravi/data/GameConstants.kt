@@ -38,8 +38,8 @@ object GameConstants {
 
     // Ch6: Günlük tamir limiti
     const val DAILY_REPAIR_LIMIT = 2
-    // Ch6: Tamir başarısızlık olasılığı
-    const val REPAIR_FAILURE_CHANCE = 0.10
+    // Ch10: Tamir başarısızlık olasılığı (Usta seviyesi 1 için temel risk)
+    const val REPAIR_FAILURE_CHANCE = 0.40
 
     // Ch8: Ekonomi Dengesi
     const val DAILY_RENT_COST = 500.0

@@ -37,6 +37,8 @@ data class PlayerState(
     val dailyRepairsUsed: Int = 0,   // Ch6
     val lastRepairDay: Int = 0,      // Ch6
     val dailyRevenue: Double = 0.0,  // Ch8: Vergi hesaplaması için günlük ciro
+    val shopLevel: Int = 1,          // Ch10: Dükkan kapasitesi
+    val mechanicLevel: Int = 1,      // Ch10: Usta becerisi
     // Türetilmiş ekonomi değerleri
     val portfolioValue: Double = 0.0,
     val totalInvestment: Double = 0.0,
@@ -246,6 +248,45 @@ class MarketViewModel(
         _uiState.value = _uiState.value.copy(purchasedLootBoxItems = null)
     }
 
+    // Ch10: Yükseltmeler
+    fun getShopUpgradeCost(level: Int): Double {
+        return when (level) {
+            1 -> 15000.0
+            2 -> 50000.0
+            3 -> 150000.0
+            4 -> 500000.0
+            else -> 0.0
+        }
+    }
+
+    fun getMechanicUpgradeCost(level: Int): Double {
+        return when (level) {
+            1 -> 20000.0
+            2 -> 75000.0
+            3 -> 250000.0
+            4 -> 1000000.0
+            else -> 0.0
+        }
+    }
+
+    fun upgradeShop() {
+        val level = playerState.value.shopLevel
+        if (level >= 5) return
+        val cost = getShopUpgradeCost(level)
+        viewModelScope.launch {
+            repository.upgradeShop(cost)
+        }
+    }
+
+    fun upgradeMechanic() {
+        val level = playerState.value.mechanicLevel
+        if (level >= 5) return
+        val cost = getMechanicUpgradeCost(level)
+        viewModelScope.launch {
+            repository.upgradeMechanic(cost)
+        }
+    }
+
     fun sellItem(item: MarketItem) {
         viewModelScope.launch { repository.sellItem(item) }
     }
@@ -259,17 +300,6 @@ class MarketViewModel(
 
     fun calculateRepairCost(item: MarketItem): Double {
         return repository.calculateRepairCost(item)
-    }
-
-    // Ch6: Tamir için maliyet-kazanç analizi
-    fun isRepairWorthIt(item: MarketItem): Boolean {
-        val cost = calculateRepairCost(item)
-        val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
-        val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
-        val baseVal = if (currentMultiplier > 0) currentVal / currentMultiplier else currentVal
-        val gain = baseVal - currentVal
-        // Kazanç en az maliyetin 1.5 katı olmalı ki "değer" olsun
-        return gain > cost * 1.5
     }
 
     fun repairItem(item: MarketItem) {
@@ -425,7 +455,14 @@ class MarketViewModel(
             }
         }
 
-        if (ratio >= modifiedAcceptRatio) {
+        // Eğer oyuncu, satıcının son teklifini birebir kabul ediyorsa (Kabul Et butonu)
+        if (state.lastSellerOffer != null && kotlin.math.abs(state.lastSellerOffer - offerAmount) < 1.0) {
+            sellerResponseText = personality.dialogs.getBuyAccept()
+            isDealClosed = true
+            agreedPrice = offerAmount
+            newPatience += BargainConstants.PATIENCE_REWARD
+        }
+        else if (ratio >= modifiedAcceptRatio) {
             sellerResponseText = personality.dialogs.getBuyAccept()
             isDealClosed = true
             agreedPrice = offerAmount
@@ -642,7 +679,14 @@ class MarketViewModel(
             }
         }
 
-        if (ratio <= modifiedAcceptRatio) {
+        // Eğer oyuncu, alıcının son teklifini birebir kabul ediyorsa (Kabul Et butonu)
+        if (state.lastBuyerOffer != null && kotlin.math.abs(state.lastBuyerOffer - offerAmount) < 1.0) {
+            buyerResponseText = personality.dialogs.getSellAccept()
+            isDealClosed = true
+            agreedPrice = offerAmount
+            newPatience += BargainConstants.PATIENCE_REWARD
+        }
+        else if (ratio <= modifiedAcceptRatio) {
             buyerResponseText = personality.dialogs.getSellAccept()
             isDealClosed = true
             agreedPrice = offerAmount

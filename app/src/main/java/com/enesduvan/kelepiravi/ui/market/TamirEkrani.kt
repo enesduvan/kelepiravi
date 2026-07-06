@@ -230,19 +230,12 @@ fun RepairItemCard(item: MarketItem, viewModel: MarketViewModel, currentBalance:
     val expectedGain = cost / GameConstants.REPAIR_COST_GAIN_RATE
     val expectedVal = currentVal + expectedGain
 
-    // Ch6: Maliyet-kazanç analizi
-    val isWorthIt = viewModel.isRepairWorthIt(item)
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(Surface)
-            .border(
-                1.dp,
-                if (!isWorthIt) Color(0xFFFF6B6B).copy(0.4f) else SurfaceVariant,
-                RoundedCornerShape(12.dp)
-            )
+            .border(1.dp, SurfaceVariant, RoundedCornerShape(12.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -268,18 +261,13 @@ fun RepairItemCard(item: MarketItem, viewModel: MarketViewModel, currentBalance:
                 color = MoneyGreen,
                 fontSize = 12.sp
             )
-            // Ch6: Maliyet analizi uyarısı
-            if (!isWorthIt) {
-                Spacer(modifier = Modifier.height(2.dp))
-                Text("⚠️ Bu tamir kâra değmez!", color = Color(0xFFFF6B6B), fontSize = 11.sp, fontWeight = FontWeight.Bold)
-            }
         }
         
         Button(
             onClick = { viewModel.repairItem(item) },
             enabled = canRepair,
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (!isWorthIt) Color(0xFF5A3A0A) else PrimaryOrange,
+                containerColor = PrimaryOrange,
                 disabledContainerColor = SurfaceVariant
             ),
             shape = RoundedCornerShape(8.dp)

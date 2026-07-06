@@ -67,7 +67,17 @@ private val MIGRATION_6_7 = object : Migration(6, 7) {
     }
 }
 
-@Database(entities = [UserInventoryEntity::class], version = 7, exportSchema = false)
+/**
+ * Migration 7 → 8: shopLevel ve mechanicLevel eklendi. (Bölüm 10 Yükseltmeler)
+ */
+private val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN shopLevel INTEGER NOT NULL DEFAULT 1")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN mechanicLevel INTEGER NOT NULL DEFAULT 1")
+    }
+}
+
+@Database(entities = [UserInventoryEntity::class], version = 8, exportSchema = false)
 @TypeConverters(MarketItemConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun kelepiraviDao(): KelepiraviDao
@@ -91,7 +101,7 @@ object AppDatabaseProvider {
                 AppDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                 .addCallback(DatabaseBackupCallback(appContext))
                 .build()
                 .also { instance = it }

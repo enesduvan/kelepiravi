@@ -127,12 +127,18 @@ class KelepiraviRepository(
                 return@withTransaction RepairResult.LimitReached
             }
 
-            val cost = calculateRepairCost(item)
+            val costReduction = (player.mechanicLevel - 1) * 0.10 // Level başı %10 indirim (Level 1: %0, Level 5: %40)
+            val baseCost = calculateRepairCost(item)
+            val cost = baseCost * (1.0 - costReduction.coerceAtMost(0.50)) // Maksimum %50 indirim
+
             val currentBalance = player.balance.toDoubleOrNull().orZero()
             if (currentBalance < cost) return@withTransaction RepairResult.NotEnoughMoney
 
-            // %10 başarısızlık şansı
-            val isFailure = kotlin.random.Random.nextDouble() < GameConstants.REPAIR_FAILURE_CHANCE
+            // Temel başarısızlık riski %40
+            // Her usta seviyesi riski %10 (0.10) azaltır
+            val failureReduction = (player.mechanicLevel - 1) * 0.10
+            val currentFailureChance = (GameConstants.REPAIR_FAILURE_CHANCE - failureReduction).coerceAtLeast(0.0)
+            val isFailure = kotlin.random.Random.nextDouble() < currentFailureChance
 
             if (isFailure) {
                 // Başarısız: Kondisyon 1 seviye düşer, para gider, hak gider
@@ -215,6 +221,9 @@ class KelepiraviRepository(
     suspend fun purchaseItem(item: MarketItem): Boolean {
         return database.withTransaction {
             val player = getPlayerOrCreate()
+            val maxCapacity = 5 + (player.shopLevel * 5)
+            if (player.inventory.size >= maxCapacity) return@withTransaction false
+
             val currentBalance = player.balance.toDoubleOrNull().orZero()
             val itemPrice = item.salesValue.toDoubleOrNull().orZero()
             if (currentBalance < itemPrice) return@withTransaction false
@@ -257,6 +266,10 @@ class KelepiraviRepository(
             val player = getPlayerOrCreate()
             val currentBalance = player.balance.toDoubleOrNull().orZero()
             if (currentBalance < type.price) return@withTransaction null
+
+            val maxCapacity = 5 + (player.shopLevel * 5)
+            // Kutu içinden ortalama 2-3 eşya çıkar, o yüzden +3 kontrol edelim
+            if (player.inventory.size + 3 > maxCapacity) return@withTransaction null
 
             val generatedItems = LootBoxGenerator.openBox(type)
             val newBalance = currentBalance - type.price
@@ -361,6 +374,41 @@ class KelepiraviRepository(
         )
         dao.insertInventory(created)
         return created
+    }
+
+    // Ch10: Yükseltmeler
+    suspend fun upgradeShop(cost: Double): Boolean {
+        return database.withTransaction {
+            val player = getPlayerOrCreate()
+            val currentBalance = player.balance.toDoubleOrNull().orZero()
+            if (currentBalance < cost) return@withTransaction false
+            if (player.shopLevel >= 5) return@withTransaction false // Maksimum seviye
+
+            dao.updateInventory(
+                player.copy(
+                    shopLevel = player.shopLevel + 1,
+                    balance = (currentBalance - cost).toString()
+                )
+            )
+            true
+        }
+    }
+
+    suspend fun upgradeMechanic(cost: Double): Boolean {
+        return database.withTransaction {
+            val player = getPlayerOrCreate()
+            val currentBalance = player.balance.toDoubleOrNull().orZero()
+            if (currentBalance < cost) return@withTransaction false
+            if (player.mechanicLevel >= 5) return@withTransaction false // Maksimum seviye
+
+            dao.updateInventory(
+                player.copy(
+                    mechanicLevel = player.mechanicLevel + 1,
+                    balance = (currentBalance - cost).toString()
+                )
+            )
+            true
+        }
     }
 
     private fun MarketItem.isSameInventoryItem(other: MarketItem): Boolean {

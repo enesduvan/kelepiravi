@@ -140,14 +140,17 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        SellQuickOfferButton("₺${formatBalance((currentBase).toString())}") {
+                        SellQuickOfferButton("₺${formatBalance((currentBase).toString())}", modifier = Modifier.weight(1f)) {
                             viewModel.sendSellOffer(currentBase)
                         }
-                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.05).toString())}") {
+                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.05).toString())}", modifier = Modifier.weight(1f)) {
                             viewModel.sendSellOffer(currentBase * 1.05)
                         }
-                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.15).toString())}") {
+                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.15).toString())}", modifier = Modifier.weight(1f)) {
                             viewModel.sendSellOffer(currentBase * 1.15)
+                        }
+                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.30).toString())}", modifier = Modifier.weight(1f)) {
+                            viewModel.sendSellOffer(currentBase * 1.30)
                         }
                     }
 
@@ -286,9 +289,9 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
 }
 
 @Composable
-fun SellQuickOfferButton(text: String, onClick: () -> Unit) {
+fun SellQuickOfferButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(SurfaceVariant)
             .clickable(onClick = onClick)

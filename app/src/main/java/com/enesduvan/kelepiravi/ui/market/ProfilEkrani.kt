@@ -124,6 +124,36 @@ fun ProfilEkrani(viewModel: MarketViewModel) {
             }
             
             Spacer(modifier = Modifier.height(24.dp))
+            Text("Geliştirmeler", color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Dükkan Geliştirmesi
+            val shopCost = viewModel.getShopUpgradeCost(playerState.shopLevel)
+            val maxShopCapacity = 5 + (playerState.shopLevel * 5)
+            UpgradeCard(
+                title = "Dükkan Kapasitesi (Lv ${playerState.shopLevel})",
+                description = "Envanterine daha fazla eşya sığdır. Şu an: $maxShopCapacity",
+                cost = shopCost,
+                isMaxed = playerState.shopLevel >= 5,
+                onUpgrade = { viewModel.upgradeShop() },
+                playerBalance = playerState.balance.toDoubleOrNull() ?: 0.0
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Usta Geliştirmesi
+            val mechanicCost = viewModel.getMechanicUpgradeCost(playerState.mechanicLevel)
+            val mechanicFailure = ((0.40 - ((playerState.mechanicLevel - 1) * 0.10)).coerceAtLeast(0.0) * 100).toInt()
+            UpgradeCard(
+                title = "Usta Becerisi (Lv ${playerState.mechanicLevel})",
+                description = "Tamir başarısızlık riskini azaltır. Şu anki risk: %$mechanicFailure",
+                cost = mechanicCost,
+                isMaxed = playerState.mechanicLevel >= 5,
+                onUpgrade = { viewModel.upgradeMechanic() },
+                playerBalance = playerState.balance.toDoubleOrNull() ?: 0.0
+            )
+            
+            Spacer(modifier = Modifier.height(24.dp))
             Text("Başarımlar", color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -198,9 +228,51 @@ fun StatCard(modifier: Modifier = Modifier, title: String, value: String, color:
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(title, color = TextSecondary, fontSize = 14.sp)
+            Text(title, color = color, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(value, color = color, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(value, color = color, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
+        }
+    }
+}
+
+@Composable
+fun UpgradeCard(
+    title: String,
+    description: String,
+    cost: Double,
+    isMaxed: Boolean,
+    onUpgrade: () -> Unit,
+    playerBalance: Double
+) {
+    val canAfford = playerBalance >= cost
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Surface),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(description, color = TextSecondary, fontSize = 12.sp)
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(
+                onClick = onUpgrade,
+                enabled = !isMaxed && canAfford,
+                colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                if (isMaxed) {
+                    Text("MAX", color = Color.White, fontWeight = FontWeight.Bold)
+                } else {
+                    Text("₺${formatBalance(cost.toString())}", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
         }
     }
 }

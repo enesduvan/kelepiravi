@@ -75,6 +75,8 @@ import com.enesduvan.kelepiravi.ui.theme.TipBorder
 fun MarketBottomSheetContent(
     item: MarketItem,
     playerBalance: String,
+    inventorySize: Int,
+    shopLevel: Int,
     onClose: () -> Unit,
     onPurchase: () -> Unit
 ) {
@@ -225,17 +227,35 @@ fun MarketBottomSheetContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         // ── 4. Aksiyon Butonları ──────────────────────────────────────────────
+        val maxCapacity = 5 + (shopLevel * 5)
+        val isFull = inventorySize >= maxCapacity
+
+        if (isFull) {
+            Text(
+                text = "Dükkan kapasiten dolu! ($inventorySize/$maxCapacity)",
+                color = Color(0xFFFF6B6B),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+        }
+
         Button(
             onClick = onPurchase,
+            enabled = !isFull,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(54.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = BuyButton),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isFull) Color(0xFF4A4A4A) else BuyButton,
+                disabledContainerColor = Color(0xFF4A4A4A)
+            ),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Icon(painter = painterResource(id = R.drawable.ic_cart), contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+            Icon(painter = painterResource(id = R.drawable.ic_cart), contentDescription = null, tint = if (isFull) Color(0xFFAAAAAA) else Color.White, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Satın Al", color = BuyButtonText, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Satın Al", color = if (isFull) Color(0xFFAAAAAA) else BuyButtonText, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
