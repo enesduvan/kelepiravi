@@ -82,7 +82,7 @@ val BalanceGreen = Color(0xFF54D548)
 
 // CONDITION (Kırık / Hasarlı Durumu)
 val ConditionBrokenBg = Color(0xFFA56B00)
-val ConditionBrokenText = Color(0xFFFF0C5)
+val ConditionBrokenText = Color(0xFFFF8C00)
 
 // DEAL BOX (Ucuzluk/Fırsat Kutusu)
 val DealBoxBg = Color(0xFF121B18)

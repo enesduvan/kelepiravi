@@ -1,48 +1,19 @@
 package com.enesduvan.kelepiravi.ui.market
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,29 +22,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
-import com.enesduvan.kelepiravi.ui.theme.Background
-import com.enesduvan.kelepiravi.ui.theme.CardSecondary
-import com.enesduvan.kelepiravi.ui.theme.ConditionBrokenBg
-import com.enesduvan.kelepiravi.ui.theme.ConditionBrokenText
-import com.enesduvan.kelepiravi.ui.theme.ConditionPerfect
-import com.enesduvan.kelepiravi.ui.theme.ConditionPerfectBg
-import com.enesduvan.kelepiravi.ui.theme.ConditionRepair
-import com.enesduvan.kelepiravi.ui.theme.ConditionRepairBg
-import com.enesduvan.kelepiravi.ui.theme.ConditionScratch
-import com.enesduvan.kelepiravi.ui.theme.ConditionScratchBg
-import com.enesduvan.kelepiravi.ui.theme.MoneyGreen
-import com.enesduvan.kelepiravi.ui.theme.PrimaryOrange
-import com.enesduvan.kelepiravi.ui.theme.Surface
-import com.enesduvan.kelepiravi.ui.theme.SurfaceVariant
-import com.enesduvan.kelepiravi.ui.theme.TextMuted
-import com.enesduvan.kelepiravi.ui.theme.TextPrimary
-import com.enesduvan.kelepiravi.ui.theme.TextSecondary
+import com.enesduvan.kelepiravi.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,14 +37,21 @@ fun MarketScreen(viewModel: MarketViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val playerState by viewModel.playerState.collectAsState()
     val dailySummary by viewModel.dailySummary.collectAsState()
+    val scamReveal by viewModel.scamReveal.collectAsState()
+
     val balanceText = remember(playerState.balance) { formatBalance(playerState.balance) }
     val visibleItems by remember(uiState.marketItems, uiState.selectedCategory) {
         derivedStateOf { viewModel.filteredMarketItems(uiState) }
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    // Ch6: Bakiye değişince animasyonlu renk yanıp sönmesi
+    val balanceColor by animateColorAsState(
+        targetValue = Color.White,
+        animationSpec = tween(300),
+        label = "balance"
+    )
+
+    Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             containerColor = Background,
@@ -100,7 +63,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("₺$balanceText", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+                            Text("₺$balanceText", color = balanceColor, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
                             if (playerState.inventory.isNotEmpty()) {
                                 val roi = playerState.portfolioROI
                                 val roiColor = if (roi >= 0) MoneyGreen else Color(0xFFFF6B6B)
@@ -115,10 +78,15 @@ fun MarketScreen(viewModel: MarketViewModel) {
                         }
                         Button(
                             onClick = { viewModel.advanceDay() },
+                            enabled = !uiState.isDayAdvancing,
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Yeni Gün (${playerState.currentDay})", color = Color.Black, fontWeight = FontWeight.Bold)
+                            if (uiState.isDayAdvancing) {
+                                CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.Black, strokeWidth = 2.dp)
+                            } else {
+                                Text("Yeni Gün (${playerState.currentDay})", color = Color.Black, fontWeight = FontWeight.Bold)
+                            }
                         }
                     }
 
@@ -166,6 +134,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
+                // Ch6: animateItemPlacement ile liste animasyonu
                 items(items = visibleItems, key = { marketItemKey(it) }) { item ->
                     ItemCard(
                         item = item,
@@ -175,6 +144,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
             }
         }
 
+        // Günlük özet dialog
         AnimatedVisibility(
             visible = dailySummary != null,
             enter = fadeIn(tween(300)) + scaleIn(tween(300), initialScale = 0.85f),
@@ -184,11 +154,95 @@ fun MarketScreen(viewModel: MarketViewModel) {
                 DailySummaryDialog(summary = summary, onDismiss = { viewModel.dismissDailySummary() })
             }
         }
+
+        // Ch6: Dolandırıcı reveal dialog
+        AnimatedVisibility(
+            visible = scamReveal != null,
+            enter = fadeIn(tween(250)) + scaleIn(tween(350), initialScale = 0.8f),
+            exit = fadeOut(tween(200)) + scaleOut(tween(200))
+        ) {
+            scamReveal?.let { item ->
+                ScamRevealDialog(item = item, onDismiss = { viewModel.dismissScamReveal() })
+            }
+        }
+    }
+}
+
+// Ch6: Dolandırıcı Reveal Dialogu
+@Composable
+fun ScamRevealDialog(item: MarketItem, onDismiss: () -> Unit) {
+    val scamType = try {
+        com.enesduvan.kelepiravi.data.market.ScamType.valueOf(item.scamType)
+    } catch (e: Exception) { null }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xCC000000))
+            .clickable { onDismiss() },
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(0.88f).padding(16.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF1A0A0A))
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("💀", fontSize = 48.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("KAZIKLANDIN!", color = Color(0xFFFF4444), fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFF2A0A0A))
+                        .border(1.dp, Color(0xFFFF4444).copy(0.4f), RoundedCornerShape(12.dp))
+                        .padding(16.dp)
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (scamType != null) {
+                            Text(scamType.warningText, color = Color(0xFFFFB74D), fontSize = 13.sp, textAlign = TextAlign.Center)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(scamType.revealText, color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Medium)
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Gerçek Durum: ${item.hiddenCondition}",
+                            color = Color(0xFFFF6B6B),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "Zamanla bu satıcıları tanımayı öğreneceksin. Her kazıklanma bir deneyimdir! 💪",
+                    color = TextSecondary,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF4444)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Anladım 😤", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun DailySummaryDialog(summary: com.enesduvan.kelepiravi.ui.market.DailySummaryState, onDismiss: () -> Unit) {
+fun DailySummaryDialog(summary: DailySummaryState, onDismiss: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -210,7 +264,7 @@ fun DailySummaryDialog(summary: com.enesduvan.kelepiravi.ui.market.DailySummaryS
                 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Giriş Bonusu:", color = TextSecondary, fontSize = 14.sp)
-                    Text("+₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(summary.bonusMoney.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
+                    Text("+₺${formatBalance(summary.bonusMoney.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -225,7 +279,7 @@ fun DailySummaryDialog(summary: com.enesduvan.kelepiravi.ui.market.DailySummaryS
                     Text("📰 Günün Haberi", color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(summary.event.title, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Text(summary.event.description, color = TextSecondary, fontSize = 13.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    Text(summary.event.description, color = TextSecondary, fontSize = 13.sp, textAlign = TextAlign.Center)
                 }
                 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -244,70 +298,89 @@ fun DailySummaryDialog(summary: com.enesduvan.kelepiravi.ui.market.DailySummaryS
 
 @Composable
 fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onClick(item) },
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    // Ch6: Kart girişinde scale animasyonu
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
+
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(tween(300)) + slideInVertically(
+            animationSpec = tween(350, easing = EaseOutCubic),
+            initialOffsetY = { it / 3 }
+        )
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp)
+                .clickable { onClick(item) },
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (item.isScammer) Color(0xFF1C1008) else Surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(CardSecondary)
+            // Ch6: Dolandırıcı ürünlerde ince turuncu şerit üstte
+            if (item.isScammer) {
+                Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(0xFFFFB74D)))
+            }
+
+            Row(
+                modifier = Modifier.padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                val context = androidx.compose.ui.platform.LocalContext.current
-                val resId = remember(item.imageName) {
-                    context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
-                }
-                if (resId != 0) {
-                    Image(
-                        painter = painterResource(id = resId),
-                        contentDescription = item.itemName,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(CardSecondary)
+                ) {
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    val resId = remember(item.imageName) {
+                        context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
+                    }
+                    if (resId != 0) {
+                        Image(
+                            painter = painterResource(id = resId),
+                            contentDescription = item.itemName,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xAA000000))))
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xAA000000))))
-                )
-            }
 
-            Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(4.dp))
-                val (bgColor, textColor) = when {
-                    item.condition.contains("Kusursuz") -> ConditionPerfectBg to ConditionPerfect
-                    item.condition.contains("Çizik") -> ConditionScratchBg to ConditionScratch
-                    item.condition.contains("Hasar") -> ConditionRepairBg to ConditionRepair
-                    else -> ConditionBrokenBg to ConditionBrokenText
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    val (bgColor, textColor) = when {
+                        item.condition.contains("Kusursuz") -> ConditionPerfectBg to ConditionPerfect
+                        item.condition.contains("Çizik") -> ConditionScratchBg to ConditionScratch
+                        item.condition.contains("Hasar") -> ConditionRepairBg to ConditionRepair
+                        else -> ConditionBrokenBg to ConditionBrokenText
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(bgColor)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(item.condition, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text("Satıcı: ${item.sellerName}", color = TextMuted, fontSize = 12.sp)
                 }
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(bgColor)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(item.condition, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text("Satıcı: ${item.sellerName}", color = TextMuted, fontSize = 12.sp)
-            }
 
-            Column(horizontalAlignment = Alignment.End) {
-                Text("İstenen", color = TextSecondary, fontSize = 10.sp)
-                Text("₺${item.salesValue}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("İstenen", color = TextSecondary, fontSize = 10.sp)
+                    Text("₺${item.salesValue}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                }
             }
         }
     }

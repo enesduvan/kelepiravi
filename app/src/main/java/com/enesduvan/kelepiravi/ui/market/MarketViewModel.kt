@@ -11,6 +11,7 @@ import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.market.SellerPersonality
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.data.repository.RepairResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +33,9 @@ data class PlayerState(
     val itemsSold: Int = 0,
     val unlockedAchievements: String = "",
     val marketTrends: Map<String, Double> = emptyMap(),
-    // Türetilmiş ekonomi değerleri — her güncelleme hesaplanır
+    val dailyRepairsUsed: Int = 0,   // Ch6
+    val lastRepairDay: Int = 0,      // Ch6
+    // Türetilmiş ekonomi değerleri
     val portfolioValue: Double = 0.0,
     val totalInvestment: Double = 0.0,
     val portfolioROI: Double = 0.0
@@ -56,13 +59,14 @@ data class BargainMessage(
 data class BargainState(
     val item: MarketItem,
     val messages: List<BargainMessage> = emptyList(),
-    val sellerPatience: Int = BargainConstants.STARTING_PATIENCE, // 0 - 100
-    val sellerMood: String = "Kararsız", // Mutlu, Kararsız, Gergin, Sinirli
+    val sellerPatience: Int = BargainConstants.STARTING_PATIENCE,
+    val sellerMood: String = "Kararsız",
     val isDealClosed: Boolean = false,
     val isFailed: Boolean = false,
     val agreedPrice: Double = 0.0,
     val suggestedPrice: Double = 0.0,
-    val lastSellerOffer: Double? = null
+    val lastSellerOffer: Double? = null,
+    val lastPlayerOfferAmount: Double? = null  // Ch6: Tekrar teklif tespiti için
 )
 
 data class DailySummaryState(
@@ -76,13 +80,21 @@ data class SellBargainState(
     val item: MarketItem,
     val buyerName: String,
     val messages: List<BargainMessage> = emptyList(),
-    val buyerPatience: Int = BargainConstants.STARTING_PATIENCE, // 0 - 100
-    val buyerMood: String = "Kararsız", // Mutlu, Kararsız, Gergin, Sinirli
+    val buyerPatience: Int = BargainConstants.STARTING_PATIENCE,
+    val buyerMood: String = "Kararsız",
     val isDealClosed: Boolean = false,
     val isFailed: Boolean = false,
     val agreedPrice: Double = 0.0,
     val baseSellPrice: Double = 0.0,
-    val lastBuyerOffer: Double? = null
+    val lastBuyerOffer: Double? = null,
+    val lastPlayerOfferAmount: Double? = null  // Ch6: Tekrar teklif tespiti için
+)
+
+// Ch6: Tamir sonuç gösterimi
+data class RepairResultState(
+    val isSuccess: Boolean,
+    val newCondition: String = "",
+    val itemName: String = ""
 )
 
 // ─── ViewModel ───────────────────────────────────────────────────────────────
@@ -110,6 +122,8 @@ class MarketViewModel(
                     if (entity?.marketTrends.isNullOrBlank()) emptyMap()
                     else kotlinx.serialization.json.Json.decodeFromString<Map<String, Double>>(entity!!.marketTrends)
                 }.getOrDefault(emptyMap()),
+                dailyRepairsUsed = entity?.dailyRepairsUsed ?: 0,
+                lastRepairDay = entity?.lastRepairDay ?: 0,
                 portfolioValue = EconomyEngine.calculatePortfolioValue(inventory),
                 totalInvestment = EconomyEngine.calculateTotalInvestment(inventory),
                 portfolioROI = EconomyEngine.calculatePortfolioROI(inventory)
@@ -124,7 +138,7 @@ class MarketViewModel(
     private val _uiState = MutableStateFlow(MarketUiState())
     val uiState: StateFlow<MarketUiState> = _uiState.asStateFlow()
 
-    /** Aktif günlük olay — dialog olarak gösterilir */
+    /** Aktif günlük olay */
     private val _dayEvent = MutableStateFlow<DailyEvent?>(null)
     val dayEvent: StateFlow<DailyEvent?> = _dayEvent.asStateFlow()
 
@@ -138,6 +152,14 @@ class MarketViewModel(
 
     private val _dailySummary = MutableStateFlow<DailySummaryState?>(null)
     val dailySummary: StateFlow<DailySummaryState?> = _dailySummary.asStateFlow()
+
+    /** Ch6: Dolandırıcıdan alındıktan sonra reveal dialogu */
+    private val _scamReveal = MutableStateFlow<MarketItem?>(null)
+    val scamReveal: StateFlow<MarketItem?> = _scamReveal.asStateFlow()
+
+    /** Ch6: Tamir sonuç dialogu */
+    private val _repairResult = MutableStateFlow<RepairResultState?>(null)
+    val repairResult: StateFlow<RepairResultState?> = _repairResult.asStateFlow()
 
     init {
         viewModelScope.launch { repository.initializePlayerIfNeeded() }
@@ -162,9 +184,7 @@ class MarketViewModel(
         )
     }
 
-    private fun _playerStateForGenerator(): PlayerState? {
-        return playerState.value
-    }
+    private fun _playerStateForGenerator(): PlayerState? = playerState.value
 
     fun selectCategory(category: String) {
         _uiState.value = _uiState.value.copy(selectedCategory = category)
@@ -186,43 +206,76 @@ class MarketViewModel(
                     marketItems = _uiState.value.marketItems.filterNot { it == item },
                     selectedItem = null
                 )
+                // Ch6: Dolandırıcıdan alındıysa reveal göster
+                if (item.isScammer && item.hiddenCondition.isNotEmpty()) {
+                    _scamReveal.value = item
+                }
             }
         }
+    }
+
+    fun dismissScamReveal() {
+        _scamReveal.value = null
     }
 
     fun sellItem(item: MarketItem) {
         viewModelScope.launch { repository.sellItem(item) }
     }
 
+    // Ch6: Günlük kalan tamir hakkı
+    fun getRemainingRepairs(): Int {
+        val state = playerState.value
+        return if (state.lastRepairDay != state.currentDay) GameConstants.DAILY_REPAIR_LIMIT
+        else (GameConstants.DAILY_REPAIR_LIMIT - state.dailyRepairsUsed).coerceAtLeast(0)
+    }
+
     fun calculateRepairCost(item: MarketItem): Double {
-        val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
-        if (currentMultiplier >= GameConstants.PERFECT_CONDITION_MULTIPLIER) return 0.0
+        return repository.calculateRepairCost(item)
+    }
+
+    // Ch6: Tamir için maliyet-kazanç analizi
+    fun isRepairWorthIt(item: MarketItem): Boolean {
+        val cost = calculateRepairCost(item)
         val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
-        val baseVal = currentVal / currentMultiplier
+        val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
+        val baseVal = if (currentMultiplier > 0) currentVal / currentMultiplier else currentVal
         val gain = baseVal - currentVal
-        return gain * GameConstants.REPAIR_COST_GAIN_RATE
+        // Kazanç en az maliyetin 1.5 katı olmalı ki "değer" olsun
+        return gain > cost * 1.5
     }
 
     fun repairItem(item: MarketItem) {
         viewModelScope.launch {
-            val cost = calculateRepairCost(item)
-            val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
-            val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
-            val baseVal = currentVal / currentMultiplier
-            
-            val newItem = item.copy(
-                condition = "Kusursuz Temiz",
-                estimatedValue = baseVal.toString()
-            )
-            repository.updateInventoryItem(item, newItem, cost)
+            when (val result = repository.repairItem(item)) {
+                is RepairResult.Success -> {
+                    _repairResult.value = RepairResultState(
+                        isSuccess = true,
+                        itemName = item.itemName
+                    )
+                }
+                is RepairResult.Failure -> {
+                    _repairResult.value = RepairResultState(
+                        isSuccess = false,
+                        newCondition = result.newCondition,
+                        itemName = item.itemName
+                    )
+                }
+                is RepairResult.LimitReached -> {
+                    // UI'da gösterilir (kalan hak = 0)
+                }
+                is RepairResult.NotEnoughMoney -> {
+                    // UI'da gösterilir (buton disabled)
+                }
+            }
         }
+    }
+
+    fun dismissRepairResult() {
+        _repairResult.value = null
     }
 
     fun getSellPrice(item: MarketItem): Double = repository.calculateSellPrice(item)
 
-    /**
-     * Yeni gün: ekonomi motoru çalışır, fiyatlar güncellenir, pazar yenilenir.
-     */
     fun advanceDay() {
         if (_uiState.value.isDayAdvancing) return
         _uiState.value = _uiState.value.copy(isDayAdvancing = true)
@@ -257,8 +310,27 @@ class MarketViewModel(
 
     fun startBargain(item: MarketItem) {
         val initialPrice = item.salesValue.toDoubleOrNull() ?: 0.0
+        val personality = SellerPersonality.fromName(item.sellerName)
+
+        // Ch6: Dolandırıcı ise profesyonel pazarlıkçı kişiliğini kullan
+        val effectivePersonality = if (item.isScammer && item.scamType.isNotEmpty()) {
+            try {
+                val scamType = com.enesduvan.kelepiravi.data.market.ScamType.valueOf(item.scamType)
+                SellerPersonality.getScammerForType(scamType)
+            } catch (e: Exception) { personality }
+        } else personality
+
+        // Ch6: Dolandırıcı acele ettirme cümlesi ekle
+        val openingLine = if (item.isScammer) {
+            effectivePersonality.dialogs.getRushPhrase()
+                ?.let { "Merhaba, ${item.itemName} için fiyatım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialPrice.toString())}. $it" }
+                ?: "Merhaba, ${item.itemName} için fiyatım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialPrice.toString())}."
+        } else {
+            "Merhaba, ${item.itemName} için fiyatım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialPrice.toString())}."
+        }
+
         val initialMsg = BargainMessage(
-            text = "Merhaba, ${item.itemName} için fiyatım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialPrice.toString())}.",
+            text = openingLine,
             isFromPlayer = false,
             timestamp = getCurrentTime()
         )
@@ -288,7 +360,12 @@ class MarketViewModel(
 
         val originalPrice = state.item.salesValue.toDoubleOrNull() ?: 0.0
         val ratio = offerAmount / originalPrice
-        val personality = SellerPersonality.fromName(state.item.sellerName)
+        val personality = if (state.item.isScammer && state.item.scamType.isNotEmpty()) {
+            try {
+                val scamType = com.enesduvan.kelepiravi.data.market.ScamType.valueOf(state.item.scamType)
+                SellerPersonality.getScammerForType(scamType)
+            } catch (e: Exception) { SellerPersonality.fromName(state.item.sellerName) }
+        } else SellerPersonality.fromName(state.item.sellerName)
         val modifiedAcceptRatio = BargainConstants.BUY_ACCEPT_RATIO + personality.buyAcceptRatioModifier
 
         var newPatience = state.sellerPatience
@@ -298,14 +375,32 @@ class MarketViewModel(
         var agreedPrice = 0.0
         var lastSellerOffer: Double? = null
 
+        // Ch6: Tekrar teklif tespiti
+        val isRepeatOffer = state.lastPlayerOfferAmount != null &&
+            kotlin.math.abs((state.lastPlayerOfferAmount) - offerAmount) < 1.0
+        if (isRepeatOffer) {
+            val annoyedMsg = personality.dialogs.getRepeatOfferAnnoyed()
+            if (annoyedMsg != null) {
+                updatedMessages.add(
+                    BargainMessage(text = annoyedMsg, isFromPlayer = false, timestamp = getCurrentTime())
+                )
+                newPatience -= BargainConstants.PATIENCE_REPEAT_OFFER_PENALTY
+                _bargainState.value = state.copy(
+                    messages = updatedMessages,
+                    sellerPatience = newPatience.coerceAtLeast(0),
+                    isFailed = newPatience <= 0,
+                    lastPlayerOfferAmount = offerAmount
+                )
+                return
+            }
+        }
+
         if (ratio >= modifiedAcceptRatio) {
-            // Çok iyi teklif, hemen kabul et
             sellerResponseText = personality.dialogs.getBuyAccept()
             isDealClosed = true
             agreedPrice = offerAmount
             newPatience += BargainConstants.PATIENCE_REWARD
         } else if (ratio >= BargainConstants.BUY_MAYBE_RATIO + personality.buyAcceptRatioModifier) {
-            // Fena değil, biraz pazarlık
             val chance = kotlin.random.Random.nextDouble()
             if (chance > BargainConstants.BUY_COUNTER_ACCEPT_CHANCE) {
                 sellerResponseText = "Tamam abi, anlaşalım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(offerAmount.toString())} olsun."
@@ -323,6 +418,18 @@ class MarketViewModel(
         } else {
             sellerResponseText = personality.dialogs.getBuyReject()
             newPatience -= (BargainConstants.PATIENCE_LARGE_PENALTY * personality.patiencePenaltyMultiplier).toInt()
+        }
+
+        // Ch6: Satıcı acele ettiriyor mu? (Aceleci & Dolandırıcı kişilikleri)
+        val shouldRush = (personality == SellerPersonality.ACELECI || state.item.isScammer) &&
+            !isDealClosed && !isFailed &&
+            kotlin.random.Random.nextDouble() < 0.35
+        if (shouldRush) {
+            personality.dialogs.getRushPhrase()?.let { rush ->
+                updatedMessages.add(
+                    BargainMessage(text = rush, isFromPlayer = false, timestamp = getCurrentTime())
+                )
+            }
         }
 
         if (newPatience <= 0) {
@@ -354,7 +461,8 @@ class MarketViewModel(
             isDealClosed = isDealClosed,
             isFailed = isFailed,
             agreedPrice = agreedPrice,
-            lastSellerOffer = lastSellerOffer
+            lastSellerOffer = lastSellerOffer,
+            lastPlayerOfferAmount = offerAmount
         )
     }
 
@@ -368,8 +476,14 @@ class MarketViewModel(
             val success = repository.purchaseItem(itemToBuy)
             if (success) {
                 _uiState.value = _uiState.value.copy(
-                    marketItems = _uiState.value.marketItems.filterNot { it.itemName == itemToBuy.itemName && it.sellerName == itemToBuy.sellerName }
+                    marketItems = _uiState.value.marketItems.filterNot {
+                        it.itemName == itemToBuy.itemName && it.sellerName == itemToBuy.sellerName
+                    }
                 )
+                // Ch6: Dolandırıcıdan alındıysa reveal
+                if (state.item.isScammer && state.item.hiddenCondition.isNotEmpty()) {
+                    _scamReveal.value = state.item
+                }
                 closeBargain()
             }
         }
@@ -379,7 +493,6 @@ class MarketViewModel(
 
     fun startSellBargain(item: MarketItem) {
         val baseSellPrice = repository.calculateSellPrice(item)
-        // Alıcı %10-%20 daha düşük bir fiyattan kapıyı açar
         val initialOffer = baseSellPrice * (
             BargainConstants.SELL_INITIAL_MIN_RATIO +
                 kotlin.random.Random.nextDouble() * BargainConstants.SELL_INITIAL_RANGE
@@ -426,6 +539,26 @@ class MarketViewModel(
         var isFailed = false
         var agreedPrice = 0.0
         var lastBuyerOffer: Double? = null
+
+        // Ch6: Tekrar teklif tespiti
+        val isRepeatOffer = state.lastPlayerOfferAmount != null &&
+            kotlin.math.abs(state.lastPlayerOfferAmount - offerAmount) < 1.0
+        if (isRepeatOffer) {
+            val annoyedMsg = personality.dialogs.getRepeatOfferAnnoyed()
+            if (annoyedMsg != null) {
+                updatedMessages.add(
+                    BargainMessage(text = annoyedMsg, isFromPlayer = false, timestamp = getCurrentTime())
+                )
+                newPatience -= BargainConstants.PATIENCE_REPEAT_OFFER_PENALTY
+                _sellBargainState.value = state.copy(
+                    messages = updatedMessages,
+                    buyerPatience = newPatience.coerceAtLeast(0),
+                    isFailed = newPatience <= 0,
+                    lastPlayerOfferAmount = offerAmount
+                )
+                return
+            }
+        }
 
         if (ratio <= modifiedAcceptRatio) {
             buyerResponseText = personality.dialogs.getSellAccept()
@@ -476,7 +609,8 @@ class MarketViewModel(
             isDealClosed = isDealClosed,
             isFailed = isFailed,
             agreedPrice = agreedPrice,
-            lastBuyerOffer = lastBuyerOffer
+            lastBuyerOffer = lastBuyerOffer,
+            lastPlayerOfferAmount = offerAmount
         )
     }
 

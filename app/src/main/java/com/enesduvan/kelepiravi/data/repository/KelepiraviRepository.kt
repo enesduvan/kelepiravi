@@ -8,6 +8,7 @@ import com.enesduvan.kelepiravi.data.market.AchievementManager
 import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.market.EconomyEngine
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
+import com.enesduvan.kelepiravi.data.market.ScamType
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
@@ -73,6 +74,13 @@ class KelepiraviRepository(
         }
     }
 
+    // Ch6: Günlük tamir limiti kontrolü
+    fun getRemainingRepairs(player: UserInventoryEntity): Int {
+        val isNewDay = player.lastRepairDay != player.currentDay
+        return if (isNewDay) GameConstants.DAILY_REPAIR_LIMIT
+        else (GameConstants.DAILY_REPAIR_LIMIT - player.dailyRepairsUsed).coerceAtLeast(0)
+    }
+
     suspend fun updateInventoryItem(oldItem: MarketItem, newItem: MarketItem, cost: Double): Boolean {
         return database.withTransaction {
             val player = getPlayerOrCreate()
@@ -96,6 +104,98 @@ class KelepiraviRepository(
         }
     }
 
+    /**
+     * Ch6: Tamir işlemi — günlük limit kontrolü ve %10 başarısızlık riski.
+     * @return RepairResult — başarı/başarısızlık/limit durumu
+     */
+    suspend fun repairItem(item: MarketItem): RepairResult {
+        return database.withTransaction {
+            val player = getPlayerOrCreate()
+
+            // Günlük limit kontrolü
+            val isNewDay = player.lastRepairDay != player.currentDay
+            val repairsUsedToday = if (isNewDay) 0 else player.dailyRepairsUsed
+            if (repairsUsedToday >= GameConstants.DAILY_REPAIR_LIMIT) {
+                return@withTransaction RepairResult.LimitReached
+            }
+
+            val cost = calculateRepairCost(item)
+            val currentBalance = player.balance.toDoubleOrNull().orZero()
+            if (currentBalance < cost) return@withTransaction RepairResult.NotEnoughMoney
+
+            // %10 başarısızlık şansı
+            val isFailure = kotlin.random.Random.nextDouble() < GameConstants.REPAIR_FAILURE_CHANCE
+
+            if (isFailure) {
+                // Başarısız: Kondisyon 1 seviye düşer, para gider, hak gider
+                val degradedCondition = degradeCondition(item.condition)
+                val degradedItem = item.copy(condition = degradedCondition)
+
+                val newInventory = player.inventory.toMutableList()
+                val index = newInventory.indexOfFirst { it.isSameInventoryItem(item) }
+                if (index != -1) newInventory[index] = degradedItem
+
+                val failureCost = cost * 0.3 // Başarısız tamir maliyetinin %30'u gider
+                dao.updateInventory(
+                    player.copy(
+                        balance = (currentBalance - failureCost).toString(),
+                        inventory = newInventory,
+                        dailyRepairsUsed = repairsUsedToday + 1,
+                        lastRepairDay = player.currentDay
+                    )
+                )
+                return@withTransaction RepairResult.Failure(degradedCondition)
+            }
+
+            // Başarılı tamir
+            val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
+            val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+            val baseVal = if (currentMultiplier > 0) currentVal / currentMultiplier else currentVal
+
+            val repairedItem = item.copy(
+                condition = "Kusursuz Temiz",
+                estimatedValue = baseVal.toString()
+            )
+
+            val newInventory = player.inventory.toMutableList()
+            val index = newInventory.indexOfFirst { it.isSameInventoryItem(item) }
+            if (index == -1) return@withTransaction RepairResult.Failure(item.condition)
+            newInventory[index] = repairedItem
+
+            val basePlayer = processXpGain(player, GameConstants.REPAIR_XP)
+            dao.updateInventory(
+                processAchievements(
+                    basePlayer.copy(
+                        balance = (currentBalance - cost).toString(),
+                        inventory = newInventory,
+                        dailyRepairsUsed = repairsUsedToday + 1,
+                        lastRepairDay = player.currentDay
+                    )
+                )
+            )
+            RepairResult.Success
+        }
+    }
+
+    /** Kondisyon seviyesini bir basamak düşürür */
+    private fun degradeCondition(condition: String): String {
+        return when {
+            condition.contains("Kusursuz") -> "Hafif Çizik"
+            condition.contains("Hafif") -> "Orta Hasar"
+            condition.contains("Orta") -> "Kırık / Arızalı"
+            else -> "Bantlı / Tamir Gerekli"
+        }
+    }
+
+    fun calculateRepairCost(item: MarketItem): Double {
+        val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
+        if (currentMultiplier >= GameConstants.PERFECT_CONDITION_MULTIPLIER) return 0.0
+        val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+        val baseVal = if (currentMultiplier > 0) currentVal / currentMultiplier else currentVal
+        val gain = baseVal - currentVal
+        return gain * GameConstants.REPAIR_COST_GAIN_RATE
+    }
+
     suspend fun purchaseItem(item: MarketItem): Boolean {
         return database.withTransaction {
             val player = getPlayerOrCreate()
@@ -103,11 +203,26 @@ class KelepiraviRepository(
             val itemPrice = item.salesValue.toDoubleOrNull().orZero()
             if (currentBalance < itemPrice) return@withTransaction false
 
-            val enrichedItem = item.copy(
-                purchasePrice = item.salesValue,
-                purchaseDate = LocalDate.now().toString(),
-                dailyChangePercent = 0.0
-            )
+            // Ch6: Dolandırıcıdan alıyorsak gerçek kondisyonu ortaya çıkar
+            val enrichedItem = if (item.isScammer && item.hiddenCondition.isNotEmpty()) {
+                val hiddenMultiplier = MarketGenerator.getConditionMultiplier(item.hiddenCondition)
+                val fakeEstimated = item.estimatedValue.toDoubleOrNull() ?: 0.0
+                val trueEstimated = (fakeEstimated * hiddenMultiplier).toInt().toString()
+                item.copy(
+                    condition = item.hiddenCondition,   // Gerçek kondisyon açıklandı
+                    estimatedValue = trueEstimated,      // Gerçek değer
+                    purchasePrice = item.salesValue,
+                    purchaseDate = LocalDate.now().toString(),
+                    dailyChangePercent = 0.0
+                )
+            } else {
+                item.copy(
+                    purchasePrice = item.salesValue,
+                    purchaseDate = LocalDate.now().toString(),
+                    dailyChangePercent = 0.0
+                )
+            }
+
             val basePlayer = processXpGain(player, GameConstants.BUY_XP)
             val finalPlayer = processAchievements(
                 basePlayer.copy(
@@ -179,7 +294,10 @@ class KelepiraviRepository(
                     currentDay = player.currentDay + 1,
                     inventory = updatedInventory,
                     balance = (currentBalance + GameConstants.DAILY_LOGIN_BONUS).toString(),
-                    marketTrends = Json.encodeToString(newTrends)
+                    marketTrends = Json.encodeToString(newTrends),
+                    // Günlük tamir sayacı sıfırlanır (yeni gün = yeni hak)
+                    dailyRepairsUsed = 0,
+                    lastRepairDay = 0
                 )
             )
 
@@ -209,4 +327,12 @@ class KelepiraviRepository(
     }
 
     private fun Double?.orZero(): Double = this ?: 0.0
+}
+
+// Ch6: Tamir sonuç durumu
+sealed class RepairResult {
+    object Success : RepairResult()
+    data class Failure(val newCondition: String) : RepairResult()
+    object LimitReached : RepairResult()
+    object NotEnoughMoney : RepairResult()
 }

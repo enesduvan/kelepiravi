@@ -1,6 +1,8 @@
 package com.enesduvan.kelepiravi.ui.market
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +45,13 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
     var offerText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
+    // Ch6: Animasyonlu sabır barı
+    val animatedPatience by animateFloatAsState(
+        targetValue = sellBargainState.buyerPatience / 100f,
+        animationSpec = tween(500, easing = EaseOutCubic),
+        label = "patience"
+    )
+
     // Ekran açıldığında son mesaja scroll
     LaunchedEffect(sellBargainState.messages.size) {
         if (sellBargainState.messages.isNotEmpty()) {
@@ -50,9 +59,7 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
         }
     }
 
-    BackHandler {
-        viewModel.closeSellBargain()
-    }
+    BackHandler { viewModel.closeSellBargain() }
 
     Scaffold(
         topBar = {
@@ -115,7 +122,6 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                         }
                     }
                 } else {
-                    // Teklif Giriş Alanı
                     val currentBase = sellBargainState.baseSellPrice
                     val lastOffer = sellBargainState.lastBuyerOffer
 
@@ -185,13 +191,12 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
         }
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            // ─── Üst Kart: Ürün ve Alıcı Durumu ─────────────────────────────────────
+            // ── Üst Kart: Ürün ve Alıcı Durumu ──────────────────────
             Row(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Ürün Görseli
                 Box(
                     modifier = Modifier.size(80.dp).clip(RoundedCornerShape(12.dp)).background(Color.White),
                     contentAlignment = Alignment.Center
@@ -215,22 +220,27 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                     Text("Değeri", color = TextSecondary, fontSize = 11.sp)
                 }
 
-                // Alıcı Modu (Sabır / Patience)
+                // Ch6: Alıcı Modu — animasyonlu
                 val emoji = when (sellBargainState.buyerMood) {
                     "Mutlu" -> "😊"
                     "Kararsız" -> "🤔"
                     "Gergin" -> "😬"
                     else -> "😡"
                 }
-                val moodColor = when (sellBargainState.buyerMood) {
-                    "Mutlu" -> MoneyGreen
-                    "Kararsız" -> PrimaryOrange
-                    "Gergin" -> Color(0xFFFF6B6B)
-                    else -> Color(0xFFD32F2F)
-                }
+                val moodColor by animateColorAsState(
+                    targetValue = when (sellBargainState.buyerMood) {
+                        "Mutlu" -> MoneyGreen
+                        "Kararsız" -> PrimaryOrange
+                        "Gergin" -> Color(0xFFFF6B6B)
+                        else -> Color(0xFFD32F2F)
+                    },
+                    animationSpec = tween(400),
+                    label = "moodColor"
+                )
 
                 Column(
-                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(Surface).border(1.dp, SurfaceVariant, RoundedCornerShape(12.dp)).padding(12.dp),
+                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(Surface)
+                        .border(1.dp, SurfaceVariant, RoundedCornerShape(12.dp)).padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
@@ -239,21 +249,20 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                         Text(emoji, fontSize = 20.sp)
                         Text(sellBargainState.buyerMood, color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
-                    // Basit sabır barı
-                    Row(modifier = Modifier.width(60.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(SurfaceVariant)) {
-                        Box(modifier = Modifier.fillMaxWidth(sellBargainState.buyerPatience / 100f).fillMaxHeight().background(moodColor))
+                    // Animasyonlu sabır barı
+                    Box(modifier = Modifier.width(60.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(SurfaceVariant)) {
+                        Box(modifier = Modifier.fillMaxWidth(animatedPatience).fillMaxHeight().background(moodColor))
                     }
                 }
             }
 
-            // Güvenli Pazarlık Ayırıcı
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
                 Text("   Güvenli Satış Pazarlığı   ", color = TextSecondary, fontSize = 12.sp)
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
             }
 
-            // ─── Chat Alanı ──────────────────────────────────────────────────────────
+            // Ch6: Animasyonlu chat alanı
             LazyColumn(
                 state = listState,
                 modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -261,7 +270,15 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(items = sellBargainState.messages, key = { it.id }) { msg ->
-                    SellChatBubble(msg)
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn(tween(250)) + slideInVertically(
+                            animationSpec = tween(300, easing = EaseOutCubic),
+                            initialOffsetY = { it / 2 }
+                        )
+                    ) {
+                        SellChatBubble(msg)
+                    }
                 }
             }
         }

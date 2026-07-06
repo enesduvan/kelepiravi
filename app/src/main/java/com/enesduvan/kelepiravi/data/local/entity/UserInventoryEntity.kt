@@ -16,5 +16,7 @@ data class UserInventoryEntity(
     val itemsBought: Int = 0,         // v3
     val itemsSold: Int = 0,           // v3
     val unlockedAchievements: String = "", // v4, comma-separated IDs
-    val marketTrends: String = ""     // v5, JSON map of Category -> Multiplier
+    val marketTrends: String = "",    // v5, JSON map of Category -> Multiplier
+    val dailyRepairsUsed: Int = 0,    // v6 — Bugün kullanılan tamir sayısı
+    val lastRepairDay: Int = 0        // v6 — Son tamir günü (günlük sıfırlama için)
 )

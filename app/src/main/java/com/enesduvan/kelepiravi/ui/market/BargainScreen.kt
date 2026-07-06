@@ -1,6 +1,8 @@
 package com.enesduvan.kelepiravi.ui.market
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,17 +48,29 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
         }
     }
 
-    // Geri tuşuna basıldığında
-    BackHandler {
-        viewModel.closeBargain()
-    }
+    BackHandler { viewModel.closeBargain() }
+
+    // Ch6: Sabır barı animasyonu
+    val animatedPatience by animateFloatAsState(
+        targetValue = bargainState.sellerPatience / 100f,
+        animationSpec = tween(durationMillis = 500, easing = EaseOutCubic),
+        label = "patience"
+    )
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Background,
         topBar = {
             TopAppBar(
-                title = { Text("Pazarlık", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                title = {
+                    Column {
+                        Text("Pazarlık", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        // Ch6: Dolandırıcı uyarısı
+                        if (bargainState.item.isScammer) {
+                            Text("⚠️ Bu satıcı şüpheli görünüyor...", color = Color(0xFFFFB74D), fontSize = 11.sp)
+                        }
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = { viewModel.closeBargain() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
@@ -67,7 +81,6 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
         },
         bottomBar = {
             if (bargainState.isDealClosed) {
-                // Anlaşma sağlandı, Satın Al butonu
                 Column(
                     modifier = Modifier
                         .background(Surface)
@@ -81,10 +94,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            // Icon omitted, text only is fine
-                            Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
-                        }
+                        Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
                         Button(
                             onClick = { viewModel.buyAgreedItem() },
                             colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
@@ -95,7 +105,6 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     }
                 }
             } else if (bargainState.isFailed) {
-                // Satıcı masadan kalktı
                 Column(
                     modifier = Modifier
                         .background(Surface)
@@ -116,7 +125,6 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     }
                 }
             } else {
-                // Teklif giriş alanı
                 Column(
                     modifier = Modifier
                         .background(Surface)
@@ -163,9 +171,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
 
                     if (bargainState.lastSellerOffer != null && !bargainState.isDealClosed && !bargainState.isFailed) {
                         Button(
-                            onClick = {
-                                viewModel.sendOffer(bargainState.lastSellerOffer)
-                            },
+                            onClick = { viewModel.sendOffer(bargainState.lastSellerOffer) },
                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen)
@@ -177,9 +183,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     Button(
                         onClick = {
                             val offer = offerText.toDoubleOrNull() ?: 0.0
-                            if (offer > 0) {
-                                viewModel.sendOffer(offer)
-                            }
+                            if (offer > 0) viewModel.sendOffer(offer)
                         },
                         modifier = Modifier.fillMaxWidth().height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
@@ -204,7 +208,6 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Ürün Görseli
                 Box(
                     modifier = Modifier.size(80.dp).clip(RoundedCornerShape(12.dp)).background(Color.White),
                     contentAlignment = Alignment.Center
@@ -221,25 +224,35 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     Text(bargainState.item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(painterResource(id = R.drawable.person), contentDescription = null, tint = TextSecondary, modifier = Modifier.size(14.dp))
-                        val personality = SellerPersonality.fromName(bargainState.item.sellerName)
+                        val personality = if (bargainState.item.isScammer && bargainState.item.scamType.isNotEmpty()) {
+                            try {
+                                SellerPersonality.getScammerForType(
+                                    com.enesduvan.kelepiravi.data.market.ScamType.valueOf(bargainState.item.scamType)
+                                )
+                            } catch (e: Exception) { SellerPersonality.fromName(bargainState.item.sellerName) }
+                        } else SellerPersonality.fromName(bargainState.item.sellerName)
                         Text("${bargainState.item.sellerName} [${personality.title}]", color = TextSecondary, fontSize = 13.sp)
                     }
                     Text("₺${formatBalance(bargainState.item.salesValue)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     Text("İlan Fiyatı", color = TextSecondary, fontSize = 11.sp)
                 }
 
-                // Satıcı Modu (Sabır / Patience)
+                // Ch6: Animasyonlu sabır barı
+                val moodColor by animateColorAsState(
+                    targetValue = when (bargainState.sellerMood) {
+                        "Mutlu" -> MoneyGreen
+                        "Kararsız" -> PrimaryOrange
+                        "Gergin" -> Color(0xFFFF6B6B)
+                        else -> Color(0xFFD32F2F)
+                    },
+                    animationSpec = tween(400),
+                    label = "moodColor"
+                )
                 val emoji = when (bargainState.sellerMood) {
                     "Mutlu" -> "😊"
                     "Kararsız" -> "😐"
                     "Gergin" -> "😠"
                     else -> "😡"
-                }
-                val moodColor = when (bargainState.sellerMood) {
-                    "Mutlu" -> MoneyGreen
-                    "Kararsız" -> PrimaryOrange
-                    "Gergin" -> Color(0xFFFF6B6B)
-                    else -> Color(0xFFD32F2F)
                 }
 
                 Column(
@@ -252,21 +265,20 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                         Text(emoji, fontSize = 20.sp)
                         Text(bargainState.sellerMood, color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
-                    // Basit sabır barı
-                    Row(modifier = Modifier.width(60.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(SurfaceVariant)) {
-                        Box(modifier = Modifier.fillMaxWidth(bargainState.sellerPatience / 100f).fillMaxHeight().background(moodColor))
+                    // Ch6: Animasyonlu sabır barı
+                    Box(modifier = Modifier.width(60.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(SurfaceVariant)) {
+                        Box(modifier = Modifier.fillMaxWidth(animatedPatience).fillMaxHeight().background(moodColor))
                     }
                 }
             }
 
-            // Güvenli Pazarlık Ayırıcı
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
                 Text("   Güvenli Pazarlık   ", color = TextSecondary, fontSize = 12.sp)
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
             }
 
-            // ── Chat Alanı ──────────────────────────────────────────
+            // Ch6: Animasyonlu chat mesajları
             LazyColumn(
                 state = listState,
                 modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -274,7 +286,15 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(items = bargainState.messages, key = { it.id }) { msg ->
-                    ChatBubble(msg)
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn(tween(250)) + slideInVertically(
+                            animationSpec = tween(300, easing = EaseOutCubic),
+                            initialOffsetY = { it / 2 }
+                        )
+                    ) {
+                        ChatBubble(msg)
+                    }
                 }
             }
         }
@@ -330,9 +350,7 @@ fun ChatBubble(msg: BargainMessage) {
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(msg.timestamp, color = TextMuted, fontSize = 10.sp)
-            }
+            Text(msg.timestamp, color = TextMuted, fontSize = 10.sp)
         }
     }
 }

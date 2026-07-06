@@ -1,33 +1,20 @@
 package com.enesduvan.kelepiravi.ui.inventory
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseOutCubic
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,27 +27,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
-import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.market.MarketViewModel
+import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
-import com.enesduvan.kelepiravi.ui.theme.Background
-import com.enesduvan.kelepiravi.ui.theme.BorderSoft
-import com.enesduvan.kelepiravi.ui.theme.ConditionPerfect
-import com.enesduvan.kelepiravi.ui.theme.ConditionPerfectBg
-import com.enesduvan.kelepiravi.ui.theme.ConditionRepair
-import com.enesduvan.kelepiravi.ui.theme.ConditionRepairBg
-import com.enesduvan.kelepiravi.ui.theme.ConditionScratch
-import com.enesduvan.kelepiravi.ui.theme.ConditionScratchBg
-import com.enesduvan.kelepiravi.ui.theme.MoneyGreen
-import com.enesduvan.kelepiravi.ui.theme.PrimaryOrange
-import com.enesduvan.kelepiravi.ui.theme.Surface
-import com.enesduvan.kelepiravi.ui.theme.SurfaceVariant
-import com.enesduvan.kelepiravi.ui.theme.TextMuted
-import com.enesduvan.kelepiravi.ui.theme.TextPrimary
-import com.enesduvan.kelepiravi.ui.theme.TextSecondary
+import com.enesduvan.kelepiravi.ui.theme.*
 
 private val RED = Color(0xFFFF6B6B)
 private val RED_BG = Color(0x22FF6B6B)
@@ -81,13 +54,16 @@ fun InventoryScreen(viewModel: MarketViewModel) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            // ── Başlık ───────────────────────────────────────────────────────
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            // ── Başlık ──────────────────────────────────────────────────────────
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Column {
                     Text("Envanter", color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
                     Text("Satın aldığın fırsatlar.", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
                 }
-                // Gün sayacı küçük
                 Box(
                     modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(SurfaceVariant).padding(horizontal = 12.dp, vertical = 8.dp),
                     contentAlignment = Alignment.Center
@@ -101,7 +77,7 @@ fun InventoryScreen(viewModel: MarketViewModel) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Portföy Özeti Kartı ───────────────────────────────────────────
+            // ── Portföy Özeti Kartı ──────────────────────────────────────────────
             if (inventoryItems.isNotEmpty()) {
                 Box(
                     modifier = Modifier
@@ -128,7 +104,7 @@ fun InventoryScreen(viewModel: MarketViewModel) {
                 Spacer(modifier = Modifier.height(4.dp))
             }
 
-            // ── Stat Kutuları ─────────────────────────────────────────────────
+            // ── Stat Kutuları ────────────────────────────────────────────────────
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 InventoryStatBox("Ürün", inventoryItems.size.toString(), TextPrimary, Modifier.weight(1f))
                 val totalProfit = playerState.portfolioValue - playerState.totalInvestment
@@ -151,19 +127,29 @@ fun InventoryScreen(viewModel: MarketViewModel) {
                 )
             }
         } else {
+            // Ch6: Animasyonlu kart girişleri
             items(items = inventoryItems, key = { marketItemKey(it) }) { item ->
-                InventoryItemCard(
-                    item = item,
-                    sellPrice = viewModel.getSellPrice(item),
-                    onSellClick = { viewModel.startSellBargain(it) }
-                )
+                var isVisible by remember { mutableStateOf(false) }
+                LaunchedEffect(Unit) { isVisible = true }
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = fadeIn(tween(280)) + slideInVertically(
+                        animationSpec = tween(320, easing = EaseOutCubic),
+                        initialOffsetY = { it / 4 }
+                    )
+                ) {
+                    InventoryItemCard(
+                        item = item,
+                        sellPrice = viewModel.getSellPrice(item),
+                        onSellClick = { viewModel.startSellBargain(it) }
+                    )
+                }
             }
         }
     }
-    // Satış dialog'u artık kullanılmıyor, yerine SellBargainScreen açılıyor (AppRoot üzerinden).
 }
 
-// ─── Portföy Stat Kutusu ──────────────────────────────────────────────────────
+// ─── Portföy Stat Kutusu ───────────────────────────────────────────────────────
 
 @Composable
 private fun PortfolioStatBox(title: String, value: String, valueColor: Color, modifier: Modifier) {
@@ -173,7 +159,7 @@ private fun PortfolioStatBox(title: String, value: String, valueColor: Color, mo
     }
 }
 
-// ─── Envanter Stat Kutusu ─────────────────────────────────────────────────────
+// ─── Envanter Stat Kutusu ──────────────────────────────────────────────────────
 
 @Composable
 private fun InventoryStatBox(title: String, value: String, valueColor: Color, modifier: Modifier = Modifier) {
@@ -187,7 +173,7 @@ private fun InventoryStatBox(title: String, value: String, valueColor: Color, mo
     }
 }
 
-// ─── Envanter Kartı ──────────────────────────────────────────────────────────
+// ─── Envanter Kartı ───────────────────────────────────────────────────────────
 
 @Composable
 private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: (MarketItem) -> Unit) {
@@ -200,6 +186,7 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
     val estimatedValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
     val profit = estimatedValue - purchasePrice
     val isProfit = profit >= 0
+    val wasScam = item.isScammer  // Ch6: Dolandırıcıdan alındı mı?
 
     // Günlük değişim
     val dailyChange = item.dailyChangePercent
@@ -209,15 +196,21 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Surface),
+        colors = CardDefaults.cardColors(
+            containerColor = if (wasScam) Color(0xFF1C0A0A) else Surface
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        // Günlük değişim şeridi — kart üstünde renkli ince bar
+        // Günlük değişim şeridi
         if (hasDailyChange) {
             Box(
                 modifier = Modifier.fillMaxWidth().height(3.dp)
                     .background(if (isDailyPositive) MoneyGreen else RED)
             )
+        }
+        // Ch6: Dolandırıcı kırmızı şerit
+        if (wasScam && !hasDailyChange) {
+            Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(0xFFFF4444)))
         }
 
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -226,11 +219,18 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
                 modifier = Modifier.size(92.dp).clip(RoundedCornerShape(16.dp)).background(SurfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                Image(painter = getPainterResourceByName(item.imageName), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                Image(
+                    painter = getPainterResourceByName(item.imageName),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
                 // Günlük değişim overlay
                 if (hasDailyChange) {
                     Box(
-                        modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp)
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(4.dp)
                             .clip(RoundedCornerShape(6.dp))
                             .background(if (isDailyPositive) GREEN_DARK else RED_DARK)
                             .border(1.dp, if (isDailyPositive) MoneyGreen.copy(0.4f) else RED.copy(0.4f), RoundedCornerShape(6.dp))
@@ -251,6 +251,14 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
                 Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Box(modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
                     Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                }
+                // Ch6: Dolandırıcı badge'i
+                if (wasScam) {
+                    Box(
+                        modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xFF3A1A00)).padding(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Text("⚠️ Kazıklandın!", color = Color(0xFFFF8C00), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
                 Text("Alış: ₺${formatBalance(purchasePrice.toString())}", color = TextSecondary, fontSize = 12.sp)
 
@@ -284,7 +292,7 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
                 ) { Text("Pazarlık Yap", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
 
                 Button(
-                    onClick = { /* Tamir — Sprint 5 */ },
+                    onClick = { /* Tamir ekranında yapılıyor */ },
                     colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
                     shape = RoundedCornerShape(14.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
