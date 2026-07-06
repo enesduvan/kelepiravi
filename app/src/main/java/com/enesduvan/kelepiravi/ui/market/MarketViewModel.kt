@@ -7,6 +7,7 @@ import com.enesduvan.kelepiravi.data.BargainConstants
 import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.market.EconomyEngine
+import com.enesduvan.kelepiravi.data.market.LootBoxType
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.market.SellerPersonality
 import com.enesduvan.kelepiravi.data.model.MarketItem
@@ -35,6 +36,7 @@ data class PlayerState(
     val marketTrends: Map<String, Double> = emptyMap(),
     val dailyRepairsUsed: Int = 0,   // Ch6
     val lastRepairDay: Int = 0,      // Ch6
+    val dailyRevenue: Double = 0.0,  // Ch8: Vergi hesaplaması için günlük ciro
     // Türetilmiş ekonomi değerleri
     val portfolioValue: Double = 0.0,
     val totalInvestment: Double = 0.0,
@@ -46,7 +48,9 @@ data class MarketUiState(
     val isRefreshing: Boolean = false,
     val selectedItem: MarketItem? = null,
     val selectedCategory: String = "Tümü",
-    val isDayAdvancing: Boolean = false
+    val isDayAdvancing: Boolean = false,
+    val isLootBoxSheetOpen: Boolean = false, // Ch9: Zamazon Kutu seçim ekranı
+    val purchasedLootBoxItems: List<MarketItem>? = null // Ch9: Kutudan çıkan eşyalar (reveal için)
 )
 
 data class BargainMessage(
@@ -66,13 +70,16 @@ data class BargainState(
     val agreedPrice: Double = 0.0,
     val suggestedPrice: Double = 0.0,
     val lastSellerOffer: Double? = null,
-    val lastPlayerOfferAmount: Double? = null  // Ch6: Tekrar teklif tespiti için
+    val lastPlayerOfferAmount: Double? = null,  // Ch6: Tekrar teklif tespiti için
+    val isScamPromptActive: Boolean = false // Ch6: Dolandırıcı ödeme onayı
 )
 
 data class DailySummaryState(
     val day: Int,
     val xpGained: Int,
     val bonusMoney: Double,
+    val taxPaid: Double,     // Ch8: Vergi kesintisi
+    val rentPaid: Double,    // Ch8: Kira kesintisi
     val event: DailyEvent?
 )
 
@@ -124,6 +131,7 @@ class MarketViewModel(
                 }.getOrDefault(emptyMap()),
                 dailyRepairsUsed = entity?.dailyRepairsUsed ?: 0,
                 lastRepairDay = entity?.lastRepairDay ?: 0,
+                dailyRevenue = entity?.dailyRevenue ?: 0.0,
                 portfolioValue = EconomyEngine.calculatePortfolioValue(inventory),
                 totalInvestment = EconomyEngine.calculateTotalInvestment(inventory),
                 portfolioROI = EconomyEngine.calculatePortfolioROI(inventory)
@@ -218,6 +226,26 @@ class MarketViewModel(
         _scamReveal.value = null
     }
 
+    fun setLootBoxSheetVisible(isVisible: Boolean) {
+        _uiState.value = _uiState.value.copy(isLootBoxSheetOpen = isVisible)
+    }
+
+    fun buyLootBox(type: LootBoxType) {
+        viewModelScope.launch {
+            val resultItems = repository.buyLootBox(type)
+            if (resultItems != null) {
+                _uiState.value = _uiState.value.copy(
+                    isLootBoxSheetOpen = false,
+                    purchasedLootBoxItems = resultItems
+                )
+            }
+        }
+    }
+
+    fun dismissLootBoxReveal() {
+        _uiState.value = _uiState.value.copy(purchasedLootBoxItems = null)
+    }
+
     fun sellItem(item: MarketItem) {
         viewModelScope.launch { repository.sellItem(item) }
     }
@@ -280,13 +308,15 @@ class MarketViewModel(
         if (_uiState.value.isDayAdvancing) return
         _uiState.value = _uiState.value.copy(isDayAdvancing = true)
         viewModelScope.launch {
-            val event = repository.advanceDay()
+            val result = repository.advanceDay()
             val nextDay = playerState.value.currentDay + 1
             _dailySummary.value = DailySummaryState(
                 day = nextDay,
                 xpGained = com.enesduvan.kelepiravi.data.GameConstants.DAILY_LOGIN_XP,
                 bonusMoney = com.enesduvan.kelepiravi.data.GameConstants.DAILY_LOGIN_BONUS,
-                event = event
+                taxPaid = result.taxPaid,
+                rentPaid = result.rentPaid,
+                event = result.event
             )
             refreshMarket()
             _uiState.value = _uiState.value.copy(isDayAdvancing = false)
@@ -447,6 +477,18 @@ class MarketViewModel(
             updatedMessages.add(sellerMsg)
         }
 
+        var finalDealClosed = isDealClosed
+        var finalScamPrompt = state.isScamPromptActive
+
+        if (finalDealClosed && state.item.isScammer) {
+            finalDealClosed = false
+            finalScamPrompt = true
+            updatedMessages.removeLastOrNull() // Remove the previous 'buy accept' message added
+            updatedMessages.add(
+                BargainMessage(text = "Kardeşim ürün bu, sen parayı gönder ben kargoya vereceğim zaten.", isFromPlayer = false, timestamp = getCurrentTime())
+            )
+        }
+
         val mood = when {
             newPatience >= BargainConstants.MOOD_HAPPY_MIN -> "Mutlu"
             newPatience >= BargainConstants.MOOD_UNSURE_MIN -> "Kararsız"
@@ -458,11 +500,51 @@ class MarketViewModel(
             messages = updatedMessages,
             sellerPatience = newPatience,
             sellerMood = mood,
-            isDealClosed = isDealClosed,
+            isDealClosed = finalDealClosed,
+            isScamPromptActive = finalScamPrompt,
             isFailed = isFailed,
             agreedPrice = agreedPrice,
             lastSellerOffer = lastSellerOffer,
             lastPlayerOfferAmount = offerAmount
+        )
+    }
+
+    // Ch6: Dolandırıcıya parayı gönderme (kabul etme) eylemi
+    fun sendMoneyToScammer() {
+        val state = _bargainState.value ?: return
+        if (!state.isScamPromptActive) return
+
+        val itemToBuy = state.item.copy(salesValue = state.agreedPrice.toString())
+        
+        viewModelScope.launch {
+            val success = repository.purchaseItem(itemToBuy)
+            if (success) {
+                _uiState.value = _uiState.value.copy(
+                    marketItems = _uiState.value.marketItems.filterNot {
+                        it.itemName == itemToBuy.itemName && it.sellerName == itemToBuy.sellerName
+                    }
+                )
+                
+                // Deal is closed, but it's a scam!
+                _bargainState.value = state.copy(isDealClosed = true, isScamPromptActive = false)
+                _scamReveal.value = itemToBuy
+            }
+        }
+    }
+
+    // Ch6: Dolandırıcıdan vazgeçme (reddetme) eylemi
+    fun cancelScamDeal() {
+        val state = _bargainState.value ?: return
+        if (!state.isScamPromptActive) return
+
+        val updatedMessages = state.messages.toMutableList()
+        updatedMessages.add(BargainMessage(text = "Kardeşim elden almadan para falan yok.", isFromPlayer = true, timestamp = getCurrentTime()))
+        updatedMessages.add(BargainMessage(text = "Sen bilirsin kardeşim, ucuza mal veriyoruz yaranamıyoruz.", isFromPlayer = false, timestamp = getCurrentTime()))
+        
+        _bargainState.value = state.copy(
+            isScamPromptActive = false,
+            isFailed = true,
+            messages = updatedMessages
         )
     }
 

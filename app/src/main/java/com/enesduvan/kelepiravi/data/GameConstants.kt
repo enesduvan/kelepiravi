@@ -23,12 +23,12 @@ object GameConstants {
     const val MARKET_MIN_ITEM_VALUE = 50
     const val MARKET_MIN_SALES_VALUE = 30
 
-    // Ch6: Daha dar kâr marjı — ort. %20-35, maks ~%65 normal fırsat
-    const val MARKET_MIN_SALES_RATIO = 0.62   // eskiden 0.50
-    const val MARKET_SALES_RATIO_RANGE = 0.22  // eskiden 0.40
+    // Ch8: Ekonomi Dengesi — kâr marjları daha da daraltıldı
+    const val MARKET_MIN_SALES_RATIO = 0.75   // eskiden 0.62
+    const val MARKET_SALES_RATIO_RANGE = 0.15  // eskiden 0.22
 
     // Ch6: Dolandırıcı üretim şansı
-    const val SCAMMER_CHANCE = 0.15            // %15 ihtimalle dolandırıcı satıcı
+    const val SCAMMER_CHANCE = 0.05            // %5 ihtimalle dolandırıcı satıcı
 
     const val DAILY_EVENT_CHANCE = 0.25
     const val DEFAULT_CONDITION_BIAS = -0.02
@@ -40,6 +40,10 @@ object GameConstants {
     const val DAILY_REPAIR_LIMIT = 2
     // Ch6: Tamir başarısızlık olasılığı
     const val REPAIR_FAILURE_CHANCE = 0.10
+
+    // Ch8: Ekonomi Dengesi
+    const val DAILY_RENT_COST = 500.0
+    const val DAILY_TAX_RATE = 0.05
 }
 
 object BargainConstants {
@@ -58,9 +62,10 @@ object BargainConstants {
 
     const val SELL_INITIAL_MIN_RATIO = 0.80
     const val SELL_INITIAL_RANGE = 0.10
-    const val SELL_ACCEPT_RATIO = 1.08         // eskiden 1.05
-    const val SELL_COUNTER_RATIO = 1.18        // eskiden 1.15
-    const val SELL_HIGH_RATIO = 1.35           // eskiden 1.30
+    // Ch8: Satıcılar (biz) malı satarken alıcılar daha cimri olacak
+    const val SELL_ACCEPT_RATIO = 1.04         // eskiden 1.08
+    const val SELL_COUNTER_RATIO = 1.12        // eskiden 1.18
+    const val SELL_HIGH_RATIO = 1.22           // eskiden 1.35
     const val SELL_COUNTER_DISCOUNT = 0.95
 
     const val PATIENCE_REWARD = 10

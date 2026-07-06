@@ -48,6 +48,9 @@ fun AppRoot(viewModel: MarketViewModel) {
     // Ch6: Pazarlık ekranlarına geçişte yatay animasyon
     AnimatedContent(
         targetState = Pair(bargainState, sellBargainState),
+        contentKey = { (b, s) -> 
+            if (b != null) 1 else if (s != null) 2 else 0 
+        },
         transitionSpec = {
             val enter = slideInHorizontally(
                 animationSpec = tween(350, easing = EaseOutCubic),

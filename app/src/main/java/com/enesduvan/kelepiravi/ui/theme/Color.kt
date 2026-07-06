@@ -27,6 +27,7 @@ val TextMuted = Color(0xFF6F7782)
 
 val BorderSoft = Color(0xFF2A313D)
 val Shadow = Color(0x40000000) // %40 Opaklıkta siyah
+val ErrorRed = Color(0xFFFF5252) // Hatalar ve giderler için kırmızı
 
 // --- Condition Badges (Genel) ---
 val ConditionPerfectBg = Color(0xFF1E7A39)

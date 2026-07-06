@@ -8,12 +8,20 @@ import com.enesduvan.kelepiravi.data.market.AchievementManager
 import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.market.EconomyEngine
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
+import com.enesduvan.kelepiravi.data.market.LootBoxGenerator
+import com.enesduvan.kelepiravi.data.market.LootBoxType
 import com.enesduvan.kelepiravi.data.market.ScamType
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+
+data class AdvanceDayResult(
+    val event: DailyEvent?,
+    val rentPaid: Double,
+    val taxPaid: Double
+)
 
 class KelepiraviRepository(
     private val database: AppDatabase
@@ -193,7 +201,15 @@ class KelepiraviRepository(
         val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
         val baseVal = if (currentMultiplier > 0) currentVal / currentMultiplier else currentVal
         val gain = baseVal - currentVal
-        return gain * GameConstants.REPAIR_COST_GAIN_RATE
+        
+        // Ch8: Eşyanın temel değerine göre tamir masrafı (Pahalı eşyalar daha riskli)
+        val rarityMultiplier = when {
+            baseVal >= 20000 -> 0.85
+            baseVal >= 8000 -> 0.70
+            baseVal >= 2000 -> 0.60
+            else -> 0.50
+        }
+        return gain * rarityMultiplier
     }
 
     suspend fun purchaseItem(item: MarketItem): Boolean {
@@ -236,6 +252,24 @@ class KelepiraviRepository(
         }
     }
 
+    suspend fun buyLootBox(type: LootBoxType): List<MarketItem>? {
+        return database.withTransaction {
+            val player = getPlayerOrCreate()
+            val currentBalance = player.balance.toDoubleOrNull().orZero()
+            if (currentBalance < type.price) return@withTransaction null
+
+            val generatedItems = LootBoxGenerator.openBox(type)
+            val newBalance = currentBalance - type.price
+
+            val finalPlayer = player.copy(
+                balance = newBalance.toString(),
+                inventory = player.inventory + generatedItems
+            )
+            dao.updateInventory(finalPlayer)
+            generatedItems
+        }
+    }
+
     suspend fun sellItem(item: MarketItem, agreedPrice: Double? = null): Boolean {
         return database.withTransaction {
             val player = getPlayerOrCreate()
@@ -257,7 +291,8 @@ class KelepiraviRepository(
                     balance = (currentBalance + sellPrice).toString(),
                     inventory = basePlayer.inventory - itemInInventory,
                     itemsSold = basePlayer.itemsSold + 1,
-                    totalProfit = basePlayer.totalProfit + profit
+                    totalProfit = basePlayer.totalProfit + profit,
+                    dailyRevenue = basePlayer.dailyRevenue + sellPrice // Ch8: Günlük ciroya ekle
                 )
             )
 
@@ -273,7 +308,7 @@ class KelepiraviRepository(
             GameConstants.SELL_PRICE_ROUNDING_SCALE
     }
 
-    suspend fun advanceDay(): DailyEvent? {
+    suspend fun advanceDay(): AdvanceDayResult {
         return database.withTransaction {
             val player = getPlayerOrCreate()
             val currentTrends = runCatching {
@@ -288,21 +323,29 @@ class KelepiraviRepository(
             )
 
             val currentBalance = player.balance.toDoubleOrNull().orZero()
+            
+            // Ch8: Kira ve Vergi Hesaplaması
+            val rent = GameConstants.DAILY_RENT_COST
+            val tax = player.dailyRevenue * GameConstants.DAILY_TAX_RATE
+            val totalDeduction = rent + tax
+            val newBalance = currentBalance + GameConstants.DAILY_LOGIN_BONUS - totalDeduction
+
             val basePlayer = processXpGain(player, GameConstants.DAILY_LOGIN_XP)
             val finalPlayer = processAchievements(
                 basePlayer.copy(
                     currentDay = player.currentDay + 1,
                     inventory = updatedInventory,
-                    balance = (currentBalance + GameConstants.DAILY_LOGIN_BONUS).toString(),
+                    balance = newBalance.toString(),
                     marketTrends = Json.encodeToString(newTrends),
                     // Günlük tamir sayacı sıfırlanır (yeni gün = yeni hak)
                     dailyRepairsUsed = 0,
-                    lastRepairDay = 0
+                    // Günlük ciro sıfırlanır
+                    dailyRevenue = 0.0
                 )
             )
 
             dao.updateInventory(finalPlayer)
-            event
+            AdvanceDayResult(event, rent, tax)
         }
     }
 

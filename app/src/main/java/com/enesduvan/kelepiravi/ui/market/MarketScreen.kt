@@ -128,17 +128,28 @@ fun MarketScreen(viewModel: MarketViewModel) {
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
+            },
+            floatingActionButton = {
+                // Ch9: Zamazon Kutu FAB
+                ExtendedFloatingActionButton(
+                    onClick = { viewModel.setLootBoxSheetVisible(true) },
+                    containerColor = FAB,
+                    contentColor = FABIcon,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text("📦 Zamazon", fontWeight = FontWeight.Bold)
+                }
             }
         ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                // Ch6: animateItemPlacement ile liste animasyonu
                 items(items = visibleItems, key = { marketItemKey(it) }) { item ->
                     ItemCard(
                         item = item,
-                        onClick = { viewModel.startBargain(it) }
+                        onClick = { viewModel.startBargain(it) },
+                        modifier = Modifier.animateItem()
                     )
                 }
             }
@@ -150,9 +161,25 @@ fun MarketScreen(viewModel: MarketViewModel) {
             enter = fadeIn(tween(300)) + scaleIn(tween(300), initialScale = 0.85f),
             exit = fadeOut(tween(200)) + scaleOut(tween(200))
         ) {
-            dailySummary?.let { summary ->
-                DailySummaryDialog(summary = summary, onDismiss = { viewModel.dismissDailySummary() })
+            if (dailySummary != null) {
+                DailySummaryDialog(summary = dailySummary!!, onDismiss = { viewModel.dismissDailySummary() })
             }
+        }
+
+        if (uiState.isLootBoxSheetOpen) {
+            val balance = playerState.balance.toDoubleOrNull() ?: 0.0
+            LootBoxBottomSheet(
+                playerBalance = balance,
+                onDismiss = { viewModel.setLootBoxSheetVisible(false) },
+                onBuy = { type -> viewModel.buyLootBox(type) }
+            )
+        }
+
+        if (uiState.purchasedLootBoxItems != null) {
+            LootBoxRevealScreen(
+                items = uiState.purchasedLootBoxItems!!,
+                onDismiss = { viewModel.dismissLootBoxReveal() }
+            )
         }
 
         // Ch6: Dolandırıcı reveal dialog
@@ -271,6 +298,27 @@ fun DailySummaryDialog(summary: DailySummaryState, onDismiss: () -> Unit) {
                     Text("Kazanılan XP:", color = TextSecondary, fontSize = 14.sp)
                     Text("+${summary.xpGained} XP", color = PrimaryOrange, fontWeight = FontWeight.Bold)
                 }
+
+                if (summary.rentPaid > 0 || summary.taxPaid > 0) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Divider(color = SurfaceVariant)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("Giderler", color = ErrorRed, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    if (summary.rentPaid > 0) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Dükkan Kirası:", color = TextSecondary, fontSize = 14.sp)
+                            Text("-₺${formatBalance(summary.rentPaid.toString())}", color = ErrorRed, fontWeight = FontWeight.Bold)
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+                    if (summary.taxPaid > 0) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Satış Vergisi (%5):", color = TextSecondary, fontSize = 14.sp)
+                            Text("-₺${formatBalance(summary.taxPaid.toString())}", color = ErrorRed, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
                 
                 if (summary.event != null) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -297,90 +345,71 @@ fun DailySummaryDialog(summary: DailySummaryState, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit) {
-    // Ch6: Kart girişinde scale animasyonu
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(tween(300)) + slideInVertically(
-            animationSpec = tween(350, easing = EaseOutCubic),
-            initialOffsetY = { it / 3 }
-        )
+fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+            .clickable { onClick(item) },
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp)
-                .clickable { onClick(item) },
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = if (item.isScammer) Color(0xFF1C1008) else Surface
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Ch6: Dolandırıcı ürünlerde ince turuncu şerit üstte
-            if (item.isScammer) {
-                Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(0xFFFFB74D)))
-            }
-
-            Row(
-                modifier = Modifier.padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(CardSecondary)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(CardSecondary)
-                ) {
-                    val context = androidx.compose.ui.platform.LocalContext.current
-                    val resId = remember(item.imageName) {
-                        context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
-                    }
-                    if (resId != 0) {
-                        Image(
-                            painter = painterResource(id = resId),
-                            contentDescription = item.itemName,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xAA000000))))
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val resId = remember(item.imageName) {
+                    context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
+                }
+                if (resId != 0) {
+                    Image(
+                        painter = painterResource(id = resId),
+                        contentDescription = item.itemName,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xAA000000))))
+                )
+            }
 
-                Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    val (bgColor, textColor) = when {
-                        item.condition.contains("Kusursuz") -> ConditionPerfectBg to ConditionPerfect
-                        item.condition.contains("Çizik") -> ConditionScratchBg to ConditionScratch
-                        item.condition.contains("Hasar") -> ConditionRepairBg to ConditionRepair
-                        else -> ConditionBrokenBg to ConditionBrokenText
-                    }
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(bgColor)
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Text(item.condition, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("Satıcı: ${item.sellerName}", color = TextMuted, fontSize = 12.sp)
+            Column(modifier = Modifier.weight(1f)) {
+                Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(4.dp))
+                val (bgColor, textColor) = when {
+                    item.condition.contains("Kusursuz") -> ConditionPerfectBg to ConditionPerfect
+                    item.condition.contains("Çizik") -> ConditionScratchBg to ConditionScratch
+                    item.condition.contains("Hasar") -> ConditionRepairBg to ConditionRepair
+                    else -> ConditionBrokenBg to ConditionBrokenText
                 }
-
-                Column(horizontalAlignment = Alignment.End) {
-                    Text("İstenen", color = TextSecondary, fontSize = 10.sp)
-                    Text("₺${item.salesValue}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(bgColor)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(item.condition, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text("Satıcı: ${item.sellerName}", color = TextMuted, fontSize = 12.sp)
+            }
+
+            Column(horizontalAlignment = Alignment.End) {
+                Text("İstenen", color = TextSecondary, fontSize = 10.sp)
+                Text("₺${item.salesValue}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
             }
         }
     }

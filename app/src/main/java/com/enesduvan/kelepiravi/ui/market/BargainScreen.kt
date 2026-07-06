@@ -65,10 +65,6 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                 title = {
                     Column {
                         Text("Pazarlık", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                        // Ch6: Dolandırıcı uyarısı
-                        if (bargainState.item.isScammer) {
-                            Text("⚠️ Bu satıcı şüpheli görünüyor...", color = Color(0xFFFFB74D), fontSize = 11.sp)
-                        }
                     }
                 },
                 navigationIcon = {
@@ -80,7 +76,37 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
             )
         },
         bottomBar = {
-            if (bargainState.isDealClosed) {
+            if (bargainState.isScamPromptActive) {
+                Column(
+                    modifier = Modifier
+                        .background(Surface)
+                        .navigationBarsPadding()
+                        .imePadding()
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text("Satıcı ödemeyi önden istiyor. Ne yapacaksın?", color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Button(
+                            onClick = { viewModel.cancelScamDeal() },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("Vazgeç", color = TextPrimary, fontWeight = FontWeight.Bold)
+                        }
+                        Button(
+                            onClick = { viewModel.sendMoneyToScammer() },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B6B)),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("Parayı Gönder", color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            } else if (bargainState.isDealClosed) {
                 Column(
                     modifier = Modifier
                         .background(Surface)
