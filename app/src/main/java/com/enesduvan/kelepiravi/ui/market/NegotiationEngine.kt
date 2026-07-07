@@ -255,6 +255,14 @@ class NegotiationEngine(
                     scamRevealFlow.value = state.item
                 }
                 closeBargain()
+            } else {
+                val updatedMessages = state.messages.toMutableList()
+                updatedMessages.add(BargainMessage(
+                    text = "Sistem Hatası: Yetersiz bakiye veya dükkan kapasitesi dolu!",
+                    isFromPlayer = false,
+                    timestamp = getCurrentTime()
+                ))
+                _bargainState.value = state.copy(messages = updatedMessages)
             }
         }
     }

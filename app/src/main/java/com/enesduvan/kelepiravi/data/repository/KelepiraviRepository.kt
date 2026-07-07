@@ -384,20 +384,24 @@ class KelepiraviRepository(
             // Ch6: Rastgele interaktif event çekme (Phase 2 Event Engine)
             val allEvents = EventLoader.loadEvents(context)
             val availableEvents = EventManager.getAvailableEvents(finalPlayer, allEvents)
-            val pickedInteractiveEvent = EventManager.pickRandomEvent(availableEvents)
+            // Sadece %30 ihtimalle interaktif event çıksın ki her gün oyun durmasın
+            val pickedInteractiveEvent = if (Math.random() < 0.3) {
+                EventManager.pickRandomEvent(availableEvents)
+            } else null
             
             AdvanceDayResult(event, pickedInteractiveEvent, rent, tax)
         }
         }
     }
 
-    suspend fun applyEventChoice(choice: EventChoice): Boolean {
+    suspend fun applyEventChoice(choice: EventChoice): List<String> {
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
                 var currentBalance = player.balance.toDoubleOrNull().orZero()
                 var newXp = player.xp
                 val newInventory = player.inventory.toMutableList()
+                val generatedItemNames = mutableListOf<String>()
                 
                 // Apply Rewards
                 for (reward in choice.rewards) {
@@ -409,12 +413,12 @@ class KelepiraviRepository(
                                 ?: MarketGenerator.PRODUCTS.random()
                             val item = MarketGenerator.generateNormalItem(kotlin.random.Random.Default, product, emptyMap())
                             val enrichedItem = item.copy(
-                                itemName = reward.value, 
                                 purchasePrice = "0.0", 
                                 purchaseDate = LocalDate.now().toString(),
                                 sellerName = "Olay Hediyesi"
                             )
                             newInventory.add(enrichedItem)
+                            generatedItemNames.add(enrichedItem.itemName)
                         }
                     }
                 }
@@ -427,6 +431,7 @@ class KelepiraviRepository(
                             val percent = penalty.value.toDoubleOrNull().orZero()
                             currentBalance -= currentBalance * (percent / 100.0)
                         }
+                        "XP" -> newXp -= penalty.value.toIntOrNull() ?: 0
                     }
                 }
                 
@@ -447,7 +452,7 @@ class KelepiraviRepository(
                 )
                 
                 dao.updateInventory(updatedPlayer)
-                true
+                generatedItemNames
             }
         }
     }

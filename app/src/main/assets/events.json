@@ -44,10 +44,17 @@
     "choices": [
       {
         "id": "C1",
-        "text": "Buyrun, her şeyim yasal.",
+        "text": "Buyrun, her şeyim yasal. (Ceza ihtimaline karşı %5 Nakit Kaybı)",
         "rewards": [ { "type": "XP", "value": "50" } ],
         "penalties": [ { "type": "MONEY_PERCENT", "value": "5" } ],
         "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Memur bey, çorbada bizim de tuzumuz olsun. (-2000 TL Rüşvet)",
+        "rewards": [],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "2000" } ],
+        "flags": [ "BRIBED_OFFICIAL" ]
       }
     ]
   },
@@ -63,7 +70,7 @@
       {
         "id": "C1",
         "text": "Ver lan laptopu! (Riski al)",
-        "rewards": [ { "type": "ITEM", "value": "Şüpheli Gaming Laptop" } ],
+        "rewards": [ { "type": "ITEM", "value": "Gaming Laptop" } ],
         "penalties": [ { "type": "MONEY_EXACT", "value": "1000" } ],
         "flags": [ "BOUGHT_STOLEN_GOODS" ]
       },
@@ -159,7 +166,7 @@
       {
         "id": "C1",
         "text": "Yes yes, I buy! (800 TL Ver)",
-        "rewards": [ { "type": "ITEM", "value": "Vintage Analog Kamera" }, { "type": "XP", "value": "150" } ],
+        "rewards": [ { "type": "ITEM", "value": "Kamera" }, { "type": "XP", "value": "150" } ],
         "penalties": [ { "type": "MONEY_EXACT", "value": "800" } ],
         "flags": []
       },
@@ -182,7 +189,7 @@
       {
         "id": "C1",
         "text": "Al teyzem 100 liranı. Fırını ver.",
-        "rewards": [ { "type": "ITEM", "value": "Bozuk Mini Fırın" } ],
+        "rewards": [ { "type": "ITEM", "value": "Mini Fırın" } ],
         "penalties": [ { "type": "MONEY_EXACT", "value": "100" } ],
         "flags": []
       },
@@ -215,7 +222,7 @@
         "id": "C2",
         "text": "Oturup bekleyeyim, elbet gelir. (Zaman kaybı)",
         "rewards": [],
-        "penalties": [ { "type": "MONEY_PERCENT", "value": "2" } ],
+        "penalties": [ { "type": "MONEY_PERCENT", "value": "10" } ],
         "flags": []
       }
     ]
@@ -323,7 +330,7 @@
       {
         "id": "C1",
         "text": "Al bakalım 500 TL, şansımızı deneyelim.",
-        "rewards": [ { "type": "ITEM", "value": "Sürpriz Kutu" }, { "type": "XP", "value": "50" } ],
+        "rewards": [ { "type": "ITEM", "value": "RANDOM" }, { "type": "XP", "value": "50" } ],
         "penalties": [ { "type": "MONEY_EXACT", "value": "500" } ],
         "flags": []
       },
@@ -415,7 +422,7 @@
       {
         "id": "C1",
         "text": "Riski severim, al 3000 TL'yi, ver koliyi.",
-        "rewards": [ { "type": "ITEM", "value": "Gizemli Koli" }, { "type": "XP", "value": "100" } ],
+        "rewards": [ { "type": "ITEM", "value": "RANDOM" }, { "type": "XP", "value": "100" } ],
         "penalties": [ { "type": "MONEY_EXACT", "value": "3000" } ],
         "flags": []
       },
@@ -438,7 +445,7 @@
       {
         "id": "C1",
         "text": "Tamam alıyorum. (400 TL Öde)",
-        "rewards": [ { "type": "ITEM", "value": "Eski Oyun Konsolu" }, { "type": "XP", "value": "100" } ],
+        "rewards": [ { "type": "ITEM", "value": "Oyun Konsolu" }, { "type": "XP", "value": "100" } ],
         "penalties": [ { "type": "MONEY_EXACT", "value": "400" } ],
         "flags": []
       },
@@ -469,6 +476,31 @@
         "id": "C2",
         "text": "Maalesef şu an durumum pek yok.",
         "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_INFLUENCER",
+    "title": "Ünlü Fenomenin Ziyareti",
+    "description": "Dükkana kamerasıyla ünlü bir YouTuber geldi. 'Abi dükkanın çok salaş ve otantik, seni kanalımda tanıtayım ama sponsorluk için 5000 TL alırım' diyor.",
+    "npc": "YouTuber Can",
+    "weight": 40,
+    "cooldown": 25,
+    "conditions": [ { "type": "MIN_DAY", "value": "15" }, { "type": "MIN_MONEY", "value": "5000" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Çek kardeşim, reklamın iyisi kötüsü olmaz! (-5000 TL)",
+        "rewards": [ { "type": "XP", "value": "2000" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "5000" } ],
+        "flags": [ "FAMOUS_SHOP" ]
+      },
+      {
+        "id": "C2",
+        "text": "Ne parası vereceğim sana, kameranı da al git buradan!",
+        "rewards": [],
+        "penalties": [ { "type": "XP", "value": "300" } ],
+        "flags": [ "HATES_INFLUENCERS" ]
       }
     ]
   }

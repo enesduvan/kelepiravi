@@ -39,6 +39,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
     val dailySummary by viewModel.dailySummary.collectAsState()
     val scamReveal by viewModel.scamReveal.collectAsState()
     val interactiveEvent by viewModel.interactiveEvent.collectAsState()
+    val eventResult by viewModel.eventResult.collectAsState()
 
     val balanceText = remember(playerState.balance) { formatBalance(playerState.balance) }
     val visibleItems by remember(uiState.marketItems, uiState.selectedCategory) {
@@ -177,6 +178,20 @@ fun MarketScreen(viewModel: MarketViewModel) {
                 InteractiveEventDialog(
                     event = interactiveEvent!!,
                     onChoiceSelected = { choice -> viewModel.applyInteractiveEventChoice(choice) }
+                )
+            }
+        }
+
+        // Ch6: Interaktif Event Sonucu
+        AnimatedVisibility(
+            visible = eventResult != null,
+            enter = fadeIn(tween(300)) + scaleIn(tween(300), initialScale = 0.8f),
+            exit = fadeOut(tween(200)) + scaleOut(tween(200))
+        ) {
+            eventResult?.let { resultText ->
+                EventResultDialog(
+                    resultText = resultText,
+                    onDismiss = { viewModel.dismissEventResult() }
                 )
             }
         }
@@ -476,6 +491,49 @@ fun InteractiveEventDialog(
                     ) {
                         Text(choice.text, color = Color.Black, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
                     }
+                }
+            }
+        }
+    }
+}
+
+// Ch6: Olay Sonucu Dialogu
+@Composable
+fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xEE000000))
+            .clickable { onDismiss() },
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A))
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("📌 OLAY SONUCU", color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Text(
+                    text = resultText,
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    lineHeight = 22.sp,
+                    textAlign = TextAlign.Center
+                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
+                    modifier = Modifier.fillMaxWidth(0.6f)
+                ) {
+                    Text("Tamam", color = Color.Black, fontWeight = FontWeight.Bold)
                 }
             }
         }

@@ -135,6 +135,8 @@ class MarketViewModel(
                 currentDay = entity?.currentDay ?: 1,
                 xp = entity?.xp ?: 0,
                 level = entity?.level ?: 1,
+                shopLevel = entity?.shopLevel ?: 0,
+                mechanicLevel = entity?.mechanicLevel ?: 0,
                 totalProfit = entity?.totalProfit ?: 0.0,
                 itemsBought = entity?.itemsBought ?: 0,
                 itemsSold = entity?.itemsSold ?: 0,
@@ -178,6 +180,9 @@ class MarketViewModel(
     /** Ch6: Rastgele Event Engine olayları */
     private val _interactiveEvent = MutableStateFlow<EventDefinition?>(null)
     val interactiveEvent: StateFlow<EventDefinition?> = _interactiveEvent.asStateFlow()
+
+    private val _eventResult = MutableStateFlow<String?>(null)
+    val eventResult: StateFlow<String?> = _eventResult.asStateFlow()
 
     /** Ch6: Tamir sonuç dialogu */
     private val _repairResult = MutableStateFlow<RepairResultState?>(null)
@@ -376,9 +381,43 @@ class MarketViewModel(
 
     fun applyInteractiveEventChoice(choice: EventChoice) {
         viewModelScope.launch {
-            repository.applyEventChoice(choice)
+            val generatedItems = repository.applyEventChoice(choice)
             _interactiveEvent.value = null
+            
+            // Sonuçları kullanıcıya göster
+            val resultText = buildString {
+                if (choice.rewards.isEmpty() && choice.penalties.isEmpty()) {
+                    append("Hiçbir şey olmadı.")
+                } else {
+                    if (choice.rewards.isNotEmpty()) {
+                        append("KAZANIMLAR:\n")
+                        var itemIndex = 0
+                        choice.rewards.forEach { r -> 
+                            if (r.type == "ITEM") {
+                                val itemName = generatedItems.getOrNull(itemIndex) ?: r.value
+                                append("+ Eşya: $itemName\n")
+                                itemIndex++
+                            } else {
+                                val valText = if (r.type == "MONEY_EXACT" || r.type == "MONEY_PERCENT") "₺${r.value}" else r.value
+                                append("+ ${r.type.replace("XP", "Tecrübe").replace("MONEY_EXACT", "Nakit")} $valText\n")
+                            } 
+                        }
+                    }
+                    if (choice.penalties.isNotEmpty()) {
+                        append("\nKAYIPLAR:\n")
+                        choice.penalties.forEach { p -> 
+                            val valText = if (p.type == "MONEY_EXACT" || p.type == "MONEY_PERCENT") "₺${p.value}" else p.value
+                            append("- ${p.type.replace("ITEM", "Eşya").replace("XP", "Tecrübe").replace("MONEY_EXACT", "Nakit")} $valText\n") 
+                        }
+                    }
+                }
+            }
+            _eventResult.value = resultText.trim()
         }
+    }
+    
+    fun dismissEventResult() {
+        _eventResult.value = null
     }
 
     fun filteredMarketItems(uiState: MarketUiState): List<MarketItem> {

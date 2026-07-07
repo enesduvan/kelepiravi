@@ -106,7 +106,8 @@ fun InventoryScreen(viewModel: MarketViewModel) {
 
             // ── Stat Kutuları ────────────────────────────────────────────────────
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                InventoryStatBox("Ürün", inventoryItems.size.toString(), TextPrimary, Modifier.weight(1f))
+                val maxCapacity = 5 + (playerState.shopLevel * 5)
+                InventoryStatBox("Depo Kapasitesi", "${inventoryItems.size} / $maxCapacity", TextPrimary, Modifier.weight(1f))
                 val totalProfit = playerState.portfolioValue - playerState.totalInvestment
                 InventoryStatBox(
                     "Kâr/Zarar",

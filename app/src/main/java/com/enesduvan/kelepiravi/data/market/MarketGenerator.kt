@@ -129,23 +129,27 @@ object MarketGenerator {
     )
 
     val PRODUCTS = listOf(
-        // Elektronik
         ProductTemplate("Akıllı Telefon",         "Elektronik",  "smartphone",    2000, 18000),
         ProductTemplate("Laptop",                  "Elektronik",  "laptop",        4000, 25000),
+        ProductTemplate("Gaming Laptop",           "Elektronik",  "laptop",        8000, 35000),
         ProductTemplate("Tablet",                  "Elektronik",  "tablet",        1500, 12000),
         ProductTemplate("Oyun Kulaklığı",          "Elektronik",  "headphones",     300,  4000),
         ProductTemplate("Oyun Konsolu Kolu",        "Elektronik",  "gamepad",        800,  4000),
+        ProductTemplate("Oyun Konsolu",            "Elektronik",  "console",       1500, 10000),
         ProductTemplate("Monitör",                 "Elektronik",  "monitor",       2000, 12000),
         ProductTemplate("Mekanik Klavye",           "Elektronik",  "keyboard",       400,  4000),
         ProductTemplate("VR Gözlüğü",             "Elektronik",  "vr",            3000, 15000),
+        ProductTemplate("Kamera",                  "Elektronik",  "camera",        1000, 8000),
 
         // Ev Aletleri
         ProductTemplate("Blender",                 "Ev Aletleri", "blender",        200,  1500),
         ProductTemplate("Kahve Makinesi",          "Ev Aletleri", "coffee_maker",   400,  4000),
         ProductTemplate("Mini Buzdolabı",          "Ev Aletleri", "fridge",        1000,  6000),
+        ProductTemplate("Mini Fırın",              "Ev Aletleri", "oven",           300,  2000),
 
         // Giyim & Aksesuar
         ProductTemplate("Kol Saati",               "Giyim",       "watch",          500, 15000),
+        ProductTemplate("Antika Köstekli Saat",    "Giyim",       "watch",         5000, 20000),
         ProductTemplate("Bez Çanta",               "Giyim",       "backpack",       200,  2000),
         ProductTemplate("Forma",                   "Giyim",       "jersey",         100,  1500),
         ProductTemplate("Deri Ceket",              "Giyim",       "leather_jacket", 400,  5000),
@@ -156,7 +160,7 @@ object MarketGenerator {
 
         // Koleksiyon & Hobi
         ProductTemplate("Koleksiyon Oyuncağı",     "Koleksiyon",  "toy",             50,  3000),
-        ProductTemplate("Akustik Gitar",           "Koleksiyon",  "guitar",         500,  5000),
+        ProductTemplate("Akustik Gitar",           "Koleksiyon",  "guitar",         500,  5000)
     )
 
     // ─── Kondisyon Havuzu (Ağırlıklı) ─────────────────────────────────────────
