@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MarketViewModel by viewModels {
         MarketViewModelFactory(
             repository = KelepiraviRepository(
-                database = AppDatabaseProvider.getDatabase(applicationContext)
+                database = AppDatabaseProvider.getDatabase(applicationContext),
+                context = applicationContext
             )
         )
     }

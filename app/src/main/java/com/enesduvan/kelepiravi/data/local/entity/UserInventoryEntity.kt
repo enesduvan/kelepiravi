@@ -21,5 +21,7 @@ data class UserInventoryEntity(
     val lastRepairDay: Int = 0,       // v6 — Son tamir günü (günlük sıfırlama için)
     val dailyRevenue: Double = 0.0,   // v7 — Günlük ciro (vergi için)
     val shopLevel: Int = 1,           // v8 — Dükkan seviyesi (Kapasite)
-    val mechanicLevel: Int = 1        // v8 — Usta becerisi (Tamir)
+    val mechanicLevel: Int = 1,       // v8 — Usta becerisi (Tamir)
+    val eventFlags: String = "",      // v9 — Event Engine flag'leri (Örn: "MET_58_PLAKA,HELPED_OLD_MAN")
+    val eventCooldowns: String = ""   // v9 — Event Engine bekleme süreleri (JSON map: EventId -> UnlocksDay)
 )

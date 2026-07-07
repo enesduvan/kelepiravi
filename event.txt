@@ -1,0 +1,436 @@
+Mahalle kültürünün o çiğ, filtresiz ve "yok artık" dedirten gerçekliğini, bir oyun tasarımcısı gözüyle ilmek ilmek işlediğim 100 efsanevi evente hoş geldin. Senin oyununda oyuncu sadece para kazanmayacak; bazen vicdan azabından uyuyamayacak, bazen dükkandaki sinekliği alıp ekrana fırlatmak isteyecek.
+İşte "Flipping Master" vizyonuna yaraşır, birbirine bağlı NPC'leri olan, kararların yıllar sonra oyuncuyu bulacağı 100 absürt, derin ve buram buram Anadolu kokan event:
+🟢 ARC 1: OTOGAR VE KAÇAKÇILAR
+1. Sivas-Tokat Macerası | Kategori: Şans
+Hikâye: Otobüs muavini Aydın dükkana daldı. "Sivas-Tokat seferinden geliyorum, bagajda unutulmuş içi neon kablo dolu bir koli var, 300 kağıda bırakırım."
+Seçim: [A] "Çalıntı malla işim olmaz" de. [B] Riski al, koliyi satın al.
+Sonuç: [A] Aydın "Sen bilirsin" der, yan dükkana satar. [B] Kablolar pavyon aydınlatması çıkar, kahveci Şevket Dayı hepsini havada kapar.
+Devam Eventi: Aydın artık düzenli kaçak mal tedarikçin olur.
+2. Aydın'ın Deplasman Telefonu | Kategori: Gizem
+Hikâye: Aydın yine geldi. "Bizim futbol takımının deplasman otobüsünde bir telefon buldum. Sürekli titriyor ama ekranı yok."
+Seçim: [A] Telefonu sök, parçala. [B] Şarja takıp otogara geri götür.
+Sonuç: [A] İçinden bir GPS takip cihazı çıkar. Peşine karanlık adamlar düşer (Güvenlik %-20). [B] Şoförler seni dürüst ilan eder, otogardan dükkana müşteri akışı başlar.
+3. "Bana 3 Ekranlı Laptop Yap" | Kategori: Absürt
+Hikâye: Görgüsüz bir müteahhit, "Usta masada şeklim olsun, bana 3 ekranlı menteşeli bir laptop yap, parası neyse vereyim" dedi.
+Seçim: [A] Japon yapıştırıcısıyla 3 hurda ekranı birleştirip sat. [B] "Abi laptop dediğin tek ekranlı olur, sadelik asabettir" de.
+Sonuç: [A] Adam kafede açarken menteşeler kırılır, dükkanı basıp seni dövdürür. [B] Adamın ufku açılır, "Doğru dedin" deyip en pahalı, tek ve kaliteli cihazı alır. +2000 TL.
+4. Bagajdaki Daktilo | Kategori: Hikâye
+Hikâye: Muavin Aydın'ın getirdiği bir çantadan 1970'lerden kalma Almanca Q klavye bir daktilo çıktı. Şeridinde son yazılanlar duruyor.
+Seçim: [A] Şeridi okumaya çalış. [B] Antikacıya sat.
+Sonuç: [A] Eski bir aşk mektubu olduğunu anlarsın, mektuptaki adresi bulma görevi açılır. [B] 500 TL kâr. (Hikaye biter).
+5. Otobüs TV'si Fiyaskosu | Kategori: Komik
+Hikâye: Bir firma, koltuk arkası ekranlarını yenilemiş. Eskileri toptan sana getirdiler ama hepsi sadece "Flash TV" açıyor, kanal değişmiyor.
+Seçim: [A] Ekranları yazılımla kırmaya çalış. [B] "Nostalji Halay Ekranı" diye öğrenci evlerine sat.
+Sonuç: [A] Anakartlar yanar (Zarar). [B] Üniversiteliler ironi olsun diye kapış kapış alır.
+🔴 ARC 2: HACKER SELİM VE DİJİTAL ANADOLU
+6. Kent Meydanı Röntgencisi | Kategori: Risk
+Hikâye: Mahallenin lise terk bilgisayar dehası Selim, "Abi Sivas Kent Meydanı kameralarındaki bot korumasını aşacak bir sistem yazıyorum, bana acil 32GB RAM lazım" dedi.
+Seçim: [A] "Ne yapacan elalemi?" deyip kov. [B] RAM'i ver, projeye ortak ol.
+Sonuç: [A] Selim yakalanır, sen bulaşmamış olursun. [B] Selim kameralardan boş bankları tespit edip seyyar satıcılara yer satmaya başlar, sana her hafta komisyon gelir.
+Devam Eventi: Siber Şube dükkanın etrafında dolaşmaya başlar.
+7. Jetpack Compose Krizi | Kategori: NPC
+Hikâye: Selim, tost makinesinden hallice bir kasayla gelip "Abi bu bilgisayar Android Studio'da Jetpack Compose açar mı? Uygulama yazacağım" diye sordu.
+Seçim: [A] "Kardeşim bu aletle anca mayın tarlası açarsın" de. [B] Kasaya fan bağlayıp umut sat.
+Sonuç: [A] Selim gerçeği kabul eder, para biriktirmeye başlar. [B] Kasa derleme yaparken alev alır, Selim ağlayarak dükkanı terk eder.
+8. Kripto Madencisi Teyze | Kategori: Ekonomi
+Hikâye: Altın günü sırası kendisine gelen Müzeyyen Teyze, "Oğlum çeyrekler bitti, bana şu mining denen aletten kur, mutfakta kendi kazsın" diyor.
+Seçim: [A] Teyzeye RTX sistem kur, parayı vur. [B] "Teyze elektrik faturası ocağına incir ağacı diker" de.
+Sonuç: [A] Bir ay sonra teyzenin kocası elinde baltayla dükkana gelir. [B] Teyze sana güvenip bütün beyaz eşyalarını sana tamir ettirir.
+9. Siber Kurşun Dökme | Kategori: Absürt
+Hikâye: Selim dükkana gelip "Abi bilgisayarıma virüs girdi, ne yapsam gitmiyor" dedi. Arkasından babaannesi "Kurşun dökeceğiz kasaya" diye içeri girdi.
+Seçim: [A] Babaanneye izin ver. [B] Kasayı zorla alıp format at.
+Sonuç: [A] Kurşun anakarta erir, kasa sanat eserine dönüşür, modern sanat galerisine 10.000 TL'ye satarsın. [B] 100 TL kazanırsın, vizyonsuz bir esnaf olursun.
+10. Metaverse Arsa Mağduru | Kategori: Trajikomik
+Hikâye: Mahallenin bakkalı dükkanı satıp Metaverse'ten arsa almış. Şifresini unuttuğu için sanal arsasına giremiyor.
+Seçim: [A] Hesabı kırmaya çalış. [B] Adama soğuk su ikram et.
+Sonuç: [A] 2 günün gider, hesap kurtarılamaz. [B] Adam dükkanında bayılır, ambulans çağırırsın.
+🟡 ARC 3: DEFİNECİ İLYAS VE GİZEMLER
+11. Titreşen Mesaj | Kategori: Gizem
+Hikâye: Vitrindeki ikinci el telefona bilinmeyen numaradan bir mesaj düştü: "Gece depoda buluşalım 👻"
+Seçim: [A] Mesaja "Tamam" yazıp adrese git. [B] Mesajı sil, telefonu sat.
+Sonuç: [A] Depoda Defineci İlyas'ı elinde çalıntı baz istasyonu aküsüyle bulursun. [B] Ertesi gün dükkanının camına bir hayalet çizilir.
+12. Radyoaktif Tüp | Kategori: Risk
+Hikâye: İlyas elinde ağır, kurşun kaplı, cızırdayan bir "askeri cihaz" ile geldi. "Bunu açarsak zenginiz" diyor.
+Seçim: [A] Oksijen kaynağıyla kes. [B] Polisi ara.
+Sonuç: [A] Oyun Biter. Gerçekten eski bir hastane röntgen cihazı kapsülüdür, radyasyondan dükkan mühürlenir. [B] Polis İlyas'ı alır, sen "Örnek Vatandaş" ödülü (Nakit) alırsın.
+13. Konuşan GPS | Kategori: Gizem
+Hikâye: İlyas'ın getirdiği eski bir araç navigasyon cihazı, fişe takılı olmamasına rağmen "Rota yeniden oluşturuldu... Hedef: Mezarın içi" diyor.
+Seçim: [A] Parçala. [B] Cihazı takip et.
+Sonuç: [A] Stres seviyen düşer. [B] Cihaz seni mahalle mezarlığına götürür, orada içi eski kaset dolu bir çuval bulursun.
+Devam Eventi: Kasetleri çözme görevleri başlar.
+14. Toprak Altı Kasa | Kategori: Şans
+Hikâye: İlyas kazıda bir PC kasası bulmuş. İçi çamur dolu ama harddisk sağlam görünüyor.
+Seçim: [A] 1000 TL verip riski al. [B] "Topraklı mal almam" de.
+Sonuç: [A] Temizleyip takarsın, içinden 2005 yılına ait bir Metin2 charı (İtem dizili) çıkar, internet kafeye 5000 TL'ye satarsın. [B] İlyas kafeye satar, kafe sahibi zengin olur.
+15. Dedektör Kavgası | Kategori: Ekonomi
+Hikâye: İlyas senin ona yaptığın dedektörle altın yerine patlamamış mermi bulmuş, "Bana paramı geri ver" diye bağırıyor.
+Seçim: [A] Adamın ağzına lafı tıka, dükkandan at. [B] Parayı geri ver.
+Sonuç: [A] İlyas gece dükkanın kepengine idrarını yapar (İtibar düşer). [B] İlyas bir dahaki sefere bulduğu tarihi sikkeyi sana bedavaya getirir.
+🟣 ARC 4: KIRAATHANE VE ESNAF DİNAMİKLERİ
+16. Okey Taşı Sayan Yapay Zeka | Kategori: Komik
+Hikâye: Kahveci Şevket Dayı, "Müşteriler taş çalıyor, şu tavana koyduğum kameraya yapay zeka yükle de ıstakaları saysın" dedi.
+Seçim: [A] Dandik bir hareket sensörü takıp "Yapay zeka abi bu" de. [B] "Abi bu seni aşar" de.
+Sonuç: [A] Kamera her çay bırakıldığında öter, Şevket Dayı cinnet geçirip kamerayı tüfekle vurur. [B] Şevket "Sen de bir şey bilmiyorsun" der.
+17. Çaycı Telsizi | Kategori: NPC
+Hikâye: Çaycı çırağı, Aselsan polis telsiziyle sipariş alıyor. "Merkez, 2 açık çay intikal etsin." Polisler frekans karıştığı için dükkanı bastı.
+Seçim: [A] Suçu çırağa at. [B] "Memur bey çocuk oyun oynuyor" deyip rüşvetvari çay ısmarla.
+Sonuç: [A] Çırak işten atılır, kahveci sana küser (Çay servisi kapanır). [B] Polisler güler geçer, çırak senin sadık adamın olur.
+18. Kaçak Maç Yayını | Kategori: Risk
+Hikâye: Şevket Dayı, "Bana öyle bir uydu alıcısı ayarla ki, derbiyi bedava izleteyim" diyor.
+Seçim: [A] Kaçak IPTV kur. [B] Ahlaki reddet.
+Sonuç: [A] Derbi günü tam gol anında yayın donar, 50 adam dükkanını basmaya gelir. [B] Paradan olursun ama başın ağrımaz.
+19. Veresiye Defteri | Kategori: Hikâye
+Hikâye: Kapanan bakkalın veresiye defterini buldun. İçinde Şevket Dayı'nın 15 yıl önceden kalma 50.000 TL borcu yazıyor.
+Seçim: [A] Defterle Şevket'e şantaj yap. [B] Defteri yak.
+Sonuç: [A] Şevket Dayı kriz geçirir, kahveyi kapatır (Mahalle ekonomisi çöker). [B] Şevket Dayı bunu görür, sana her gün bedava kaşarlı tost yollar.
+20. Taksici Rıza'nın Metresi | Kategori: Kara Mizah
+Hikâye: Taksici Rıza iki telefonla geldi. "Kardeş bu telefonu eşim, bunu da diğer eşim biliyor. İkisini de aynı anda formatla, rehberler karışmasın."
+Seçim: [A] Dediğini yap. [B] İnadına rehberleri çapraz yükle.
+Sonuç: [A] Rıza sana VIP taksi indirimi tanımlar. [B] 2 gün sonra taksi durağında silahlar patlar, Rıza hastanelik olur (Karma +50).
+🟠 ARC 5: ROBOTLAR VE AKILLI CİHAZLAR
+21. Katil Robot Süpürge | Kategori: Gizem
+Hikâye: Sattığın akıllı robot süpürgeyi müşteri iade getirdi. "Cihaz evin sadece mutfağını haritalıyor ve yerdeki kurumuş kırmızı lekelerin üstünde dönüp duruyor."
+Seçim: [A] Süpürgeyi formatla sat. [B] Süpürgenin sensör verisini Selim'e incelet.
+Sonuç: [A] Olay kapanır. [B] Bir cinayet mahallini temizlediğini anlarsın. Dükkana siyah şahinle adamlar gelir... (Büyük Kaçış eventi başlar).
+22. Kilitli Akıllı Buzdolabı | Kategori: Absürt
+Hikâye: Bir adam koca buzdolabını kamyonetle getirdi. "Kredi borcumu ödemedim diye banka buzdolabının ekranından icra gönderdi, kapak açılmıyor, içindeki etler kokacak!"
+Seçim: [A] Yazılım atıp buzdolabını rootla (Hack). [B] Levyeyle kapağı kır.
+Sonuç: [A] Bankanın siber güvenliği dükkanın IP'sini tespit eder, dükkan elektriğin kesilir. [B] Adam etleri kurtarır, sana 2 kilo pirzola bırakır.
+23. Sahibini Bekleyen Köpek (Dijital) | Kategori: Duygusal
+Hikâye: İlk nesil bir Tamagotchi (Sanal Bebek) eline geçti. 20 yıldır pili bitmemiş ve içindeki sanal köpek hala yaşıyor.
+Seçim: [A] Pili çıkarıp cihazı temizle. [B] Köpeği beslemeye devam et.
+Sonuç: [A] Oyuncu "Gerçekten bunu yaptın mı?" diye kendini sorgular. [B] Cihazı her gün beslemek zorunda kalırsın (Zaman kaybı) ama sonunda nadir bir 'Sadakat Başarımı' kazanırsın.
+24. Depresif Alexa | Kategori: Kara Mizah
+Hikâye: Yurt dışından gelen akıllı hoparlör, fişe takılınca sürekli "Varoluş bir acıdır, interneti kesin" diye Türkçe konuşuyor.
+Seçim: [A] Hoparlörü psikolog bir müşteriye sat. [B] İçini aç.
+Sonuç: [A] Psikolog cihazla seans yapmaya başlar, iyileştirince sana 1000 TL bonus yollar. [B] Sadece yazılım hatası olduğunu görürsün, gizem ölür.
+25. Çakma AirPods'dan İstihbarat | Kategori: Risk
+Hikâye: Toptancıdan aldığın ucuz kulaklığı test ederken müzik yerine birilerinin Rusça telsiz konuşmalarını duyuyorsun.
+Seçim: [A] "Rus radyosu çekiyor" diye sat. [B] Toptancıya malları geri at.
+Sonuç: [A] Alan müşteri tutuklanır, polis dükkanını basar. [B] Toptancı panikler, sana sus payı olarak 10.000 TL değerinde mal verir.
+🟤 ARC 6: AİLE VE MAHALLE FACİALARI
+26. Kaynana Sabotajı | Kategori: Absürt
+Hikâye: Bir gelin, kocasının PlayStation 5'ini "Bozuk bu, hurdası ne eder?" diye yarı fiyatına satmaya getirdi. Cihaz sapasağlam.
+Seçim: [A] Cihazı hemen ucuza kapat. [B] "Abla kocan seni keser" diyerek uyar.
+Sonuç: [A] Gece koca dükkanın camını kırar, PS5'ini geri çalar. [B] Gelin sana düşman olur, mahalledeki tüm kadınlara seni kötüler (Kadın müşteri -%50).
+27. Sünnet Düğünü Jeneratörü | Kategori: Şans
+Hikâye: Sünnet düğününde elektrik gitmiş, muhtar kan ter içinde geldi: "Acil jeneratör lazım, yoksa çocuk travma geçirecek!"
+Seçim: [A] Dükkanın kendi UPS/Jeneratörünü ver. [B] "Kader utansın muhtar" de.
+Sonuç: [A] Çocuğun babası mafya çıkar, sana "Ne zaman istersen bir adam vururum" kartı verir (Oyunda 1 kez ceza iptali). [B] Düğün iptal olur, muhtar seni zabıtaya ispiyonlar.
+28. Eski Sevgiliye Format | Kategori: Trajikomik
+Hikâye: Gözü yaşlı bir genç kız, "Bunda eski sevgilimin fotoğrafları var, öyle bir sil ki CIA gelse geri getiremesin" dedi.
+Seçim: [A] Harddiske matkapla delik aç. [B] "Low Level Format" atıp kızı gönder.
+Sonuç: [A] Kız matkap sesinden tatmin olur, sana 500 TL bahşiş bırakır. [B] Kız iki gün sonra "Geri getirebilir miyiz, barıştık" diye gelir, kafayı yersin.
+29. Miras Kavgası | Kategori: NPC
+Hikâye: İki kardeş, babalarından kalan dükkanı paylaşıyor. Biri "Bilgisayarları bana sat", diğeri "Sakın alma" diyor. İkisi de dükkanda.
+Seçim: [A] Büyük kardeşten yana ol. [B] Dükkandan ikisini de kov.
+Sonuç: [A] Büyük kardeş sana malları satar ama küçük kardeş zabıta yollar. [B] İtibarın artar, "Adil esnaf" olursun.
+30. Düğün Kasedi (Şantaj) | Kategori: Risk
+Hikâye: Bir adamın düğün kasetini dijitale aktarırken, arka planda damadın sağdıçla gelinin altınlarını çaldığını görüyorsun.
+Seçim: [A] Damada şantaj yap. [B] Kaseti geline kargola.
+Sonuç: [A] Damat parayı verir ama dükkanını kundaklamaya kalkar. [B] Mahallede boşanma davası çıkar, senin dürüstlüğün dilden dile dolanır (Tüm esnaf indirim yapar).
+⚪ ARC 7: VİNTAGE VE KOLEKSİYON
+31. 90'lar Korsan CD'cisi | Kategori: Nostalji
+Hikâye: Hurdadan bir CD çantası çıktı. İçi kalemle "GTA Sivas, Matrix Neo, Musti Megamix" yazılı korsan oyun ve müzik CD'si dolu.
+Seçim: [A] Koleksiyoner bir gence sat. [B] Nostalji yapıp dükkanda Musti Megamix çal.
+Sonuç: [A] 200 TL kazanırsın. [B] Dükkanın enerjisi fulenir, müzik telifçileri gelene kadar her müşteriye ek satış yaparsın.
+32. Walkman'in İçindeki Not | Kategori: Hikâye
+Hikâye: Antika bir Walkman tamir ederken pil yatağından "Eğer bunu okuyorsan, ben çoktan Berlin'e kaçtım. - 1989" yazılı bir kağıt çıktı.
+Seçim: [A] Notu internete yükle. [B] Walkman'i notla beraber açık artırmaya koy.
+Sonuç: [A] Adamın torunları seni bulur, hikayenin sonunu öğrenirsin (Büyük İtibar). [B] 3000 TL kazanırsın.
+33. Kurmalı Dede Saati | Kategori: Gizem
+Hikâye: Müşteri, "Bu saat her gece saat 03:00'te kendi kendine zembereğini boşaltıyor, al başımdan" dedi.
+Seçim: [A] Gece 03:00'te dükkanda kal ve bekle. [B] Saatin mekanizmasını sök.
+Sonuç: [A] Aslında yan dükkanın kedisinin pencereden girip saate vurduğunu yakalarsın. Olay çözülür. [B] Saati bozarsın.
+34. Nadir Atari Kasedi | Kategori: Şans
+Hikâye: Bir koli '9999 in 1' atari kasetinin içinde "Super Mario Bros" prototip kasedi buldun. Ederi 50.000 Dolar.
+Seçim: [A] Hemen Ebay'e koy. [B] Çerçevelet, dükkana as.
+Sonuç: [A] Para hesabına geçmeden kargo uçağı düşer, sigorta şirketiyle 1 yıl davalık olursun. [B] "Altın Kasetli Dükkan" olarak ünlenir, zenginler ayağına gelir.
+35. İlk Türk Bilgisayarı | Kategori: Efsanevi
+Hikâye: Bir kamu binasının bodrumundan, 80'lerde üretilmiş ama hiç piyasaya sürülmemiş ilk yerli bilgisayar kasasını aldın.
+Seçim: [A] Parçalayıp altınlarını erit. [B] Teknoloji müzesine bağışla.
+Sonuç: [A] Geri dönüşülemez tarih katliamı (Gizli lanet: Elektronik eşyalar sürekli elinde bozulur). [B] Vergi muafiyeti kazanırsın!
+(Devamı hızlandırılmış ve punchy bir şekilde: 36-100)
+36. Kategori: Absürt | Hikâye: Müşteri "Bana sadece YouTube Shorts izleyebileceğim, gerisi iptal edilmiş bir tablet ver" dedi. | Sonuç: Yaparsan adamın beyni uyuşur, her gün gelip anlamsız kısa videolar izletir.
+37. Kategori: Risk | Hikâye: Sarı siteden aldığın iPhone kutusunun içinden, özenle yerleştirilmiş bir kalıp beyaz sabun çıktı. | Devam: Satıcıyı bulma arc'ı başlar.
+38. Kategori: Komik | Hikâye: Hurdacı "Bu monitörde hayalet var" dedi. Açınca ekranda kalıcı olarak "Windows XP korsan yazılım kurbanı olabilirsiniz" yazısı yanmış.
+39. Kategori: NPC | Hikâye: Selim, akıllı lambaları hackleyip sokağı pavyona çevirdi, polis seni "sistemi sağlayan adam" olarak arıyor.
+40. Kategori: Şans | Hikâye: İkinci el pantolon cebinde unutulmuş 512MB'lık bir USB'den, 2011'de kazılmış 10 Bitcoin çıktı. Şifresi bilinmiyor. (Sonsuz Stres).
+41. Kategori: Trajikomik | Hikâye: Yaşlı teyze, torununun aldığı VR gözlüğü getirip "Bunu takınca köyümü görüyorum, kalsın dayanamıyorum" dedi. Google Earth açık kalmış.
+42. Kategori: Risk | Hikâye: Gümrük kaçağı dron satıcısı kapına geldi. Malları alırsan sivil havacılık peşine düşer.
+43. Kategori: Absürt | Hikâye: "Bozuk bu" diye gelen kasanın içinden, farelerin yuva yaptığı yarım kilo çiğdem (çekirdek) kabuğu döküldü.
+44. Kategori: Duygusal | Hikâye: Bir adam elinde tuşlu telefonla, "Vefat eden kızımın son ses kaydı bunda ama şarj aleti dünyada yok" diye ağlıyor. Kendin şarj aleti lehimlersin. (+1000 Vicdan).
+45. Kategori: Kara Mizah | Hikâye: Yeni aldığın ikinci el laptop klavyesinde sadece C, V ve CTRL tuşları aşınmış. Sahibi bir kopyala-yapıştır teziyle profesör olmuş.
+46. Kategori: Ekonomi | Hikâye: Zabıta amiri "Dükkanın önüne tezgah açmışsın" dedi. Tezgah dediği de 2 tane klima motoru. Rüşvet olarak "Bluetooth kulaklık" istiyor.
+47. Kategori: Gizem | Hikâye: Sattığın akıllı bileklik, müşterinin nabzını 0 gösterdiği için müşteri ölüp ölmediğini kontrol etmek için doktora gitmiş. Doktor seni arıyor.
+48. Kategori: Risk | Hikâye: Karanlık sokakta takas yaparken adam sana parayı verdi ama malı almadan koşarak kaçtı. Paralar sahte mi? (Değil, adamın panik atağı tutmuş).
+49. Kategori: Komik | Hikâye: Otobüs muavini Aydın, "Bagajda bir papağan buldum, sadece 'Şifre bir iki üç dört' diyor, al senin olsun" dedi.
+50. Kategori: Hikâye | Hikâye: Dükkanda bulduğun bir VHS kaseti tamir ettin. İçinde 90'larda kendi dükkanının yerinde olan "Umut Müzik Evi"nin açılış kutlaması var.
+51. Kategori: Absürt | Hikâye: Bir üniversiteli "Abi bana kışın kalorifer niyetine yansın diye AMD işlemcili en eski kasayı ver" dedi.
+52. Kategori: Şans | Hikâye: Çaycı Şevket Dayı faturayı ödeyemeyince dükkanın elektriğini kaçak olarak senin panoya bağlamış. Fatura sana geldi (3000 TL).
+53. Kategori: NPC | Hikâye: Hacker Selim, "Abi mahallenin muhtarına şantaj yapıyorum, verilerini kriptoladım, fidye gelirse kırışırız" dedi. Çocuğu polise ihbar edip etmeme ikilemi.
+54. Kategori: Gizem | Hikâye: Her gece 22:15'te vitrindeki ikinci el radyodan mors alfabesiyle "S-E-L-A-M" çalıyor. Pili yok.
+55. Kategori: Ekonomi | Hikâye: Dolar bir gecede %20 düştü! Elindeki tüm stokların değeri çöp oldu. Toptancı da telefonları açmıyor. (Depresyon Eventi).
+56. Kategori: Trajikomik | Hikâye: Mahallenin delisi "Bana çip taktılar" diye ağlayıp kafasındaki sivilceyi sıkmanı istiyor, elinde de yeni nesil kulaklık var.
+57. Kategori: Risk | Hikâye: Sarı sitede "Ölücülere İnat 1 TL" yazdığın ilana gerçekten bir adam 1 TL gönderip kapıya dayandı, Tüketici Haklarına gitmekle tehdit ediyor.
+58. Kategori: Duygusal | Hikâye: İflas eden bir e-sporcu, son turnuvayı kazandığı şanslı mouse'unu satarken gözyaşlarını tutamadı.
+59. Kategori: Absürt | Hikâye: "Su geçilmez telefon" diye sattığın cihazı adam denize atıp çıkarmış, "Bu balık tutmuyor" diye iadeye geldi.
+60. Kategori: Gizem | Hikâye: Hurdacı İlyas'ın getirdiği bir harddiskin içi, dükkanının son 5 yıllık gizli kamera görüntüleriyle dolu. Seni kim izliyor?
+61. Kategori: NPC | Hikâye: Muavin Aydın, Sivas seferinde otobüsün çarptığı bir ineğin sahibine tazminat vermek için senden borç istiyor.
+62. Kategori: Komik | Hikâye: Müşteri "Bilgisayar yavaşladı" diye getirdi. Adam masaüstüne 500 tane klasör açıp "İnternet" yazmış.
+63. Kategori: Şans | Hikâye: Kutusu hiç açılmamış 20 yıllık bir iPod buldun. İçindeki lityum pil her an patlayabilir ya da cihaz binlerce dolar eder.
+64. Kategori: Kara Mizah | Hikâye: Bir mafya babası, vurulan adamının kanlı telefonunu getirip "İçindeki adresleri al, kasayı değiştir, sıfır gibi olsun" dedi.
+65. Kategori: Ekonomi | Hikâye: Mahallede altyapı çalışması yapan kepçe, internet kablosunu kopardı. POS cihazı çalışmıyor, dükkan peşin paraya döndü (Müşteri -%70).
+66. Kategori: Absürt | Hikâye: Düğün kameramanı kaseti üst üste kaydetmiş. Halay çekerken araya birden "Jurassic Park" dinozorları giriyor. Düzeltmeni istiyorlar.
+67. Kategori: Hikâye | Hikâye: Müşterinin tamire bıraktığı tablette, karısının onu en yakın arkadaşıyla aldattığına dair mesajlar pop-up olarak düştü. Söylemeli misin?
+68. Kategori: Risk | Hikâye: Yan dükkanın camına "Kapanıyoruz, her şey zararına" yazıldı. Müşterilerin hepsi oraya kaydı. Gece gizlice adamın afişini yırtma kararı.
+69. Kategori: NPC | Hikâye: Çaycı Şevket Dayı'nın kahvesinde çay kazanına akıllı priz takılmış, hacker Selim prizi hackleyip suları soğutuyor.
+70. Kategori: Gizem | Hikâye: Çöpten aldığın klavyenin sadece "YARDIM ET" tuşlarının boyası aşınmış. Geri kalanı sıfır gibi.
+71. Kategori: Trajikomik | Hikâye: "Kardeşim cihaz oyun oynamak için birebir" diye sattığın bilgisayar, çocuk Roblox açınca duman atıp alev aldı. Çocuk dükkanda ağlıyor.
+72. Kategori: Şans | Hikâye: Müşteri 100 Dolar uzattı ama para 1996 basımı, sahte mi gerçek mi ayırt edemiyorsun.
+73. Kategori: Absürt | Hikâye: Teyzenin biri "Kocamın beyni yıkanıyor" diyerek kocasının AirPods'unu kaynatıp çorba yapmış, garantisi geçer mi diye soruyor.
+74. Kategori: Ekonomi | Hikâye: Toptancıdan aldığın 100 adet flash bellek 64GB yazıyor ama hepsi 4GB çıkıyor (Büyük dolandırıcılık arcı başlar).
+75. Kategori: Duygusal | Hikâye: Cezaevinden yeni çıkmış bir adam, "Bana öyle bir radyo ver ki, içerideyken dinlediğim Müslüm türkülerini aynı cızırtıyla çalsın" dedi.
+76. Kategori: Risk | Hikâye: Bir müşteri telefon tamiri için kapora bıraktı ama 3 yıldır geri dönmedi. Telefonu bugün satılığa çıkardın, adam kapıdan girdi.
+77. Kategori: Gizem | Hikâye: Defineci İlyas, elinde Roma döneminden kalma bir altın sikkeyle gelip "Buna karşılık 3 tane Bluetooth hoparlör ver" dedi.
+78. Kategori: NPC | Hikâye: Muavin Aydın, bagajda "bomba" sandığı için otobüsü tahliye ettirdiği cihazın aslında senin sipariş ettiğin büyük bir subwoofer olduğunu söyledi.
+79. Kategori: Komik | Hikâye: Üniversiteli genç, "Vizelere çalışmam lazım, ne olursun şu bilgisayarın LoL açan ekran kartını sök, entegresini de yak ki bir daha takamayayım" diye yalvarıyor.
+80. Kategori: Kara Mizah | Hikâye: Bir cenaze levazımatçısı, kefen arabasına takmak için arkadan "Acı Kaybımız" yazılı kayan LED tabela istiyor. "Neon olsun usta."
+81. Kategori: Absürt | Hikâye: Çiftçinin biri inekleri daha çok süt versin diye ahıra kuracağı devasa ses sistemi için senden 2. el festival kolonları istiyor.
+82. Kategori: Hikâye | Hikâye: İkinci el fotoğraf makinesinin son fotoğrafında, dükkanının gece yarısı soyulmadan hemen önceki halini görüyorsun. Satan adam hırsızın ta kendisi!
+83. Kategori: Şans | Hikâye: Toptancı yanlışlıkla sana 1 koli iPhone yerine 1 koli Android telefon kabı yolladı. Telefonu açmıyor.
+84. Kategori: NPC | Hikâye: Hacker Selim, "Abi Dark Web'den yanlışlıkla 1 ton Rus kömürü sipariş ettim, kargo kapıda, alırsan yarı fiyatına" diyor.
+85. Kategori: Gizem | Hikâye: Vitrindeki kapalı televizyonda sadece senin yansıman görünmesi gerekirken, arkanda bekleyen uzun boylu bir adamın yansıması var. Arkana dönünce kimse yok.
+86. Kategori: Risk | Hikâye: Zabıta, "Dükkanın tentesi standart dışı, ya bin lira ceza keserim ya da şu benim çocuğun tabletinin kırık ekranını bedava yaparsın" dedi.
+87. Kategori: Ekonomi | Hikâye: Karşı kaldırıma "Vatan Bilgisayar" şubesi açıldı. Mahalle esnafı olarak ayakta kalma savaşı (Boss Fight Eventi).
+88. Kategori: Trajikomik | Hikâye: Gurbetçi bir aile, "Bizim Almancı yeğen yolladı" diye dünyanın en pahalı ekran kartını "Oyun kasedi herhalde" diye 50 TL'ye sana satmaya çalışıyor. Vicdan testi.
+89. Kategori: Absürt | Hikâye: Müşteri akıllı saatini getirip "Bu alet bana 'Yeter artık yat uyu' diyor, sök şu ahlak bekçisini" dedi.
+90. Kategori: Duygusal | Hikâye: Emekli öğretmen, maaşıyla torununa laptop alamayınca kendi alyansını rehin bırakarak taksit yapmak istiyor.
+91. Kategori: Komik | Hikâye: Şevket Dayı kahvede "Adisyon" sistemi kurmak için senden tablet aldı ama adamlar okey taşlarını tabletin üstüne vura vura ekranı kırdı.
+92. Kategori: Gizem | Hikâye: Sattığın ses kayıt cihazı iade geldi. Müşteri "Gece uyurken odadan sadece 'Vergiler... vergiler çok yüksek...' diye fısıltı kaydediyor" diyerek kaçtı.
+93. Kategori: Şans | Hikâye: Sokakta bulduğun bir cüzdanda kimlik yok, sadece bir teknoloji mağazasının "10.000 TL Hediye Çeki" var. Kasiyer durumu çakar mı?
+94. Kategori: Kara Mizah | Hikâye: Bir miras kavgasından sağ çıkan kızı, merhum babasının oksijen tüpünün bağlı olduğu akıllı prizi "Tasarruf yapsın diye" kapatan kişiyi bulman için sana getirdi.
+95. Kategori: Risk | Hikâye: Gece yarısı dükkanın alarmı çaldı. Gittiğinde cam kırık ama hırsız hiçbir şey çalmamış, vitrine eski bir daktilo "bırakıp" kaçmış.
+96. Kategori: Efsanevi | Hikâye: Sivas seferinden dönen Aydın, bagajda "İlk Apple bilgisayarının tahta kasası"na benzeyen çamurlu bir şey buldu. Steve Jobs'un kayıp prototipi mi, yoksa marangoz Hasan ustanın takozu mu?
+97. Kategori: Efsanevi | Hikâye: Dükkanının temelinden, Osmanlı döneminden kalma devasa bir telgraf hattı ve som altın bir mors aleti çıktı. (Oyun sonu ekonomi patlaması).
+98. Kategori: Efsanevi | Hikâye: Hacker Selim sonunda tüm şehrin elektrik şebekesini yanlışlıkla kapattı. Mahallede jeneratörü olan tek yer senin dükkanın. (Kıyamet sonrası ticaret başlar).
+99. Kategori: Efsanevi | Hikâye: Defineci İlyas, uzaylılara ait olduğunu iddia ettiği yeşil parlayan bir çip getirdi. Çipi telefona takınca telefonun şarjı %1000 oluyor ve havaya kalkıyor. (Bilim kurgu sonu).
+100. Kategori: Efsanevi | Hikâye: Tüm kazancınla "Flipping Master" adında, mahalle esnafını anlatan bir oyun kodladın. Yayıncısı sen misin, yoksa hala bu simülasyonun içinde bir NPC misin? Seçim ekranında oyun çöker. (Kırık Dördüncü Duvar Sonu).
+Mahalle kültürünün o çiğ, filtresiz ve "yok artık" dedirten gerçekliğini, bir oyun tasarımcısı gözüyle ilmek ilmek işlediğim 100 efsanevi evente hoş geldin. Senin oyununda oyuncu sadece para kazanmayacak; bazen vicdan azabından uyuyamayacak, bazen dükkandaki sinekliği alıp ekrana fırlatmak isteyecek.
+İşte "Flipping Master" vizyonuna yaraşır, birbirine bağlı NPC'leri olan, kararların yıllar sonra oyuncuyu bulacağı 100 absürt, derin ve buram buram Anadolu kokan event:
+🟢 ARC 1: OTOGAR VE KAÇAKÇILAR
+1. Sivas-Tokat Macerası | Kategori: Şans
+Hikâye: Otobüs muavini Aydın dükkana daldı. "Sivas-Tokat seferinden geliyorum, bagajda unutulmuş içi neon kablo dolu bir koli var, 300 kağıda bırakırım."
+Seçim: [A] "Çalıntı malla işim olmaz" de. [B] Riski al, koliyi satın al.
+Sonuç: [A] Aydın "Sen bilirsin" der, yan dükkana satar. [B] Kablolar pavyon aydınlatması çıkar, kahveci Şevket Dayı hepsini havada kapar.
+Devam Eventi: Aydın artık düzenli kaçak mal tedarikçin olur.
+2. Aydın'ın Deplasman Telefonu | Kategori: Gizem
+Hikâye: Aydın yine geldi. "Bizim futbol takımının deplasman otobüsünde bir telefon buldum. Sürekli titriyor ama ekranı yok."
+Seçim: [A] Telefonu sök, parçala. [B] Şarja takıp otogara geri götür.
+Sonuç: [A] İçinden bir GPS takip cihazı çıkar. Peşine karanlık adamlar düşer (Güvenlik %-20). [B] Şoförler seni dürüst ilan eder, otogardan dükkana müşteri akışı başlar.
+3. "Bana 3 Ekranlı Laptop Yap" | Kategori: Absürt
+Hikâye: Görgüsüz bir müteahhit, "Usta masada şeklim olsun, bana 3 ekranlı menteşeli bir laptop yap, parası neyse vereyim" dedi.
+Seçim: [A] Japon yapıştırıcısıyla 3 hurda ekranı birleştirip sat. [B] "Abi laptop dediğin tek ekranlı olur, sadelik asabettir" de.
+Sonuç: [A] Adam kafede açarken menteşeler kırılır, dükkanı basıp seni dövdürür. [B] Adamın ufku açılır, "Doğru dedin" deyip en pahalı, tek ve kaliteli cihazı alır. +2000 TL.
+4. Bagajdaki Daktilo | Kategori: Hikâye
+Hikâye: Muavin Aydın'ın getirdiği bir çantadan 1970'lerden kalma Almanca Q klavye bir daktilo çıktı. Şeridinde son yazılanlar duruyor.
+Seçim: [A] Şeridi okumaya çalış. [B] Antikacıya sat.
+Sonuç: [A] Eski bir aşk mektubu olduğunu anlarsın, mektuptaki adresi bulma görevi açılır. [B] 500 TL kâr. (Hikaye biter).
+5. Otobüs TV'si Fiyaskosu | Kategori: Komik
+Hikâye: Bir firma, koltuk arkası ekranlarını yenilemiş. Eskileri toptan sana getirdiler ama hepsi sadece "Flash TV" açıyor, kanal değişmiyor.
+Seçim: [A] Ekranları yazılımla kırmaya çalış. [B] "Nostalji Halay Ekranı" diye öğrenci evlerine sat.
+Sonuç: [A] Anakartlar yanar (Zarar). [B] Üniversiteliler ironi olsun diye kapış kapış alır.
+🔴 ARC 2: HACKER SELİM VE DİJİTAL ANADOLU
+6. Kent Meydanı Röntgencisi | Kategori: Risk
+Hikâye: Mahallenin lise terk bilgisayar dehası Selim, "Abi Sivas Kent Meydanı kameralarındaki bot korumasını aşacak bir sistem yazıyorum, bana acil 32GB RAM lazım" dedi.
+Seçim: [A] "Ne yapacan elalemi?" deyip kov. [B] RAM'i ver, projeye ortak ol.
+Sonuç: [A] Selim yakalanır, sen bulaşmamış olursun. [B] Selim kameralardan boş bankları tespit edip seyyar satıcılara yer satmaya başlar, sana her hafta komisyon gelir.
+Devam Eventi: Siber Şube dükkanın etrafında dolaşmaya başlar.
+7. Jetpack Compose Krizi | Kategori: NPC
+Hikâye: Selim, tost makinesinden hallice bir kasayla gelip "Abi bu bilgisayar Android Studio'da Jetpack Compose açar mı? Uygulama yazacağım" diye sordu.
+Seçim: [A] "Kardeşim bu aletle anca mayın tarlası açarsın" de. [B] Kasaya fan bağlayıp umut sat.
+Sonuç: [A] Selim gerçeği kabul eder, para biriktirmeye başlar. [B] Kasa derleme yaparken alev alır, Selim ağlayarak dükkanı terk eder.
+8. Kripto Madencisi Teyze | Kategori: Ekonomi
+Hikâye: Altın günü sırası kendisine gelen Müzeyyen Teyze, "Oğlum çeyrekler bitti, bana şu mining denen aletten kur, mutfakta kendi kazsın" diyor.
+Seçim: [A] Teyzeye RTX sistem kur, parayı vur. [B] "Teyze elektrik faturası ocağına incir ağacı diker" de.
+Sonuç: [A] Bir ay sonra teyzenin kocası elinde baltayla dükkana gelir. [B] Teyze sana güvenip bütün beyaz eşyalarını sana tamir ettirir.
+9. Siber Kurşun Dökme | Kategori: Absürt
+Hikâye: Selim dükkana gelip "Abi bilgisayarıma virüs girdi, ne yapsam gitmiyor" dedi. Arkasından babaannesi "Kurşun dökeceğiz kasaya" diye içeri girdi.
+Seçim: [A] Babaanneye izin ver. [B] Kasayı zorla alıp format at.
+Sonuç: [A] Kurşun anakarta erir, kasa sanat eserine dönüşür, modern sanat galerisine 10.000 TL'ye satarsın. [B] 100 TL kazanırsın, vizyonsuz bir esnaf olursun.
+10. Metaverse Arsa Mağduru | Kategori: Trajikomik
+Hikâye: Mahallenin bakkalı dükkanı satıp Metaverse'ten arsa almış. Şifresini unuttuğu için sanal arsasına giremiyor.
+Seçim: [A] Hesabı kırmaya çalış. [B] Adama soğuk su ikram et.
+Sonuç: [A] 2 günün gider, hesap kurtarılamaz. [B] Adam dükkanında bayılır, ambulans çağırırsın.
+🟡 ARC 3: DEFİNECİ İLYAS VE GİZEMLER
+11. Titreşen Mesaj | Kategori: Gizem
+Hikâye: Vitrindeki ikinci el telefona bilinmeyen numaradan bir mesaj düştü: "Gece depoda buluşalım 👻"
+Seçim: [A] Mesaja "Tamam" yazıp adrese git. [B] Mesajı sil, telefonu sat.
+Sonuç: [A] Depoda Defineci İlyas'ı elinde çalıntı baz istasyonu aküsüyle bulursun. [B] Ertesi gün dükkanının camına bir hayalet çizilir.
+12. Radyoaktif Tüp | Kategori: Risk
+Hikâye: İlyas elinde ağır, kurşun kaplı, cızırdayan bir "askeri cihaz" ile geldi. "Bunu açarsak zenginiz" diyor.
+Seçim: [A] Oksijen kaynağıyla kes. [B] Polisi ara.
+Sonuç: [A] Oyun Biter. Gerçekten eski bir hastane röntgen cihazı kapsülüdür, radyasyondan dükkan mühürlenir. [B] Polis İlyas'ı alır, sen "Örnek Vatandaş" ödülü (Nakit) alırsın.
+13. Konuşan GPS | Kategori: Gizem
+Hikâye: İlyas'ın getirdiği eski bir araç navigasyon cihazı, fişe takılı olmamasına rağmen "Rota yeniden oluşturuldu... Hedef: Mezarın içi" diyor.
+Seçim: [A] Parçala. [B] Cihazı takip et.
+Sonuç: [A] Stres seviyen düşer. [B] Cihaz seni mahalle mezarlığına götürür, orada içi eski kaset dolu bir çuval bulursun.
+Devam Eventi: Kasetleri çözme görevleri başlar.
+14. Toprak Altı Kasa | Kategori: Şans
+Hikâye: İlyas kazıda bir PC kasası bulmuş. İçi çamur dolu ama harddisk sağlam görünüyor.
+Seçim: [A] 1000 TL verip riski al. [B] "Topraklı mal almam" de.
+Sonuç: [A] Temizleyip takarsın, içinden 2005 yılına ait bir Metin2 charı (İtem dizili) çıkar, internet kafeye 5000 TL'ye satarsın. [B] İlyas kafeye satar, kafe sahibi zengin olur.
+15. Dedektör Kavgası | Kategori: Ekonomi
+Hikâye: İlyas senin ona yaptığın dedektörle altın yerine patlamamış mermi bulmuş, "Bana paramı geri ver" diye bağırıyor.
+Seçim: [A] Adamın ağzına lafı tıka, dükkandan at. [B] Parayı geri ver.
+Sonuç: [A] İlyas gece dükkanın kepengine idrarını yapar (İtibar düşer). [B] İlyas bir dahaki sefere bulduğu tarihi sikkeyi sana bedavaya getirir.
+🟣 ARC 4: KIRAATHANE VE ESNAF DİNAMİKLERİ
+16. Okey Taşı Sayan Yapay Zeka | Kategori: Komik
+Hikâye: Kahveci Şevket Dayı, "Müşteriler taş çalıyor, şu tavana koyduğum kameraya yapay zeka yükle de ıstakaları saysın" dedi.
+Seçim: [A] Dandik bir hareket sensörü takıp "Yapay zeka abi bu" de. [B] "Abi bu seni aşar" de.
+Sonuç: [A] Kamera her çay bırakıldığında öter, Şevket Dayı cinnet geçirip kamerayı tüfekle vurur. [B] Şevket "Sen de bir şey bilmiyorsun" der.
+17. Çaycı Telsizi | Kategori: NPC
+Hikâye: Çaycı çırağı, Aselsan polis telsiziyle sipariş alıyor. "Merkez, 2 açık çay intikal etsin." Polisler frekans karıştığı için dükkanı bastı.
+Seçim: [A] Suçu çırağa at. [B] "Memur bey çocuk oyun oynuyor" deyip rüşvetvari çay ısmarla.
+Sonuç: [A] Çırak işten atılır, kahveci sana küser (Çay servisi kapanır). [B] Polisler güler geçer, çırak senin sadık adamın olur.
+18. Kaçak Maç Yayını | Kategori: Risk
+Hikâye: Şevket Dayı, "Bana öyle bir uydu alıcısı ayarla ki, derbiyi bedava izleteyim" diyor.
+Seçim: [A] Kaçak IPTV kur. [B] Ahlaki reddet.
+Sonuç: [A] Derbi günü tam gol anında yayın donar, 50 adam dükkanını basmaya gelir. [B] Paradan olursun ama başın ağrımaz.
+19. Veresiye Defteri | Kategori: Hikâye
+Hikâye: Kapanan bakkalın veresiye defterini buldun. İçinde Şevket Dayı'nın 15 yıl önceden kalma 50.000 TL borcu yazıyor.
+Seçim: [A] Defterle Şevket'e şantaj yap. [B] Defteri yak.
+Sonuç: [A] Şevket Dayı kriz geçirir, kahveyi kapatır (Mahalle ekonomisi çöker). [B] Şevket Dayı bunu görür, sana her gün bedava kaşarlı tost yollar.
+20. Taksici Rıza'nın Metresi | Kategori: Kara Mizah
+Hikâye: Taksici Rıza iki telefonla geldi. "Kardeş bu telefonu eşim, bunu da diğer eşim biliyor. İkisini de aynı anda formatla, rehberler karışmasın."
+Seçim: [A] Dediğini yap. [B] İnadına rehberleri çapraz yükle.
+Sonuç: [A] Rıza sana VIP taksi indirimi tanımlar. [B] 2 gün sonra taksi durağında silahlar patlar, Rıza hastanelik olur (Karma +50).
+🟠 ARC 5: ROBOTLAR VE AKILLI CİHAZLAR
+21. Katil Robot Süpürge | Kategori: Gizem
+Hikâye: Sattığın akıllı robot süpürgeyi müşteri iade getirdi. "Cihaz evin sadece mutfağını haritalıyor ve yerdeki kurumuş kırmızı lekelerin üstünde dönüp duruyor."
+Seçim: [A] Süpürgeyi formatla sat. [B] Süpürgenin sensör verisini Selim'e incelet.
+Sonuç: [A] Olay kapanır. [B] Bir cinayet mahallini temizlediğini anlarsın. Dükkana siyah şahinle adamlar gelir... (Büyük Kaçış eventi başlar).
+22. Kilitli Akıllı Buzdolabı | Kategori: Absürt
+Hikâye: Bir adam koca buzdolabını kamyonetle getirdi. "Kredi borcumu ödemedim diye banka buzdolabının ekranından icra gönderdi, kapak açılmıyor, içindeki etler kokacak!"
+Seçim: [A] Yazılım atıp buzdolabını rootla (Hack). [B] Levyeyle kapağı kır.
+Sonuç: [A] Bankanın siber güvenliği dükkanın IP'sini tespit eder, dükkan elektriğin kesilir. [B] Adam etleri kurtarır, sana 2 kilo pirzola bırakır.
+23. Sahibini Bekleyen Köpek (Dijital) | Kategori: Duygusal
+Hikâye: İlk nesil bir Tamagotchi (Sanal Bebek) eline geçti. 20 yıldır pili bitmemiş ve içindeki sanal köpek hala yaşıyor.
+Seçim: [A] Pili çıkarıp cihazı temizle. [B] Köpeği beslemeye devam et.
+Sonuç: [A] Oyuncu "Gerçekten bunu yaptın mı?" diye kendini sorgular. [B] Cihazı her gün beslemek zorunda kalırsın (Zaman kaybı) ama sonunda nadir bir 'Sadakat Başarımı' kazanırsın.
+24. Depresif Alexa | Kategori: Kara Mizah
+Hikâye: Yurt dışından gelen akıllı hoparlör, fişe takılınca sürekli "Varoluş bir acıdır, interneti kesin" diye Türkçe konuşuyor.
+Seçim: [A] Hoparlörü psikolog bir müşteriye sat. [B] İçini aç.
+Sonuç: [A] Psikolog cihazla seans yapmaya başlar, iyileştirince sana 1000 TL bonus yollar. [B] Sadece yazılım hatası olduğunu görürsün, gizem ölür.
+25. Çakma AirPods'dan İstihbarat | Kategori: Risk
+Hikâye: Toptancıdan aldığın ucuz kulaklığı test ederken müzik yerine birilerinin Rusça telsiz konuşmalarını duyuyorsun.
+Seçim: [A] "Rus radyosu çekiyor" diye sat. [B] Toptancıya malları geri at.
+Sonuç: [A] Alan müşteri tutuklanır, polis dükkanını basar. [B] Toptancı panikler, sana sus payı olarak 10.000 TL değerinde mal verir.
+🟤 ARC 6: AİLE VE MAHALLE FACİALARI
+26. Kaynana Sabotajı | Kategori: Absürt
+Hikâye: Bir gelin, kocasının PlayStation 5'ini "Bozuk bu, hurdası ne eder?" diye yarı fiyatına satmaya getirdi. Cihaz sapasağlam.
+Seçim: [A] Cihazı hemen ucuza kapat. [B] "Abla kocan seni keser" diyerek uyar.
+Sonuç: [A] Gece koca dükkanın camını kırar, PS5'ini geri çalar. [B] Gelin sana düşman olur, mahalledeki tüm kadınlara seni kötüler (Kadın müşteri -%50).
+27. Sünnet Düğünü Jeneratörü | Kategori: Şans
+Hikâye: Sünnet düğününde elektrik gitmiş, muhtar kan ter içinde geldi: "Acil jeneratör lazım, yoksa çocuk travma geçirecek!"
+Seçim: [A] Dükkanın kendi UPS/Jeneratörünü ver. [B] "Kader utansın muhtar" de.
+Sonuç: [A] Çocuğun babası mafya çıkar, sana "Ne zaman istersen bir adam vururum" kartı verir (Oyunda 1 kez ceza iptali). [B] Düğün iptal olur, muhtar seni zabıtaya ispiyonlar.
+28. Eski Sevgiliye Format | Kategori: Trajikomik
+Hikâye: Gözü yaşlı bir genç kız, "Bunda eski sevgilimin fotoğrafları var, öyle bir sil ki CIA gelse geri getiremesin" dedi.
+Seçim: [A] Harddiske matkapla delik aç. [B] "Low Level Format" atıp kızı gönder.
+Sonuç: [A] Kız matkap sesinden tatmin olur, sana 500 TL bahşiş bırakır. [B] Kız iki gün sonra "Geri getirebilir miyiz, barıştık" diye gelir, kafayı yersin.
+29. Miras Kavgası | Kategori: NPC
+Hikâye: İki kardeş, babalarından kalan dükkanı paylaşıyor. Biri "Bilgisayarları bana sat", diğeri "Sakın alma" diyor. İkisi de dükkanda.
+Seçim: [A] Büyük kardeşten yana ol. [B] Dükkandan ikisini de kov.
+Sonuç: [A] Büyük kardeş sana malları satar ama küçük kardeş zabıta yollar. [B] İtibarın artar, "Adil esnaf" olursun.
+30. Düğün Kasedi (Şantaj) | Kategori: Risk
+Hikâye: Bir adamın düğün kasetini dijitale aktarırken, arka planda damadın sağdıçla gelinin altınlarını çaldığını görüyorsun.
+Seçim: [A] Damada şantaj yap. [B] Kaseti geline kargola.
+Sonuç: [A] Damat parayı verir ama dükkanını kundaklamaya kalkar. [B] Mahallede boşanma davası çıkar, senin dürüstlüğün dilden dile dolanır (Tüm esnaf indirim yapar).
+⚪ ARC 7: VİNTAGE VE KOLEKSİYON
+31. 90'lar Korsan CD'cisi | Kategori: Nostalji
+Hikâye: Hurdadan bir CD çantası çıktı. İçi kalemle "GTA Sivas, Matrix Neo, Musti Megamix" yazılı korsan oyun ve müzik CD'si dolu.
+Seçim: [A] Koleksiyoner bir gence sat. [B] Nostalji yapıp dükkanda Musti Megamix çal.
+Sonuç: [A] 200 TL kazanırsın. [B] Dükkanın enerjisi fulenir, müzik telifçileri gelene kadar her müşteriye ek satış yaparsın.
+32. Walkman'in İçindeki Not | Kategori: Hikâye
+Hikâye: Antika bir Walkman tamir ederken pil yatağından "Eğer bunu okuyorsan, ben çoktan Berlin'e kaçtım. - 1989" yazılı bir kağıt çıktı.
+Seçim: [A] Notu internete yükle. [B] Walkman'i notla beraber açık artırmaya koy.
+Sonuç: [A] Adamın torunları seni bulur, hikayenin sonunu öğrenirsin (Büyük İtibar). [B] 3000 TL kazanırsın.
+33. Kurmalı Dede Saati | Kategori: Gizem
+Hikâye: Müşteri, "Bu saat her gece saat 03:00'te kendi kendine zembereğini boşaltıyor, al başımdan" dedi.
+Seçim: [A] Gece 03:00'te dükkanda kal ve bekle. [B] Saatin mekanizmasını sök.
+Sonuç: [A] Aslında yan dükkanın kedisinin pencereden girip saate vurduğunu yakalarsın. Olay çözülür. [B] Saati bozarsın.
+34. Nadir Atari Kasedi | Kategori: Şans
+Hikâye: Bir koli '9999 in 1' atari kasetinin içinde "Super Mario Bros" prototip kasedi buldun. Ederi 50.000 Dolar.
+Seçim: [A] Hemen Ebay'e koy. [B] Çerçevelet, dükkana as.
+Sonuç: [A] Para hesabına geçmeden kargo uçağı düşer, sigorta şirketiyle 1 yıl davalık olursun. [B] "Altın Kasetli Dükkan" olarak ünlenir, zenginler ayağına gelir.
+35. İlk Türk Bilgisayarı | Kategori: Efsanevi
+Hikâye: Bir kamu binasının bodrumundan, 80'lerde üretilmiş ama hiç piyasaya sürülmemiş ilk yerli bilgisayar kasasını aldın.
+Seçim: [A] Parçalayıp altınlarını erit. [B] Teknoloji müzesine bağışla.
+Sonuç: [A] Geri dönüşülemez tarih katliamı (Gizli lanet: Elektronik eşyalar sürekli elinde bozulur). [B] Vergi muafiyeti kazanırsın!
+(Devamı hızlandırılmış ve punchy bir şekilde: 36-100)
+36. Kategori: Absürt | Hikâye: Müşteri "Bana sadece YouTube Shorts izleyebileceğim, gerisi iptal edilmiş bir tablet ver" dedi. | Sonuç: Yaparsan adamın beyni uyuşur, her gün gelip anlamsız kısa videolar izletir.
+37. Kategori: Risk | Hikâye: Sarı siteden aldığın iPhone kutusunun içinden, özenle yerleştirilmiş bir kalıp beyaz sabun çıktı. | Devam: Satıcıyı bulma arc'ı başlar.
+38. Kategori: Komik | Hikâye: Hurdacı "Bu monitörde hayalet var" dedi. Açınca ekranda kalıcı olarak "Windows XP korsan yazılım kurbanı olabilirsiniz" yazısı yanmış.
+39. Kategori: NPC | Hikâye: Selim, akıllı lambaları hackleyip sokağı pavyona çevirdi, polis seni "sistemi sağlayan adam" olarak arıyor.
+40. Kategori: Şans | Hikâye: İkinci el pantolon cebinde unutulmuş 512MB'lık bir USB'den, 2011'de kazılmış 10 Bitcoin çıktı. Şifresi bilinmiyor. (Sonsuz Stres).
+41. Kategori: Trajikomik | Hikâye: Yaşlı teyze, torununun aldığı VR gözlüğü getirip "Bunu takınca köyümü görüyorum, kalsın dayanamıyorum" dedi. Google Earth açık kalmış.
+42. Kategori: Risk | Hikâye: Gümrük kaçağı dron satıcısı kapına geldi. Malları alırsan sivil havacılık peşine düşer.
+43. Kategori: Absürt | Hikâye: "Bozuk bu" diye gelen kasanın içinden, farelerin yuva yaptığı yarım kilo çiğdem (çekirdek) kabuğu döküldü.
+44. Kategori: Duygusal | Hikâye: Bir adam elinde tuşlu telefonla, "Vefat eden kızımın son ses kaydı bunda ama şarj aleti dünyada yok" diye ağlıyor. Kendin şarj aleti lehimlersin. (+1000 Vicdan).
+45. Kategori: Kara Mizah | Hikâye: Yeni aldığın ikinci el laptop klavyesinde sadece C, V ve CTRL tuşları aşınmış. Sahibi bir kopyala-yapıştır teziyle profesör olmuş.
+46. Kategori: Ekonomi | Hikâye: Zabıta amiri "Dükkanın önüne tezgah açmışsın" dedi. Tezgah dediği de 2 tane klima motoru. Rüşvet olarak "Bluetooth kulaklık" istiyor.
+47. Kategori: Gizem | Hikâye: Sattığın akıllı bileklik, müşterinin nabzını 0 gösterdiği için müşteri ölüp ölmediğini kontrol etmek için doktora gitmiş. Doktor seni arıyor.
+48. Kategori: Risk | Hikâye: Karanlık sokakta takas yaparken adam sana parayı verdi ama malı almadan koşarak kaçtı. Paralar sahte mi? (Değil, adamın panik atağı tutmuş).
+49. Kategori: Komik | Hikâye: Otobüs muavini Aydın, "Bagajda bir papağan buldum, sadece 'Şifre bir iki üç dört' diyor, al senin olsun" dedi.
+50. Kategori: Hikâye | Hikâye: Dükkanda bulduğun bir VHS kaseti tamir ettin. İçinde 90'larda kendi dükkanının yerinde olan "Umut Müzik Evi"nin açılış kutlaması var.
+51. Kategori: Absürt | Hikâye: Bir üniversiteli "Abi bana kışın kalorifer niyetine yansın diye AMD işlemcili en eski kasayı ver" dedi.
+52. Kategori: Şans | Hikâye: Çaycı Şevket Dayı faturayı ödeyemeyince dükkanın elektriğini kaçak olarak senin panoya bağlamış. Fatura sana geldi (3000 TL).
+53. Kategori: NPC | Hikâye: Hacker Selim, "Abi mahallenin muhtarına şantaj yapıyorum, verilerini kriptoladım, fidye gelirse kırışırız" dedi. Çocuğu polise ihbar edip etmeme ikilemi.
+54. Kategori: Gizem | Hikâye: Her gece 22:15'te vitrindeki ikinci el radyodan mors alfabesiyle "S-E-L-A-M" çalıyor. Pili yok.
+55. Kategori: Ekonomi | Hikâye: Dolar bir gecede %20 düştü! Elindeki tüm stokların değeri çöp oldu. Toptancı da telefonları açmıyor. (Depresyon Eventi).
+56. Kategori: Trajikomik | Hikâye: Mahallenin delisi "Bana çip taktılar" diye ağlayıp kafasındaki sivilceyi sıkmanı istiyor, elinde de yeni nesil kulaklık var.
+57. Kategori: Risk | Hikâye: Sarı sitede "Ölücülere İnat 1 TL" yazdığın ilana gerçekten bir adam 1 TL gönderip kapıya dayandı, Tüketici Haklarına gitmekle tehdit ediyor.
+58. Kategori: Duygusal | Hikâye: İflas eden bir e-sporcu, son turnuvayı kazandığı şanslı mouse'unu satarken gözyaşlarını tutamadı.
+59. Kategori: Absürt | Hikâye: "Su geçilmez telefon" diye sattığın cihazı adam denize atıp çıkarmış, "Bu balık tutmuyor" diye iadeye geldi.
+60. Kategori: Gizem | Hikâye: Hurdacı İlyas'ın getirdiği bir harddiskin içi, dükkanının son 5 yıllık gizli kamera görüntüleriyle dolu. Seni kim izliyor?
+61. Kategori: NPC | Hikâye: Muavin Aydın, Sivas seferinde otobüsün çarptığı bir ineğin sahibine tazminat vermek için senden borç istiyor.
+62. Kategori: Komik | Hikâye: Müşteri "Bilgisayar yavaşladı" diye getirdi. Adam masaüstüne 500 tane klasör açıp "İnternet" yazmış.
+63. Kategori: Şans | Hikâye: Kutusu hiç açılmamış 20 yıllık bir iPod buldun. İçindeki lityum pil her an patlayabilir ya da cihaz binlerce dolar eder.
+64. Kategori: Kara Mizah | Hikâye: Bir mafya babası, vurulan adamının kanlı telefonunu getirip "İçindeki adresleri al, kasayı değiştir, sıfır gibi olsun" dedi.
+65. Kategori: Ekonomi | Hikâye: Mahallede altyapı çalışması yapan kepçe, internet kablosunu kopardı. POS cihazı çalışmıyor, dükkan peşin paraya döndü (Müşteri -%70).
+66. Kategori: Absürt | Hikâye: Düğün kameramanı kaseti üst üste kaydetmiş. Halay çekerken araya birden "Jurassic Park" dinozorları giriyor. Düzeltmeni istiyorlar.
+67. Kategori: Hikâye | Hikâye: Müşterinin tamire bıraktığı tablette, karısının onu en yakın arkadaşıyla aldattığına dair mesajlar pop-up olarak düştü. Söylemeli misin?
+68. Kategori: Risk | Hikâye: Yan dükkanın camına "Kapanıyoruz, her şey zararına" yazıldı. Müşterilerin hepsi oraya kaydı. Gece gizlice adamın afişini yırtma kararı.
+69. Kategori: NPC | Hikâye: Çaycı Şevket Dayı'nın kahvesinde çay kazanına akıllı priz takılmış, hacker Selim prizi hackleyip suları soğutuyor.
+70. Kategori: Gizem | Hikâye: Çöpten aldığın klavyenin sadece "YARDIM ET" tuşlarının boyası aşınmış. Geri kalanı sıfır gibi.
+71. Kategori: Trajikomik | Hikâye: "Kardeşim cihaz oyun oynamak için birebir" diye sattığın bilgisayar, çocuk Roblox açınca duman atıp alev aldı. Çocuk dükkanda ağlıyor.
+72. Kategori: Şans | Hikâye: Müşteri 100 Dolar uzattı ama para 1996 basımı, sahte mi gerçek mi ayırt edemiyorsun.
+73. Kategori: Absürt | Hikâye: Teyzenin biri "Kocamın beyni yıkanıyor" diyerek kocasının AirPods'unu kaynatıp çorba yapmış, garantisi geçer mi diye soruyor.
+74. Kategori: Ekonomi | Hikâye: Toptancıdan aldığın 100 adet flash bellek 64GB yazıyor ama hepsi 4GB çıkıyor (Büyük dolandırıcılık arcı başlar).
+75. Kategori: Duygusal | Hikâye: Cezaevinden yeni çıkmış bir adam, "Bana öyle bir radyo ver ki, içerideyken dinlediğim Müslüm türkülerini aynı cızırtıyla çalsın" dedi.
+76. Kategori: Risk | Hikâye: Bir müşteri telefon tamiri için kapora bıraktı ama 3 yıldır geri dönmedi. Telefonu bugün satılığa çıkardın, adam kapıdan girdi.
+77. Kategori: Gizem | Hikâye: Defineci İlyas, elinde Roma döneminden kalma bir altın sikkeyle gelip "Buna karşılık 3 tane Bluetooth hoparlör ver" dedi.
+78. Kategori: NPC | Hikâye: Muavin Aydın, bagajda "bomba" sandığı için otobüsü tahliye ettirdiği cihazın aslında senin sipariş ettiğin büyük bir subwoofer olduğunu söyledi.
+79. Kategori: Komik | Hikâye: Üniversiteli genç, "Vizelere çalışmam lazım, ne olursun şu bilgisayarın LoL açan ekran kartını sök, entegresini de yak ki bir daha takamayayım" diye yalvarıyor.
+80. Kategori: Kara Mizah | Hikâye: Bir cenaze levazımatçısı, kefen arabasına takmak için arkadan "Acı Kaybımız" yazılı kayan LED tabela istiyor. "Neon olsun usta."
+81. Kategori: Absürt | Hikâye: Çiftçinin biri inekleri daha çok süt versin diye ahıra kuracağı devasa ses sistemi için senden 2. el festival kolonları istiyor.
+82. Kategori: Hikâye | Hikâye: İkinci el fotoğraf makinesinin son fotoğrafında, dükkanının gece yarısı soyulmadan hemen önceki halini görüyorsun. Satan adam hırsızın ta kendisi!
+83. Kategori: Şans | Hikâye: Toptancı yanlışlıkla sana 1 koli iPhone yerine 1 koli Android telefon kabı yolladı. Telefonu açmıyor.
+84. Kategori: NPC | Hikâye: Hacker Selim, "Abi Dark Web'den yanlışlıkla 1 ton Rus kömürü sipariş ettim, kargo kapıda, alırsan yarı fiyatına" diyor.
+85. Kategori: Gizem | Hikâye: Vitrindeki kapalı televizyonda sadece senin yansıman görünmesi gerekirken, arkanda bekleyen uzun boylu bir adamın yansıması var. Arkana dönünce kimse yok.
+86. Kategori: Risk | Hikâye: Zabıta, "Dükkanın tentesi standart dışı, ya bin lira ceza keserim ya da şu benim çocuğun tabletinin kırık ekranını bedava yaparsın" dedi.
+87. Kategori: Ekonomi | Hikâye: Karşı kaldırıma "Vatan Bilgisayar" şubesi açıldı. Mahalle esnafı olarak ayakta kalma savaşı (Boss Fight Eventi).
+88. Kategori: Trajikomik | Hikâye: Gurbetçi bir aile, "Bizim Almancı yeğen yolladı" diye dünyanın en pahalı ekran kartını "Oyun kasedi herhalde" diye 50 TL'ye sana satmaya çalışıyor. Vicdan testi.
+89. Kategori: Absürt | Hikâye: Müşteri akıllı saatini getirip "Bu alet bana 'Yeter artık yat uyu' diyor, sök şu ahlak bekçisini" dedi.
+90. Kategori: Duygusal | Hikâye: Emekli öğretmen, maaşıyla torununa laptop alamayınca kendi alyansını rehin bırakarak taksit yapmak istiyor.
+91. Kategori: Komik | Hikâye: Şevket Dayı kahvede "Adisyon" sistemi kurmak için senden tablet aldı ama adamlar okey taşlarını tabletin üstüne vura vura ekranı kırdı.
+92. Kategori: Gizem | Hikâye: Sattığın ses kayıt cihazı iade geldi. Müşteri "Gece uyurken odadan sadece 'Vergiler... vergiler çok yüksek...' diye fısıltı kaydediyor" diyerek kaçtı.
+93. Kategori: Şans | Hikâye: Sokakta bulduğun bir cüzdanda kimlik yok, sadece bir teknoloji mağazasının "10.000 TL Hediye Çeki" var. Kasiyer durumu çakar mı?
+94. Kategori: Kara Mizah | Hikâye: Bir miras kavgasından sağ çıkan kızı, merhum babasının oksijen tüpünün bağlı olduğu akıllı prizi "Tasarruf yapsın diye" kapatan kişiyi bulman için sana getirdi.
+95. Kategori: Risk | Hikâye: Gece yarısı dükkanın alarmı çaldı. Gittiğinde cam kırık ama hırsız hiçbir şey çalmamış, vitrine eski bir daktilo "bırakıp" kaçmış.
+96. Kategori: Efsanevi | Hikâye: Sivas seferinden dönen Aydın, bagajda "İlk Apple bilgisayarının tahta kasası"na benzeyen çamurlu bir şey buldu. Steve Jobs'un kayıp prototipi mi, yoksa marangoz Hasan ustanın takozu mu?
+97. Kategori: Efsanevi | Hikâye: Dükkanının temelinden, Osmanlı döneminden kalma devasa bir telgraf hattı ve som altın bir mors aleti çıktı. (Oyun sonu ekonomi patlaması).
+98. Kategori: Efsanevi | Hikâye: Hacker Selim sonunda tüm şehrin elektrik şebekesini yanlışlıkla kapattı. Mahallede jeneratörü olan tek yer senin dükkanın. (Kıyamet sonrası ticaret başlar).
+99. Kategori: Efsanevi | Hikâye: Defineci İlyas, uzaylılara ait olduğunu iddia ettiği yeşil parlayan bir çip getirdi. Çipi telefona takınca telefonun şarjı %1000 oluyor ve havaya kalkıyor. (Bilim kurgu sonu).
+100. Kategori: Efsanevi | Hikâye: Tüm kazancınla "Flipping Master" adında, mahalle esnafını anlatan bir oyun kodladın. Yayıncısı sen misin, yoksa hala bu simülasyonun içinde bir NPC misin? Seçim ekranında oyun çöker. (Kırık Dördüncü Duvar Sonu).

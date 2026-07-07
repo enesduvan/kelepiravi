@@ -1,0 +1,475 @@
+[
+  {
+    "id": "EV_OLD_MAN_WATCH",
+    "title": "Yaşlı Adamın Saati",
+    "description": "Dükkana yaşlı bir amca geldi. Elinde dedesinden kalma çok eski bir köstekli saat var. 'Evlat, ilacımı alacak param kalmadı. Şuna 500 lira verir misin?' diyor. Saat aslında oldukça değerli görünüyor.",
+    "npc": "Yaşlı Amca",
+    "weight": 100,
+    "cooldown": 5,
+    "conditions": [
+      { "type": "MIN_DAY", "value": "2" },
+      { "type": "MIN_MONEY", "value": "500" },
+      { "type": "NOT_HAS_FLAG", "value": "HELPED_OLD_MAN" }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Al amca, 500 lira senin olsun. (Saati al)",
+        "rewards": [ { "type": "ITEM", "value": "Antika Köstekli Saat" }, { "type": "XP", "value": "100" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "500" } ],
+        "flags": [ "HELPED_OLD_MAN" ]
+      },
+      {
+        "id": "C2",
+        "text": "Amca bu saat en az 2000 lira eder. Al şu 2000 lirayı. (Dürüstlük)",
+        "rewards": [ { "type": "ITEM", "value": "Antika Köstekli Saat" }, { "type": "XP", "value": "500" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "2000" } ],
+        "flags": [ "HELPED_OLD_MAN", "HONEST_MERCHANT" ]
+      },
+      {
+        "id": "C3",
+        "text": "Kusura bakma amca, antikadan anlamam. (Reddet)",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TAX_INSPECTION",
+    "title": "Vergi Denetimi",
+    "description": "Maliye memurları dükkana ani bir baskın düzenledi. Tüm kayıtlarını incelemek istiyorlar.",
+    "npc": "Maliye Memuru",
+    "weight": 50,
+    "cooldown": 10,
+    "conditions": [ { "type": "MIN_DAY", "value": "5" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Buyrun, her şeyim yasal.",
+        "rewards": [ { "type": "XP", "value": "50" } ],
+        "penalties": [ { "type": "MONEY_PERCENT", "value": "5" } ],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_STOLEN_LAPTOP",
+    "title": "Şüpheli Laptop",
+    "description": "Kapşonlu bir genç dükkana girdi. Sağına soluna bakarak elindeki gıcır gıcır Gaming Laptop'u sadece 1000 TL'ye satabileceğini söylüyor.",
+    "npc": "Şüpheli Genç",
+    "weight": 80,
+    "cooldown": 7,
+    "conditions": [ { "type": "MIN_MONEY", "value": "1000" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Ver lan laptopu! (Riski al)",
+        "rewards": [ { "type": "ITEM", "value": "Şüpheli Gaming Laptop" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "1000" } ],
+        "flags": [ "BOUGHT_STOLEN_GOODS" ]
+      },
+      {
+        "id": "C2",
+        "text": "Polisi arıyorum, defol! (Kov)",
+        "rewards": [ { "type": "XP", "value": "200" } ],
+        "penalties": [],
+        "flags": [ "HONEST_MERCHANT" ]
+      }
+    ]
+  },
+  {
+    "id": "EV_CAT",
+    "title": "Sokak Kedisi",
+    "description": "Dükkandan içeri ıslanmış, titreyen minik bir kedi yavrusu girdi. Sana masum masum bakıyor.",
+    "npc": "Kedi Yavrusu",
+    "weight": 120,
+    "cooldown": 15,
+    "conditions": [ { "type": "NOT_HAS_FLAG", "value": "HAS_CAT" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Gel bakalım pisi pisi. Sana bir yatak yapayım. (-200 TL Masraf)",
+        "rewards": [ { "type": "XP", "value": "300" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "200" } ],
+        "flags": [ "HAS_CAT" ]
+      },
+      {
+        "id": "C2",
+        "text": "Kış kış! Dükkanı kokutursun.",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TEFECI_WARNING",
+    "title": "Tefeci Rıza'nın Ziyareti",
+    "description": "Tefeci Rıza dükkana geldi. 'Piyasa kötü yeğenim, faizleri biraz artırıyoruz artık' diyerek sırıtıyor.",
+    "npc": "Tefeci Rıza",
+    "weight": 40,
+    "cooldown": 10,
+    "conditions": [ { "type": "MIN_DAY", "value": "10" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Abi yapma gözünü seveyim...",
+        "rewards": [],
+        "penalties": [ { "type": "MONEY_PERCENT", "value": "3" } ],
+        "flags": [ "RIZA_ANGRY" ]
+      },
+      {
+        "id": "C2",
+        "text": "Al şu 1000 lirayı da sesini çıkarma! (Rüşvet)",
+        "rewards": [ { "type": "XP", "value": "100" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "1000" } ],
+        "flags": [ "PAID_DEBT_EARLY" ]
+      }
+    ]
+  },
+  {
+    "id": "EV_HAYRI_USTA_HELP",
+    "title": "Hayri Usta'nın Ricası",
+    "description": "Hayri Usta kan ter içinde geldi. 'Yeğenim benim matkap bozuldu, elinde varsa bana ödünç ver, dükkanı kurtarayım' diyor.",
+    "npc": "Hayri Usta",
+    "weight": 70,
+    "cooldown": 20,
+    "conditions": [ { "type": "MIN_DAY", "value": "3" }, { "type": "NOT_HAS_FLAG", "value": "HELPED_HAYRI" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Al usta senin canın sağ olsun. (-300 TL)",
+        "rewards": [ { "type": "XP", "value": "400" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "300" } ],
+        "flags": [ "HELPED_HAYRI" ]
+      },
+      {
+        "id": "C2",
+        "text": "Ustam bende de yok inan ki...",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TOURIST",
+    "title": "Yolunu Kaybeden Turist",
+    "description": "Dükkana elinde haritayla şaşkın bir turist girdi. Sana eski bir kamera uzatıp 'Buy? Buy?' diyor.",
+    "npc": "Yabancı Turist",
+    "weight": 90,
+    "cooldown": 5,
+    "conditions": [ { "type": "MIN_DAY", "value": "4" }, { "type": "MIN_MONEY", "value": "800" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Yes yes, I buy! (800 TL Ver)",
+        "rewards": [ { "type": "ITEM", "value": "Vintage Analog Kamera" }, { "type": "XP", "value": "150" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "800" } ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "No no, no English. (Reddet)",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_SEVIM_TEYZE_RADIO",
+    "title": "Sevim Teyze'nin Fırını",
+    "description": "Sevim Teyze elinde eski bir mini fırınla geldi. 'Evladım bu artık ısıtmıyor, al hurdasına 100 lira ver de harçlık yapayım' diyor.",
+    "npc": "Sevim Teyze",
+    "weight": 80,
+    "cooldown": 6,
+    "conditions": [ { "type": "MIN_MONEY", "value": "100" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Al teyzem 100 liranı. Fırını ver.",
+        "rewards": [ { "type": "ITEM", "value": "Bozuk Mini Fırın" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "100" } ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Al şu 200 lirayı sen teyzem, fırın da sende kalsın.",
+        "rewards": [ { "type": "XP", "value": "400" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "200" } ],
+        "flags": [ "HONEST_MERCHANT" ]
+      }
+    ]
+  },
+  {
+    "id": "EV_POWER_OUTAGE",
+    "title": "Elektrik Kesintisi",
+    "description": "Mahallede trafo patladı! Dükkan zifiri karanlık. Bugün dükkana müşteri gelmesi çok zor olacak.",
+    "npc": "Belediye",
+    "weight": 30,
+    "cooldown": 12,
+    "conditions": [],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Yapacak bir şey yok, jeneratör kiralayayım. (-500 TL)",
+        "rewards": [ { "type": "XP", "value": "100" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "500" } ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Oturup bekleyeyim, elbet gelir. (Zaman kaybı)",
+        "rewards": [],
+        "penalties": [ { "type": "MONEY_PERCENT", "value": "2" } ],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_STREET_FIGHT",
+    "title": "Mahalle Kavgası",
+    "description": "İki genç dükkanının önünde kavgaya tutuştu. Biri kan revan içinde senin dükkanına saklanmak istiyor.",
+    "npc": "Yaralı Genç",
+    "weight": 60,
+    "cooldown": 10,
+    "conditions": [ { "type": "MIN_DAY", "value": "6" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Gel içeri kardeşim, kapıyı kilitliyorum. (Polisi Ara)",
+        "rewards": [ { "type": "XP", "value": "300" } ],
+        "penalties": [],
+        "flags": [ "HELPED_YOUTH" ]
+      },
+      {
+        "id": "C2",
+        "text": "Benim dükkanıma bulaşmayın! (Kapıyı yüzüne kapat)",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_ZABITA",
+    "title": "Zabıta Baskını",
+    "description": "Zabıtalar geldi. 'Dükkanın önüne çok mal yığmışsın, yolu kapatıyor' diyerek ceza yazacaklar.",
+    "npc": "Zabıta Amiri",
+    "weight": 50,
+    "cooldown": 8,
+    "conditions": [ { "type": "MIN_DAY", "value": "5" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Haklısınız amirim, cezayı yazın ödeyelim.",
+        "rewards": [],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "1500" } ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Amirim öğrenciyiz, idare edin. (Şansını Dene)",
+        "rewards": [ { "type": "XP", "value": "50" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "500" } ],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_COLLECTOR",
+    "title": "Zengin Koleksiyoner",
+    "description": "Lüks giyimli biri dükkana girdi. Eski pikap aradığını, bulursan çok iyi para ödeyeceğini söylüyor.",
+    "npc": "Koleksiyoner Berk",
+    "weight": 70,
+    "cooldown": 15,
+    "conditions": [ { "type": "MIN_DAY", "value": "8" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Tamam, bulursam sana ayırırım.",
+        "rewards": [ { "type": "XP", "value": "100" } ],
+        "penalties": [],
+        "flags": [ "MET_COLLECTOR" ]
+      }
+    ]
+  },
+  {
+    "id": "EV_FAKE_POLICE",
+    "title": "Sahte Polis",
+    "description": "Bir adam geldi. Polis rozeti gösterip, çalıntı mal sattığın ihbarı aldıklarını ve rüşvet verirsen göz yumacağını söyledi.",
+    "npc": "Sahte Polis",
+    "weight": 60,
+    "cooldown": 20,
+    "conditions": [ { "type": "MIN_DAY", "value": "15" }, { "type": "MIN_MONEY", "value": "2000" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Al abi 2000 lirayı, beni uğraştırma. (Korkup Öde)",
+        "rewards": [],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "2000" } ],
+        "flags": [ "SCAMMED_BY_FAKE_POLICE" ]
+      },
+      {
+        "id": "C2",
+        "text": "Siz sahtekara benziyorsunuz. Yürü git, polisi ben arıyorum! (Kov)",
+        "rewards": [ { "type": "XP", "value": "500" } ],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_LOTTERY",
+    "title": "Esnaf Çekilişi",
+    "description": "Mahalle esnafı aralarında bir çekiliş düzenliyor. Bilet 500 TL. Katılmak ister misin?",
+    "npc": "Esnaf Temsilcisi",
+    "weight": 100,
+    "cooldown": 14,
+    "conditions": [ { "type": "MIN_MONEY", "value": "500" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Al bakalım 500 TL, şansımızı deneyelim.",
+        "rewards": [ { "type": "ITEM", "value": "Sürpriz Kutu" }, { "type": "XP", "value": "50" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "500" } ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Ben şansa inanmam, kalsın.",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_THIEF",
+    "title": "Gece Hırsızı",
+    "description": "Sabah dükkana geldiğinde kilidin zorlandığını gördün. Bir hırsız girmeye çalışmış ama tam başaramamış.",
+    "npc": "Hırsız",
+    "weight": 50,
+    "cooldown": 10,
+    "conditions": [ { "type": "MIN_DAY", "value": "7" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Yeni sağlam bir kilit taktırayım. (-1000 TL)",
+        "rewards": [ { "type": "XP", "value": "200" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "1000" } ],
+        "flags": [ "SECURE_SHOP" ]
+      },
+      {
+        "id": "C2",
+        "text": "Bir şey olmaz, idare eder. (Riski Al)",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_CHANGE_MONEY",
+    "title": "Bozuk Para",
+    "description": "Yan komşun bakkal telaşla geldi. 'Yeğenim müşteriye para üstü vereceğim, 1000 lirayı bozabilir misin?' diyor.",
+    "npc": "Bakkal Amca",
+    "weight": 80,
+    "cooldown": 5,
+    "conditions": [ { "type": "MIN_MONEY", "value": "1000" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Tabii ki ustam, al bozukları ver bütünü.",
+        "rewards": [ { "type": "XP", "value": "100" } ],
+        "penalties": [],
+        "flags": [ "HELPED_NEIGHBOR" ]
+      },
+      {
+        "id": "C2",
+        "text": "Bozuk param hiç yok ustam kusura bakma.",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_BEGGAR",
+    "title": "Dilenci Çocuk",
+    "description": "Üstü başı yırtık küçük bir çocuk dükkana gelip aç olduğunu söyledi.",
+    "npc": "Dilenci Çocuk",
+    "weight": 110,
+    "cooldown": 4,
+    "conditions": [ { "type": "MIN_MONEY", "value": "50" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Al bakalım şu 100 lirayı git yemek ye.",
+        "rewards": [ { "type": "XP", "value": "250" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "100" } ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Hadi yavrum başka kapıya.",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_WHOLESALER",
+    "title": "Toptancı Eşref",
+    "description": "Toptancı Eşref elinde dev bir koliyle geldi. İçinde ne olduğu belli değil ama 3000 TL'ye satıyor. 'İçinden altın bile çıkabilir' diyor.",
+    "npc": "Toptancı Eşref",
+    "weight": 70,
+    "cooldown": 15,
+    "conditions": [ { "type": "MIN_DAY", "value": "12" }, { "type": "MIN_MONEY", "value": "3000" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Riski severim, al 3000 TL'yi, ver koliyi.",
+        "rewards": [ { "type": "ITEM", "value": "Gizemli Koli" }, { "type": "XP", "value": "100" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "3000" } ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Eşref abi beni böyle numaralarla kandıramazsın.",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_GAMER_KID",
+    "title": "Oyuncu Genç",
+    "description": "Ergen bir genç koşa koşa geldi. Eski bir konsol bulmuş, sana 400 TL'ye satmak istiyor. Çalışıp çalışmadığını bilmiyor.",
+    "npc": "Gamer Genç",
+    "weight": 90,
+    "cooldown": 6,
+    "conditions": [ { "type": "MIN_MONEY", "value": "400" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Tamam alıyorum. (400 TL Öde)",
+        "rewards": [ { "type": "ITEM", "value": "Eski Oyun Konsolu" }, { "type": "XP", "value": "100" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "400" } ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Bozuk çıkar bu, uğraşamam.",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_ELECTION",
+    "title": "Belediye Başkanı Ziyareti",
+    "description": "Belediye başkan adayı mahalle esnafını ziyaret ediyor. Dükkanına girdi, tokalaştı. Çıkarken koruması 'Esnaf Derneğine' 2000 TL bağış istiyor.",
+    "npc": "Başkan Adayı",
+    "weight": 30,
+    "cooldown": 30,
+    "conditions": [ { "type": "MIN_DAY", "value": "20" }, { "type": "MIN_MONEY", "value": "2000" } ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Başkanım canın sağ olsun, buyrun bağışımız. (2000 TL)",
+        "rewards": [ { "type": "XP", "value": "1000" } ],
+        "penalties": [ { "type": "MONEY_EXACT", "value": "2000" } ],
+        "flags": [ "SUPPORTED_MAYOR" ]
+      },
+      {
+        "id": "C2",
+        "text": "Maalesef şu an durumum pek yok.",
+        "rewards": [], "penalties": [], "flags": []
+      }
+    ]
+  }
+]

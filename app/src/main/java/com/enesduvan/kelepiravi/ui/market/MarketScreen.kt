@@ -38,6 +38,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
     val playerState by viewModel.playerState.collectAsState()
     val dailySummary by viewModel.dailySummary.collectAsState()
     val scamReveal by viewModel.scamReveal.collectAsState()
+    val interactiveEvent by viewModel.interactiveEvent.collectAsState()
 
     val balanceText = remember(playerState.balance) { formatBalance(playerState.balance) }
     val visibleItems by remember(uiState.marketItems, uiState.selectedCategory) {
@@ -163,6 +164,20 @@ fun MarketScreen(viewModel: MarketViewModel) {
         ) {
             if (dailySummary != null) {
                 DailySummaryDialog(summary = dailySummary!!, onDismiss = { viewModel.dismissDailySummary() })
+            }
+        }
+
+        // Ch6: Interaktif Event (Olay Motoru)
+        AnimatedVisibility(
+            visible = interactiveEvent != null,
+            enter = fadeIn(tween(300)) + scaleIn(tween(300), initialScale = 0.8f),
+            exit = fadeOut(tween(200)) + scaleOut(tween(200))
+        ) {
+            if (interactiveEvent != null) {
+                InteractiveEventDialog(
+                    event = interactiveEvent!!,
+                    onChoiceSelected = { choice -> viewModel.applyInteractiveEventChoice(choice) }
+                )
             }
         }
 
@@ -412,6 +427,56 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier
             Column(horizontalAlignment = Alignment.End) {
                 Text("İstenen", color = TextSecondary, fontSize = 10.sp)
                 Text("₺${item.salesValue}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+            }
+        }
+    }
+}
+
+// Ch6: İnteraktif Event Dialogu
+@Composable
+fun InteractiveEventDialog(
+    event: com.enesduvan.kelepiravi.data.event.EventDefinition,
+    onChoiceSelected: (com.enesduvan.kelepiravi.data.event.EventChoice) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xEE000000)),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(0.9f).padding(16.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2A2A))
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("👀 OLAY", color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(event.title, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Text(
+                    event.description,
+                    color = TextPrimary,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 22.sp
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                event.choices.forEach { choice ->
+                    Button(
+                        onClick = { onChoiceSelected(choice) },
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(choice.text, color = Color.Black, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    }
+                }
             }
         }
     }

@@ -77,7 +77,17 @@ private val MIGRATION_7_8 = object : Migration(7, 8) {
     }
 }
 
-@Database(entities = [UserInventoryEntity::class], version = 8, exportSchema = false)
+/**
+ * Migration 8 → 9: eventFlags ve eventCooldowns eklendi. (Bölüm 2 Event Engine)
+ */
+private val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN eventFlags TEXT NOT NULL DEFAULT ''")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN eventCooldowns TEXT NOT NULL DEFAULT ''")
+    }
+}
+
+@Database(entities = [UserInventoryEntity::class], version = 9, exportSchema = false)
 @TypeConverters(MarketItemConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun kelepiraviDao(): KelepiraviDao
@@ -101,7 +111,7 @@ object AppDatabaseProvider {
                 AppDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                 .addCallback(DatabaseBackupCallback(appContext))
                 .build()
                 .also { instance = it }

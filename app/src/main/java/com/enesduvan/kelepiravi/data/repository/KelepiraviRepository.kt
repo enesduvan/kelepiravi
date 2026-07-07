@@ -16,17 +16,26 @@ import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+import com.enesduvan.kelepiravi.data.event.EventChoice
+import com.enesduvan.kelepiravi.data.event.EventDefinition
+import com.enesduvan.kelepiravi.data.event.EventLoader
+import com.enesduvan.kelepiravi.data.event.EventManager
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 data class AdvanceDayResult(
     val event: DailyEvent?,
+    val interactiveEvent: EventDefinition?,
     val rentPaid: Double,
     val taxPaid: Double
 )
 
 class KelepiraviRepository(
-    private val database: AppDatabase
+    private val database: AppDatabase,
+    private val context: android.content.Context
 ) {
     private val dao = database.kelepiraviDao()
+    private val mutex = Mutex()
 
     fun getPlayerState(): Flow<List<UserInventoryEntity>> = dao.getAllInventories()
 
@@ -77,8 +86,10 @@ class KelepiraviRepository(
     }
 
     suspend fun initializePlayerIfNeeded() {
-        database.withTransaction {
-            getPlayerOrCreate()
+        mutex.withLock {
+            database.withTransaction {
+                getPlayerOrCreate()
+            }
         }
     }
 
@@ -90,8 +101,9 @@ class KelepiraviRepository(
     }
 
     suspend fun updateInventoryItem(oldItem: MarketItem, newItem: MarketItem, cost: Double): Boolean {
-        return database.withTransaction {
-            val player = getPlayerOrCreate()
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
             val currentBalance = player.balance.toDoubleOrNull().orZero()
             if (currentBalance < cost) return@withTransaction false
 
@@ -110,6 +122,7 @@ class KelepiraviRepository(
             dao.updateInventory(finalPlayer)
             true
         }
+        }
     }
 
     /**
@@ -117,8 +130,9 @@ class KelepiraviRepository(
      * @return RepairResult — başarı/başarısızlık/limit durumu
      */
     suspend fun repairItem(item: MarketItem): RepairResult {
-        return database.withTransaction {
-            val player = getPlayerOrCreate()
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
 
             // Günlük limit kontrolü
             val isNewDay = player.lastRepairDay != player.currentDay
@@ -189,6 +203,7 @@ class KelepiraviRepository(
             )
             RepairResult.Success
         }
+        }
     }
 
     /** Kondisyon seviyesini bir basamak düşürür */
@@ -219,8 +234,9 @@ class KelepiraviRepository(
     }
 
     suspend fun purchaseItem(item: MarketItem): Boolean {
-        return database.withTransaction {
-            val player = getPlayerOrCreate()
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
             val maxCapacity = 5 + (player.shopLevel * 5)
             if (player.inventory.size >= maxCapacity) return@withTransaction false
 
@@ -259,11 +275,13 @@ class KelepiraviRepository(
             dao.updateInventory(finalPlayer)
             true
         }
+        }
     }
 
     suspend fun buyLootBox(type: LootBoxType): List<MarketItem>? {
-        return database.withTransaction {
-            val player = getPlayerOrCreate()
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
             val currentBalance = player.balance.toDoubleOrNull().orZero()
             if (currentBalance < type.price) return@withTransaction null
 
@@ -281,11 +299,13 @@ class KelepiraviRepository(
             dao.updateInventory(finalPlayer)
             generatedItems
         }
+        }
     }
 
     suspend fun sellItem(item: MarketItem, agreedPrice: Double? = null): Boolean {
-        return database.withTransaction {
-            val player = getPlayerOrCreate()
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
             val itemInInventory = player.inventory.find { it.isSameInventoryItem(item) }
                 ?: return@withTransaction false
             val sellPrice = agreedPrice ?: calculateSellPrice(itemInInventory)
@@ -312,6 +332,7 @@ class KelepiraviRepository(
             dao.updateInventory(finalPlayer)
             true
         }
+        }
     }
 
     fun calculateSellPrice(item: MarketItem): Double {
@@ -322,8 +343,9 @@ class KelepiraviRepository(
     }
 
     suspend fun advanceDay(): AdvanceDayResult {
-        return database.withTransaction {
-            val player = getPlayerOrCreate()
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
             val currentTrends = runCatching {
                 if (player.marketTrends.isBlank()) emptyMap<String, Double>()
                 else Json.decodeFromString<Map<String, Double>>(player.marketTrends)
@@ -358,7 +380,75 @@ class KelepiraviRepository(
             )
 
             dao.updateInventory(finalPlayer)
-            AdvanceDayResult(event, rent, tax)
+            
+            // Ch6: Rastgele interaktif event çekme (Phase 2 Event Engine)
+            val allEvents = EventLoader.loadEvents(context)
+            val availableEvents = EventManager.getAvailableEvents(finalPlayer, allEvents)
+            val pickedInteractiveEvent = EventManager.pickRandomEvent(availableEvents)
+            
+            AdvanceDayResult(event, pickedInteractiveEvent, rent, tax)
+        }
+        }
+    }
+
+    suspend fun applyEventChoice(choice: EventChoice): Boolean {
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                var currentBalance = player.balance.toDoubleOrNull().orZero()
+                var newXp = player.xp
+                val newInventory = player.inventory.toMutableList()
+                
+                // Apply Rewards
+                for (reward in choice.rewards) {
+                    when (reward.type) {
+                        "MONEY" -> currentBalance += reward.value.toDoubleOrNull().orZero()
+                        "XP" -> newXp += reward.value.toIntOrNull() ?: 0
+                        "ITEM" -> {
+                            val product = MarketGenerator.PRODUCTS.find { it.name == reward.value } 
+                                ?: MarketGenerator.PRODUCTS.random()
+                            val item = MarketGenerator.generateNormalItem(kotlin.random.Random.Default, product, emptyMap())
+                            val enrichedItem = item.copy(
+                                itemName = reward.value, 
+                                purchasePrice = "0.0", 
+                                purchaseDate = LocalDate.now().toString(),
+                                sellerName = "Olay Hediyesi"
+                            )
+                            newInventory.add(enrichedItem)
+                        }
+                    }
+                }
+                
+                // Apply Penalties
+                for (penalty in choice.penalties) {
+                    when (penalty.type) {
+                        "MONEY_EXACT" -> currentBalance -= penalty.value.toDoubleOrNull().orZero()
+                        "MONEY_PERCENT" -> {
+                            val percent = penalty.value.toDoubleOrNull().orZero()
+                            currentBalance -= currentBalance * (percent / 100.0)
+                        }
+                    }
+                }
+                
+                if (currentBalance < 0) currentBalance = 0.0
+                
+                // Apply Flags
+                val currentFlags = player.eventFlags.split(",").filter { it.isNotEmpty() }.toMutableSet()
+                currentFlags.addAll(choice.flags)
+                val newFlagsStr = currentFlags.joinToString(",")
+                
+                // Update player
+                val xpGain = newXp - player.xp
+                val basePlayer = if (xpGain > 0) processXpGain(player, xpGain) else player
+                val updatedPlayer = basePlayer.copy(
+                    balance = currentBalance.toString(),
+                    inventory = newInventory,
+                    eventFlags = newFlagsStr
+                )
+                
+                dao.updateInventory(updatedPlayer)
+                true
+            }
         }
     }
 
@@ -378,8 +468,9 @@ class KelepiraviRepository(
 
     // Ch10: Yükseltmeler
     suspend fun upgradeShop(cost: Double): Boolean {
-        return database.withTransaction {
-            val player = getPlayerOrCreate()
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
             val currentBalance = player.balance.toDoubleOrNull().orZero()
             if (currentBalance < cost) return@withTransaction false
             if (player.shopLevel >= 5) return@withTransaction false // Maksimum seviye
@@ -392,11 +483,13 @@ class KelepiraviRepository(
             )
             true
         }
+        }
     }
 
     suspend fun upgradeMechanic(cost: Double): Boolean {
-        return database.withTransaction {
-            val player = getPlayerOrCreate()
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
             val currentBalance = player.balance.toDoubleOrNull().orZero()
             if (currentBalance < cost) return@withTransaction false
             if (player.mechanicLevel >= 5) return@withTransaction false // Maksimum seviye
@@ -408,6 +501,7 @@ class KelepiraviRepository(
                 )
             )
             true
+        }
         }
     }
 

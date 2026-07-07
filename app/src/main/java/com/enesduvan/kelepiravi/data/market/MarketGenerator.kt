@@ -120,7 +120,7 @@ object MarketGenerator {
 
     // ─── Ürün Şablonları ──────────────────────────────────────────────────────
 
-    private data class ProductTemplate(
+    data class ProductTemplate(
         val name: String,
         val category: String,
         val imageKey: String,
@@ -128,7 +128,7 @@ object MarketGenerator {
         val baseMaxValue: Int
     )
 
-    private val PRODUCTS = listOf(
+    val PRODUCTS = listOf(
         // Elektronik
         ProductTemplate("Akıllı Telefon",         "Elektronik",  "smartphone",    2000, 18000),
         ProductTemplate("Laptop",                  "Elektronik",  "laptop",        4000, 25000),
@@ -232,7 +232,7 @@ object MarketGenerator {
         }
     }
 
-    private fun generateNormalItem(
+    fun generateNormalItem(
         rng: Random,
         product: ProductTemplate,
         marketTrends: Map<String, Double>
