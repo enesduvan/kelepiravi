@@ -188,23 +188,13 @@ fun ListingCard(
                 }
             }
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(
-                    onClick = { /* TODO: Düzenle */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    border = BorderStroke(1.dp, PrimaryOrange),
-                    modifier = Modifier.weight(1f).height(36.dp)
-                ) {
-                    Text("Düzenle", color = PrimaryOrange, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                }
-                Button(
-                    onClick = { onCancelClick(listing) },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    border = BorderStroke(1.dp, RED),
-                    modifier = Modifier.weight(1f).height(36.dp)
-                ) {
-                    Text("İlanı Kaldır", color = RED, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                }
+            Button(
+                onClick = { onCancelClick(listing) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                border = BorderStroke(1.dp, RED),
+                modifier = Modifier.fillMaxWidth().height(36.dp)
+            ) {
+                Text("İlanı Kaldır", color = RED, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
         }
     }

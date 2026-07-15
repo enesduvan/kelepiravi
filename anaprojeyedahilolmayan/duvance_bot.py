@@ -87,7 +87,21 @@ base_items = {
     "duffel_bag": "cylindrical sports gym duffel bag",
     "hoodie": "casual cotton hoodie sweater, folded",
     "denim_jeans": "pair of classic blue denim jeans, folded",
-    "silver_necklace": "simple silver chain necklace with a small pendant"
+    "silver_necklace": "simple silver chain necklace with a small pendant",
+
+    # Emlak (5)
+    "house_apartment": "modern city apartment building, cozy",
+    "house_villa": "luxury detached villa with a small pool",
+    "house_village": "classic old traditional village house, stone walls",
+    "house_mansion": "massive ultra luxury water-front mansion, rich architecture",
+    "house_prefab": "simple modular prefab house, neat",
+
+    # Araçlar (5)
+    "car_sports": "sleek aggressive sports car, aerodynamic design",
+    "car_sedan": "classic elegant sedan car, modern look",
+    "car_suv": "large rugged SUV off-road car, big tires",
+    "car_van": "commercial panel van minibus, white color",
+    "car_toros": "old classic blocky sedan car, retro style"
 }
 
 # === 2. BÖLÜM: 10 FARKLI KONDİSYON ===

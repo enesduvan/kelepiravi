@@ -147,6 +147,50 @@ object MarketGenerator {
         "vr" to ImagePool(
             clean = listOf("vr_headset_clean_1"),
             damaged = listOf("vr_headset_scratched_1")
+        ),
+        
+        // Emlak (Ev) Modelleri
+        "house_apartment" to ImagePool(
+            clean = listOf("house_apartment_01_flawless_varyasyon1"),
+            damaged = listOf("house_apartment_04_heavily_damaged_varyasyon1")
+        ),
+        "house_villa" to ImagePool(
+            clean = listOf("house_villa_01_flawless_varyasyon1"),
+            damaged = listOf("house_villa_04_heavily_damaged_varyasyon1")
+        ),
+        "house_village" to ImagePool(
+            clean = listOf("house_village_01_flawless_varyasyon1"),
+            damaged = listOf("house_village_04_heavily_damaged_varyasyon1")
+        ),
+        "house_mansion" to ImagePool(
+            clean = listOf("house_mansion_01_flawless_varyasyon1"),
+            damaged = listOf("house_mansion_04_heavily_damaged_varyasyon1")
+        ),
+        "house_prefab" to ImagePool(
+            clean = listOf("house_prefab_01_flawless_varyasyon1"),
+            damaged = listOf("house_prefab_04_heavily_damaged_varyasyon1")
+        ),
+
+        // Araç Modelleri
+        "car_sports" to ImagePool(
+            clean = listOf("car_sports_01_flawless_varyasyon1"),
+            damaged = listOf("car_sports_04_heavily_damaged_varyasyon1")
+        ),
+        "car_sedan" to ImagePool(
+            clean = listOf("car_sedan_01_flawless_varyasyon1"),
+            damaged = listOf("car_sedan_04_heavily_damaged_varyasyon1")
+        ),
+        "car_suv" to ImagePool(
+            clean = listOf("car_suv_01_flawless_varyasyon1"),
+            damaged = listOf("car_suv_04_heavily_damaged_varyasyon1")
+        ),
+        "car_van" to ImagePool(
+            clean = listOf("car_van_01_flawless_varyasyon1"),
+            damaged = listOf("car_van_04_heavily_damaged_varyasyon1")
+        ),
+        "car_toros" to ImagePool(
+            clean = listOf("car_toros_01_flawless_varyasyon1"),
+            damaged = listOf("car_toros_04_heavily_damaged_varyasyon1")
         )
     )
 
@@ -160,7 +204,7 @@ object MarketGenerator {
         val baseMaxValue: Int
     )
 
-    val PRODUCTS = listOf(
+    val NORMAL_PRODUCTS = listOf(
         ProductTemplate("Akıllı Telefon",         "Elektronik",  "smartphone",    2000, 18000),
         ProductTemplate("Laptop",                  "Elektronik",  "laptop",        4000, 25000),
         ProductTemplate("Gaming Laptop",           "Elektronik",  "laptop",        8000, 35000),
@@ -194,6 +238,22 @@ object MarketGenerator {
         ProductTemplate("Koleksiyon Oyuncağı",     "Koleksiyon",  "toy",             50,  3000),
         ProductTemplate("Akustik Gitar",           "Koleksiyon",  "guitar",         500,  5000),
 
+        // Emlak (Evler)
+        ProductTemplate("1+1 Apartman Dairesi",    "Emlak",       "house_apartment", 1000000, 3000000),
+        ProductTemplate("Müstakil Villa",          "Emlak",       "house_villa",     5000000, 15000000),
+        ProductTemplate("Köy Evi",                 "Emlak",       "house_village",   500000,  1500000),
+        ProductTemplate("Lüks Yalı",               "Emlak",       "house_mansion",   20000000, 100000000),
+        ProductTemplate("Prefabrik Ev",            "Emlak",       "house_prefab",    300000,  800000),
+
+        // Araçlar (Arabalar)
+        ProductTemplate("Spor Araba",              "Araç",        "car_sports",      2000000, 6000000),
+        ProductTemplate("Klasik Sedan",            "Araç",        "car_sedan",       500000,  1500000),
+        ProductTemplate("SUV Jip",                 "Araç",        "car_suv",         1000000, 3000000),
+        ProductTemplate("Panelvan Minibüs",        "Araç",        "car_van",         400000,  900000),
+        ProductTemplate("Külüstür Toros",          "Araç",        "car_toros",       150000,  300000)
+    )
+
+    val ABSURD_PRODUCTS = listOf(
         // Absürt İlanlar (Nadir)
         ProductTemplate("Boğaz Köprüsü (Hissedar)", "Emlak", "bogaz_koprusu", 5000000, 15000000),
         ProductTemplate("NASA Bilgisayarı", "Elektronik", "nasa_bilgisayari", 1000000, 5000000),
@@ -201,6 +261,8 @@ object MarketGenerator {
         ProductTemplate("Satılık Kaynana", "Diğer", "satilik_kaynana", 10, 100),
         ProductTemplate("Köy Kahvesi", "Emlak", "koy_kahvesi", 100000, 500000)
     )
+
+    val PRODUCTS: List<ProductTemplate> get() = NORMAL_PRODUCTS + ABSURD_PRODUCTS
 
     // ─── Kondisyon Havuzu (Ağırlıklı) ─────────────────────────────────────────
 
@@ -265,7 +327,8 @@ object MarketGenerator {
 
     private fun generateOne(marketTrends: Map<String, Double>): MarketItem {
         val rng = Random.Default
-        val product = PRODUCTS.random(rng)
+        val isAbsurd = rng.nextDouble() < 0.10 // %10 şansla absürt ilan
+        val product = if (isAbsurd) ABSURD_PRODUCTS.random(rng) else NORMAL_PRODUCTS.random(rng)
         val isScammer = rng.nextDouble() < GameConstants.SCAMMER_CHANCE
 
         return if (isScammer) {

@@ -5,7 +5,7 @@ object GameConstants {
     const val INITIAL_BALANCE = "25000.0"
     const val INITIAL_DAY = 1
 
-    const val MARKET_BATCH_SIZE = 12
+    const val MARKET_BATCH_SIZE = 18
 
     const val XP_LEVEL_FACTOR = 50
     const val BUY_XP = 10

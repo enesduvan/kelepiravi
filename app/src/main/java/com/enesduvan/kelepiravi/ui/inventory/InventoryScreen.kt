@@ -203,11 +203,9 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
             modifier = Modifier
                 .fillMaxSize()
                 .background(MarketplaceBackground)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
         ) {
-            // Header
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 16.dp)) {
+            // Header (Sabit)
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp).fillMaxWidth()) {
                 IconButton(onClick = onDismiss) {
                     Icon(androidx.compose.material.icons.Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
                 }
@@ -215,6 +213,14 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(androidx.compose.material.icons.Icons.Default.HelpOutline, contentDescription = "Yardım", tint = MarketTextSecondary)
             }
+
+            // Kaydırılabilir İçerik
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+            ) {
 
             // Item Card
             Box(
@@ -338,127 +344,31 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = { onConfirm(price.toLong().toString()) },
-                colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(androidx.compose.material.icons.Icons.Default.LocalOffer, contentDescription = null, tint = Color.White)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Satışa Koy", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            }
             Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                Icon(androidx.compose.material.icons.Icons.Default.VerifiedUser, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(14.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("Ürün satışa konulduğunda envanterden düşer.", color = MarketTextSecondary, fontSize = 12.sp)
-            }
-        }
-    }
-}
+            } // Kaydırılabilir Alan Sonu
 
-@Composable
-private fun ListingCard(
-    listing: Listing,
-    onCancelClick: (Listing) -> Unit,
-    onAcceptOffer: (Listing, Double) -> Unit
-) {
-    val estimatedValue = listing.item.estimatedValue.toDoubleOrNull() ?: 0.0
-    val listedPrice = listing.listedPrice.toDoubleOrNull() ?: 0.0
-    val diffPercent = ((listedPrice - estimatedValue) / estimatedValue) * 100
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier.size(64.dp).clip(RoundedCornerShape(12.dp)).background(SurfaceVariant),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = getPainterResourceByName(listing.item.imageName),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-                Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
-                    Text(listing.item.itemName, color = TextPrimary, fontWeight = FontWeight.Bold)
-                    Text("İlan Fiyatı: ₺${formatBalance(listing.listedPrice)}", color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    Text("Piyasa: ₺${formatBalance(estimatedValue.toString())} (${if (diffPercent > 0) "+" else ""}${"%.0f".format(diffPercent)}%)", color = TextSecondary, fontSize = 12.sp)
-                }
-            }
-
-            // Stats row (Views, Favorites)
-            Row(
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(SurfaceVariant).padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+            // Sabit Alt Alan
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Card)
+                    .padding(16.dp)
             ) {
-                Text("👀 ${listing.views} Kişi Baktı", color = TextSecondary, fontSize = 12.sp)
-                Text("❤️ ${listing.favorites} Favori", color = TextSecondary, fontSize = 12.sp)
-                Text("⏳ ${listing.listedDay}. Gün", color = TextSecondary, fontSize = 12.sp)
-            }
-
-            // Offers (MOCK FOR NOW, will be connected to NPC Engine)
-            if (listing.offers.isEmpty()) {
-                Text("Henüz teklif yok. Müşteri bekleniyor...", color = TextMuted, fontSize = 12.sp, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-            } else {
-                listing.offers.forEach { offer ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Color(0xFF2A2A2A)).padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text(offer.npcName, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                            Text("Teklifi: ₺${formatBalance(offer.offerAmount)}", color = MoneyGreen, fontSize = 13.sp)
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(
-                                onClick = { /* TODO: Open Bargain Screen */ },
-                                colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                                modifier = Modifier.height(30.dp)
-                            ) {
-                                Text("Pazarlık Yap", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                            }
-                            Button(
-                                onClick = { onAcceptOffer(listing, offer.offerAmount.toDouble()) },
-                                colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                                modifier = Modifier.height(30.dp)
-                            ) {
-                                Text("Kabul Et", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
-                }
-            }
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Button(
-                    onClick = { /* TODO: Düzenle */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    border = BorderStroke(1.dp, PrimaryOrange),
-                    modifier = Modifier.weight(1f).height(36.dp)
+                    onClick = { onConfirm(price.toLong().toString()) },
+                    colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Düzenle", color = PrimaryOrange, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Icon(androidx.compose.material.icons.Icons.Default.LocalOffer, contentDescription = null, tint = Color.White)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Satışa Koy", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
-                Button(
-                    onClick = { onCancelClick(listing) },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    border = BorderStroke(1.dp, RED),
-                    modifier = Modifier.weight(1f).height(36.dp)
-                ) {
-                    Text("İlanı Kaldır", color = RED, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                    Icon(androidx.compose.material.icons.Icons.Default.VerifiedUser, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(14.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Ürün satışa konulduğunda envanterden düşer.", color = MarketTextSecondary, fontSize = 12.sp)
                 }
             }
         }
@@ -589,14 +499,6 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     modifier = Modifier.height(36.dp)
                 ) { Text(if (isFastSell) "Pazarlık Yap" else "İlan Ver", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
-
-                Button(
-                    onClick = { /* Tamir ekranında yapılıyor */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
-                    shape = RoundedCornerShape(14.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    modifier = Modifier.height(36.dp)
-                ) { Text("Tamir", color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
             }
         }
     }
