@@ -301,5 +301,616 @@
     "variants": [
       "leather_jacket_torn_1"
     ]
+  },
+  {
+    "id": 28,
+    "asset": "city_bike",
+    "name": "Şehir Bisikleti",
+    "category": "sports",
+    "basePrice": 3500,
+    "rarity": 2,
+    "variants": [
+      "blackcitybike", "bluecitybike", "greencitybike", "lightbluecitybike"
+    ]
+  },
+  {
+    "id": 29,
+    "asset": "mountain_bike",
+    "name": "Dağ Bisikleti",
+    "category": "sports",
+    "basePrice": 5200,
+    "rarity": 3,
+    "variants": [
+      "darkgreymountainbike", "matteblackmountainbike", "tealmountainbike", "tealwhitemountainbike"
+    ]
+  },
+  {
+    "id": 30,
+    "asset": "retro_console",
+    "name": "Retro Oyun Konsolu",
+    "category": "electronics",
+    "basePrice": 2800,
+    "rarity": 3,
+    "variants": [
+      "classicgreyretroconsole", "retroconsolewithscreena", "retroconsolewithscreenb", "modernsilverconsole", "classicretroconsole", "turkokonsoleretro"
+    ]
+  },
+  {
+    "id": 31,
+    "asset": "vr_headset_extra",
+    "name": "VR Gözlük (Çeşitli Model)",
+    "category": "electronics",
+    "basePrice": 4500,
+    "rarity": 3,
+    "variants": [
+      "chunkyvrheadset", "genericvrheadseta", "sleekvrheadset", "vrheadsetwithaudio"
+    ]
+  },
+  {
+    "id": 32,
+    "asset": "rc_car",
+    "name": "RC Araba",
+    "category": "toys",
+    "basePrice": 1800,
+    "rarity": 2,
+    "variants": [
+      "redrcbuggy", "redblackrcbuggy", "redwhitercbuggy"
+    ]
+  },
+  {
+    "id": 33,
+    "asset": "rc_truck_muddy",
+    "name": "RC Kamyon (Çamurlu)",
+    "category": "toys",
+    "basePrice": 900,
+    "rarity": 1,
+    "variants": [
+      "muddyredrctruck"
+    ]
+  },
+  {
+    "id": 34,
+    "asset": "electric_scooter",
+    "name": "Elektrikli Scooter",
+    "category": "sports",
+    "basePrice": 6500,
+    "rarity": 3,
+    "variants": [
+      "scooter", "scooter2", "scooter3"
+    ]
+  },
+  {
+    "id": 35,
+    "asset": "jigsaw_puzzle",
+    "name": "Yapboz Bulmaca",
+    "category": "toys",
+    "basePrice": 350,
+    "rarity": 1,
+    "variants": [
+      "boxedbluejigsawpuzzle", "openbluejigsawpuzzle", "squarebluepuzzle", "bluepuzzlebox"
+    ]
+  },
+  {
+    "id": 36,
+    "asset": "toy_blocks",
+    "name": "Renkli Lego Blok",
+    "category": "toys",
+    "basePrice": 250,
+    "rarity": 1,
+    "variants": [
+      "boxofcolorfultoyblocks", "boxofgreytoyblocks", "boxoftantoyblocks", "cardboardboxgreyblocks"
+    ]
+  },
+  {
+    "id": 37,
+    "asset": "chess_set",
+    "name": "Ahşap Satranç Takımı",
+    "category": "toys",
+    "basePrice": 1200,
+    "rarity": 2,
+    "variants": [
+      "woodenchessseta", "woodenchesssetb", "woodenchesssetc", "woodenchesssetd"
+    ]
+  },
+  {
+    "id": 38,
+    "asset": "car_tire",
+    "name": "Araba Lastiği",
+    "category": "spare_parts",
+    "basePrice": 800,
+    "rarity": 1,
+    "variants": [
+      "flatcartire", "standingcartirea", "standingcartireb", "standingcartirec"
+    ]
+  },
+  {
+    "id": 39,
+    "asset": "luxury_watch",
+    "name": "Lüks Kol Saati",
+    "category": "accessories",
+    "basePrice": 15000,
+    "rarity": 4,
+    "variants": [
+      "classicbluewatch", "luxuryreginowatch", "leathersmartwatch"
+    ]
+  },
+  {
+    "id": 40,
+    "asset": "smashed_watch",
+    "name": "Ezilmiş Kol Saati",
+    "category": "accessories",
+    "basePrice": 2000,
+    "rarity": 2,
+    "variants": [
+      "smashedclassicwatch"
+    ]
+  },
+  {
+    "id": 41,
+    "asset": "gaming_laptop_v2",
+    "name": "Oyuncu Laptopu (Ağır Seri)",
+    "category": "electronics",
+    "basePrice": 35000,
+    "rarity": 4,
+    "variants": [
+      "gaminglaptop", "heavydutygaminglaptop"
+    ]
+  },
+  {
+    "id": 42,
+    "asset": "laptop_damaged",
+    "name": "Laptop (Hasarlı)",
+    "category": "electronics",
+    "basePrice": 8000,
+    "rarity": 2,
+    "variants": [
+      "damagedsilverlaptop", "genericsilverlaptop"
+    ]
+  },
+  {
+    "id": 43,
+    "asset": "retro_mobile",
+    "name": "Retro Cep Telefonu",
+    "category": "electronics",
+    "basePrice": 2500,
+    "rarity": 3,
+    "variants": [
+      "retromobilephone"
+    ]
+  },
+  {
+    "id": 44,
+    "asset": "smartphone_scratched_v2",
+    "name": "Akıllı Telefon (Çizik)",
+    "category": "electronics",
+    "basePrice": 7500,
+    "rarity": 2,
+    "variants": [
+      "scratchedsmartphone"
+    ]
+  },
+  {
+    "id": 45,
+    "asset": "smartphone_missing",
+    "name": "Akıllı Telefon (Parçalı)",
+    "category": "electronics",
+    "basePrice": 3000,
+    "rarity": 1,
+    "variants": [
+      "smartphone_05_missing_parts_varyasyon1", "smartphone_05_missing_parts_varyasyon2",
+      "smartphone_05_missing_parts_varyasyon3", "smartphone_05_missing_parts_varyasyon4"
+    ]
+  },
+  {
+    "id": 46,
+    "asset": "smartphone_scrap",
+    "name": "Akıllı Telefon (Hurda)",
+    "category": "electronics",
+    "basePrice": 800,
+    "rarity": 1,
+    "variants": [
+      "smartphone_10_scrap_varyasyon1", "smartphone_10_scrap_varyasyon2",
+      "smartphone_10_scrap_varyasyon3", "smartphone_10_scrap_varyasyon4"
+    ]
+  },
+  {
+    "id": 47,
+    "asset": "smartphone_custom",
+    "name": "Akıllı Telefon (Özel Boyalı)",
+    "category": "electronics",
+    "basePrice": 9500,
+    "rarity": 3,
+    "variants": [
+      "smartphone_09_custom_painted_varyasyon1"
+    ]
+  },
+  {
+    "id": 48,
+    "asset": "gaming_headset_new",
+    "name": "Oyuncu Kulaklığı",
+    "category": "electronics",
+    "basePrice": 3500,
+    "rarity": 2,
+    "variants": [
+      "gaming_headset_01_flawless_varyasyon1", "gaming_headset_01_flawless_varyasyon2", "gaming_headset_01_flawless_varyasyon3", "gaming_headset_01_flawless_varyasyon4",
+      "gaming_headset_02_lightly_used_varyasyon1", "gaming_headset_02_lightly_used_varyasyon2", "gaming_headset_02_lightly_used_varyasyon3", "gaming_headset_02_lightly_used_varyasyon4",
+      "gaming_headset_03_worn_out_varyasyon1", "gaming_headset_03_worn_out_varyasyon2", "gaming_headset_03_worn_out_varyasyon3", "gaming_headset_03_worn_out_varyasyon4",
+      "gaming_headset_04_heavily_damaged_varyasyon1", "gaming_headset_04_heavily_damaged_varyasyon3", "gaming_headset_04_heavily_damaged_varyasyon4",
+      "gaming_headset_05_missing_parts_varyasyon1", "gaming_headset_05_missing_parts_varyasyon2", "gaming_headset_05_missing_parts_varyasyon3", "gaming_headset_05_missing_parts_varyasyon4",
+      "gaming_headset_06_repaired_duct_tape_varyasyon1", "gaming_headset_06_repaired_duct_tape_varyasyon2", "gaming_headset_06_repaired_duct_tape_varyasyon3", "gaming_headset_06_repaired_duct_tape_varyasyon4",
+      "gaming_headset_07_dirty_rusty_varyasyon1", "gaming_headset_07_dirty_rusty_varyasyon2", "gaming_headset_07_dirty_rusty_varyasyon3", "gaming_headset_07_dirty_rusty_varyasyon4",
+      "gaming_headset_08_burned_varyasyon1", "gaming_headset_08_burned_varyasyon2", "gaming_headset_08_burned_varyasyon3", "gaming_headset_08_burned_varyasyon4",
+      "gaming_headset_09_custom_painted_varyasyon1", "gaming_headset_09_custom_painted_varyasyon2", "gaming_headset_09_custom_painted_varyasyon3", "gaming_headset_09_custom_painted_varyasyon4",
+      "gaming_headset_10_scrap_varyasyon1", "gaming_headset_10_scrap_varyasyon2", "gaming_headset_10_scrap_varyasyon3", "gaming_headset_10_scrap_varyasyon4"
+    ]
+  },
+  {
+    "id": 49,
+    "asset": "bluetooth_speaker_new",
+    "name": "Bluetooth Hoparlör",
+    "category": "electronics",
+    "basePrice": 2800,
+    "rarity": 2,
+    "variants": [
+      "bluetooth_speaker_01_flawless_varyasyon1", "bluetooth_speaker_01_flawless_varyasyon2", "bluetooth_speaker_01_flawless_varyasyon3", "bluetooth_speaker_01_flawless_varyasyon4",
+      "bluetooth_speaker_02_lightly_used_varyasyon1", "bluetooth_speaker_02_lightly_used_varyasyon2", "bluetooth_speaker_02_lightly_used_varyasyon3", "bluetooth_speaker_02_lightly_used_varyasyon4",
+      "bluetooth_speaker_03_worn_out_varyasyon2", "bluetooth_speaker_03_worn_out_varyasyon3",
+      "bluetooth_speaker_05_missing_parts_varyasyon3",
+      "bluetooth_speaker_06_repaired_duct_tape_varyasyon2", "bluetooth_speaker_06_repaired_duct_tape_varyasyon3", "bluetooth_speaker_06_repaired_duct_tape_varyasyon4",
+      "bluetooth_speaker_07_dirty_rusty_varyasyon1", "bluetooth_speaker_07_dirty_rusty_varyasyon2", "bluetooth_speaker_07_dirty_rusty_varyasyon3", "bluetooth_speaker_07_dirty_rusty_varyasyon4",
+      "bluetooth_speaker_08_burned_varyasyon1", "bluetooth_speaker_08_burned_varyasyon2", "bluetooth_speaker_08_burned_varyasyon3", "bluetooth_speaker_08_burned_varyasyon4",
+      "bluetooth_speaker_09_custom_painted_varyasyon1", "bluetooth_speaker_09_custom_painted_varyasyon2", "bluetooth_speaker_09_custom_painted_varyasyon3", "bluetooth_speaker_09_custom_painted_varyasyon4",
+      "bluetooth_speaker_10_scrap_varyasyon2", "bluetooth_speaker_10_scrap_varyasyon3", "bluetooth_speaker_10_scrap_varyasyon4"
+    ]
+  },
+  {
+    "id": 50,
+    "asset": "game_console_new",
+    "name": "Oyun Konsolu (Modern)",
+    "category": "electronics",
+    "basePrice": 8000,
+    "rarity": 3,
+    "variants": [
+      "game_console_01_flawless_varyasyon1", "game_console_01_flawless_varyasyon2", "game_console_01_flawless_varyasyon3", "game_console_01_flawless_varyasyon4",
+      "game_console_02_lightly_used_varyasyon1", "game_console_02_lightly_used_varyasyon2", "game_console_02_lightly_used_varyasyon3", "game_console_02_lightly_used_varyasyon4",
+      "game_console_03_worn_out_varyasyon1", "game_console_03_worn_out_varyasyon2", "game_console_03_worn_out_varyasyon3", "game_console_03_worn_out_varyasyon4",
+      "game_console_04_heavily_damaged_varyasyon1", "game_console_04_heavily_damaged_varyasyon2", "game_console_04_heavily_damaged_varyasyon3", "game_console_04_heavily_damaged_varyasyon4",
+      "game_console_05_missing_parts_varyasyon1", "game_console_05_missing_parts_varyasyon2", "game_console_05_missing_parts_varyasyon3", "game_console_05_missing_parts_varyasyon4",
+      "game_console_06_repaired_duct_tape_varyasyon1", "game_console_06_repaired_duct_tape_varyasyon2", "game_console_06_repaired_duct_tape_varyasyon4",
+      "game_console_07_dirty_rusty_varyasyon1", "game_console_07_dirty_rusty_varyasyon2", "game_console_07_dirty_rusty_varyasyon3", "game_console_07_dirty_rusty_varyasyon4",
+      "game_console_08_burned_varyasyon1", "game_console_08_burned_varyasyon2", "game_console_08_burned_varyasyon3", "game_console_08_burned_varyasyon4",
+      "game_console_09_custom_painted_varyasyon1", "game_console_09_custom_painted_varyasyon2", "game_console_09_custom_painted_varyasyon4"
+    ]
+  },
+  {
+    "id": 51,
+    "asset": "gaming_laptop_new",
+    "name": "Oyuncu Laptopu (Varyantlı)",
+    "category": "electronics",
+    "basePrice": 30000,
+    "rarity": 4,
+    "variants": [
+      "gaming_laptop_01_flawless_varyasyon2", "gaming_laptop_01_flawless_varyasyon3", "gaming_laptop_01_flawless_varyasyon4",
+      "gaming_laptop_02_lightly_used_varyasyon2",
+      "gaming_laptop_03_worn_out_varyasyon1", "gaming_laptop_03_worn_out_varyasyon2", "gaming_laptop_03_worn_out_varyasyon3", "gaming_laptop_03_worn_out_varyasyon4",
+      "gaming_laptop_04_heavily_damaged_varyasyon1", "gaming_laptop_04_heavily_damaged_varyasyon2", "gaming_laptop_04_heavily_damaged_varyasyon3",
+      "gaming_laptop_05_missing_parts_varyasyon1", "gaming_laptop_05_missing_parts_varyasyon2", "gaming_laptop_05_missing_parts_varyasyon3", "gaming_laptop_05_missing_parts_varyasyon4",
+      "gaming_laptop_06_repaired_duct_tape_varyasyon1", "gaming_laptop_06_repaired_duct_tape_varyasyon2", "gaming_laptop_06_repaired_duct_tape_varyasyon3", "gaming_laptop_06_repaired_duct_tape_varyasyon4",
+      "gaming_laptop_07_dirty_rusty_varyasyon1", "gaming_laptop_07_dirty_rusty_varyasyon2", "gaming_laptop_07_dirty_rusty_varyasyon3", "gaming_laptop_07_dirty_rusty_varyasyon4",
+      "gaming_laptop_08_burned_varyasyon1", "gaming_laptop_08_burned_varyasyon2", "gaming_laptop_08_burned_varyasyon3", "gaming_laptop_08_burned_varyasyon4",
+      "gaming_laptop_09_custom_painted_varyasyon1", "gaming_laptop_09_custom_painted_varyasyon2", "gaming_laptop_09_custom_painted_varyasyon3", "gaming_laptop_09_custom_painted_varyasyon4",
+      "gaming_laptop_10_scrap_varyasyon1", "gaming_laptop_10_scrap_varyasyon2", "gaming_laptop_10_scrap_varyasyon3", "gaming_laptop_10_scrap_varyasyon4"
+    ]
+  },
+  {
+    "id": 52,
+    "asset": "office_laptop",
+    "name": "Ofis Laptopu",
+    "category": "electronics",
+    "basePrice": 12000,
+    "rarity": 2,
+    "variants": [
+      "office_laptop_01_flawless_varyasyon1", "office_laptop_01_flawless_varyasyon2", "office_laptop_01_flawless_varyasyon3", "office_laptop_01_flawless_varyasyon4",
+      "office_laptop_02_lightly_used_varyasyon1", "office_laptop_02_lightly_used_varyasyon2", "office_laptop_02_lightly_used_varyasyon3", "office_laptop_02_lightly_used_varyasyon4",
+      "office_laptop_05_missing_parts_varyasyon1", "office_laptop_05_missing_parts_varyasyon3",
+      "office_laptop_06_repaired_duct_tape_varyasyon1", "office_laptop_06_repaired_duct_tape_varyasyon2", "office_laptop_06_repaired_duct_tape_varyasyon3", "office_laptop_06_repaired_duct_tape_varyasyon4",
+      "office_laptop_07_dirty_rusty_varyasyon1", "office_laptop_07_dirty_rusty_varyasyon2", "office_laptop_07_dirty_rusty_varyasyon3", "office_laptop_07_dirty_rusty_varyasyon4",
+      "office_laptop_08_burned_varyasyon1", "office_laptop_08_burned_varyasyon2", "office_laptop_08_burned_varyasyon3", "office_laptop_08_burned_varyasyon4",
+      "office_laptop_09_custom_painted_varyasyon1", "office_laptop_09_custom_painted_varyasyon2", "office_laptop_09_custom_painted_varyasyon3", "office_laptop_09_custom_painted_varyasyon4"
+    ]
+  },
+  {
+    "id": 53,
+    "asset": "keypad_phone",
+    "name": "Tuş Takımlı Telefon",
+    "category": "electronics",
+    "basePrice": 1500,
+    "rarity": 2,
+    "variants": [
+      "keypad_phone_01_flawless_varyasyon1", "keypad_phone_01_flawless_varyasyon2", "keypad_phone_01_flawless_varyasyon3", "keypad_phone_01_flawless_varyasyon4",
+      "keypad_phone_02_lightly_used_varyasyon1", "keypad_phone_02_lightly_used_varyasyon2", "keypad_phone_02_lightly_used_varyasyon3", "keypad_phone_02_lightly_used_varyasyon4",
+      "keypad_phone_03_worn_out_varyasyon1", "keypad_phone_03_worn_out_varyasyon2", "keypad_phone_03_worn_out_varyasyon3", "keypad_phone_03_worn_out_varyasyon4",
+      "keypad_phone_04_heavily_damaged_varyasyon1", "keypad_phone_04_heavily_damaged_varyasyon2", "keypad_phone_04_heavily_damaged_varyasyon3", "keypad_phone_04_heavily_damaged_varyasyon4",
+      "keypad_phone_05_missing_parts_varyasyon1", "keypad_phone_05_missing_parts_varyasyon2", "keypad_phone_05_missing_parts_varyasyon3", "keypad_phone_05_missing_parts_varyasyon4",
+      "keypad_phone_06_repaired_duct_tape_varyasyon1", "keypad_phone_06_repaired_duct_tape_varyasyon2", "keypad_phone_06_repaired_duct_tape_varyasyon3", "keypad_phone_06_repaired_duct_tape_varyasyon4",
+      "keypad_phone_07_dirty_rusty_varyasyon1", "keypad_phone_07_dirty_rusty_varyasyon2", "keypad_phone_07_dirty_rusty_varyasyon3", "keypad_phone_07_dirty_rusty_varyasyon4",
+      "keypad_phone_08_burned_varyasyon1", "keypad_phone_08_burned_varyasyon2", "keypad_phone_08_burned_varyasyon3", "keypad_phone_08_burned_varyasyon4",
+      "keypad_phone_09_custom_painted_varyasyon1", "keypad_phone_09_custom_painted_varyasyon2", "keypad_phone_09_custom_painted_varyasyon3", "keypad_phone_09_custom_painted_varyasyon4"
+    ]
+  },
+  {
+    "id": 54,
+    "asset": "mini_projector",
+    "name": "Mini Projektör",
+    "category": "electronics",
+    "basePrice": 4500,
+    "rarity": 3,
+    "variants": [
+      "mini_projector_01_flawless_varyasyon1", "mini_projector_01_flawless_varyasyon2", "mini_projector_01_flawless_varyasyon3", "mini_projector_01_flawless_varyasyon4",
+      "mini_projector_02_lightly_used_varyasyon1", "mini_projector_02_lightly_used_varyasyon2", "mini_projector_02_lightly_used_varyasyon3", "mini_projector_02_lightly_used_varyasyon4",
+      "mini_projector_03_worn_out_varyasyon1", "mini_projector_03_worn_out_varyasyon2", "mini_projector_03_worn_out_varyasyon3", "mini_projector_03_worn_out_varyasyon4",
+      "mini_projector_04_heavily_damaged_varyasyon1", "mini_projector_04_heavily_damaged_varyasyon2", "mini_projector_04_heavily_damaged_varyasyon3", "mini_projector_04_heavily_damaged_varyasyon4",
+      "mini_projector_05_missing_parts_varyasyon1", "mini_projector_05_missing_parts_varyasyon2", "mini_projector_05_missing_parts_varyasyon3", "mini_projector_05_missing_parts_varyasyon4",
+      "mini_projector_06_repaired_duct_tape_varyasyon1", "mini_projector_06_repaired_duct_tape_varyasyon3", "mini_projector_06_repaired_duct_tape_varyasyon4",
+      "mini_projector_07_dirty_rusty_varyasyon1", "mini_projector_07_dirty_rusty_varyasyon2", "mini_projector_07_dirty_rusty_varyasyon3", "mini_projector_07_dirty_rusty_varyasyon4",
+      "mini_projector_08_burned_varyasyon1", "mini_projector_08_burned_varyasyon2", "mini_projector_08_burned_varyasyon3", "mini_projector_08_burned_varyasyon4",
+      "mini_projector_09_custom_painted_varyasyon1", "mini_projector_09_custom_painted_varyasyon2", "mini_projector_09_custom_painted_varyasyon3", "mini_projector_09_custom_painted_varyasyon4"
+    ]
+  },
+  {
+    "id": 55,
+    "asset": "pc_monitor",
+    "name": "PC Monitör",
+    "category": "electronics",
+    "basePrice": 5500,
+    "rarity": 2,
+    "variants": [
+      "pc_monitor_01_flawless_varyasyon1", "pc_monitor_01_flawless_varyasyon2", "pc_monitor_01_flawless_varyasyon3", "pc_monitor_01_flawless_varyasyon4",
+      "pc_monitor_02_lightly_used_varyasyon1", "pc_monitor_02_lightly_used_varyasyon2", "pc_monitor_02_lightly_used_varyasyon3", "pc_monitor_02_lightly_used_varyasyon4",
+      "pc_monitor_03_worn_out_varyasyon1", "pc_monitor_03_worn_out_varyasyon2", "pc_monitor_03_worn_out_varyasyon3", "pc_monitor_03_worn_out_varyasyon4",
+      "pc_monitor_04_heavily_damaged_varyasyon1", "pc_monitor_04_heavily_damaged_varyasyon2", "pc_monitor_04_heavily_damaged_varyasyon3", "pc_monitor_04_heavily_damaged_varyasyon4",
+      "pc_monitor_05_missing_parts_varyasyon2", "pc_monitor_05_missing_parts_varyasyon3",
+      "pc_monitor_06_repaired_duct_tape_varyasyon1", "pc_monitor_06_repaired_duct_tape_varyasyon4",
+      "pc_monitor_07_dirty_rusty_varyasyon1", "pc_monitor_07_dirty_rusty_varyasyon2", "pc_monitor_07_dirty_rusty_varyasyon3", "pc_monitor_07_dirty_rusty_varyasyon4",
+      "pc_monitor_09_custom_painted_varyasyon1", "pc_monitor_09_custom_painted_varyasyon2", "pc_monitor_09_custom_painted_varyasyon3", "pc_monitor_09_custom_painted_varyasyon4",
+      "pc_monitor_10_scrap_varyasyon4"
+    ]
+  },
+  {
+    "id": 56,
+    "asset": "smartwatch_new",
+    "name": "Akıllı Saat (Varyantlı)",
+    "category": "accessories",
+    "basePrice": 6000,
+    "rarity": 3,
+    "variants": [
+      "smartwatch_01_flawless_varyasyon1", "smartwatch_01_flawless_varyasyon2", "smartwatch_01_flawless_varyasyon3", "smartwatch_01_flawless_varyasyon4",
+      "smartwatch_02_lightly_used_varyasyon1", "smartwatch_02_lightly_used_varyasyon2", "smartwatch_02_lightly_used_varyasyon3", "smartwatch_02_lightly_used_varyasyon4",
+      "smartwatch_03_worn_out_varyasyon1", "smartwatch_03_worn_out_varyasyon2", "smartwatch_03_worn_out_varyasyon3", "smartwatch_03_worn_out_varyasyon4",
+      "smartwatch_04_heavily_damaged_varyasyon1", "smartwatch_04_heavily_damaged_varyasyon2", "smartwatch_04_heavily_damaged_varyasyon3", "smartwatch_04_heavily_damaged_varyasyon4",
+      "smartwatch_06_repaired_duct_tape_varyasyon1", "smartwatch_06_repaired_duct_tape_varyasyon2", "smartwatch_06_repaired_duct_tape_varyasyon3", "smartwatch_06_repaired_duct_tape_varyasyon4",
+      "smartwatch_07_dirty_rusty_varyasyon1", "smartwatch_07_dirty_rusty_varyasyon2", "smartwatch_07_dirty_rusty_varyasyon3", "smartwatch_07_dirty_rusty_varyasyon4",
+      "smartwatch_08_burned_varyasyon1", "smartwatch_08_burned_varyasyon2", "smartwatch_08_burned_varyasyon3", "smartwatch_08_burned_varyasyon4",
+      "smartwatch_09_custom_painted_varyasyon1", "smartwatch_09_custom_painted_varyasyon2", "smartwatch_09_custom_painted_varyasyon3", "smartwatch_09_custom_painted_varyasyon4",
+      "smartwatch_10_scrap_varyasyon4"
+    ]
+  },
+  {
+    "id": 57,
+    "asset": "tablet_new",
+    "name": "Tablet (Varyantlı)",
+    "category": "electronics",
+    "basePrice": 7000,
+    "rarity": 2,
+    "variants": [
+      "tablet_01_flawless_varyasyon1", "tablet_01_flawless_varyasyon2", "tablet_01_flawless_varyasyon3", "tablet_01_flawless_varyasyon4",
+      "tablet_02_lightly_used_varyasyon1", "tablet_02_lightly_used_varyasyon2", "tablet_02_lightly_used_varyasyon3", "tablet_02_lightly_used_varyasyon4",
+      "tablet_03_worn_out_varyasyon1", "tablet_03_worn_out_varyasyon2", "tablet_03_worn_out_varyasyon3", "tablet_03_worn_out_varyasyon4",
+      "tablet_04_heavily_damaged_varyasyon3",
+      "tablet_05_missing_parts_varyasyon3",
+      "tablet_06_repaired_duct_tape_varyasyon2", "tablet_06_repaired_duct_tape_varyasyon3", "tablet_06_repaired_duct_tape_varyasyon4",
+      "tablet_07_dirty_rusty_varyasyon2", "tablet_07_dirty_rusty_varyasyon3", "tablet_07_dirty_rusty_varyasyon4",
+      "tablet_08_burned_varyasyon1", "tablet_08_burned_varyasyon2", "tablet_08_burned_varyasyon3",
+      "tablet_09_custom_painted_varyasyon1", "tablet_09_custom_painted_varyasyon2", "tablet_09_custom_painted_varyasyon3", "tablet_09_custom_painted_varyasyon4"
+    ]
+  },
+  {
+    "id": 58,
+    "asset": "wireless_earbuds_new",
+    "name": "Kablosuz Kulaklık",
+    "category": "electronics",
+    "basePrice": 2500,
+    "rarity": 2,
+    "variants": [
+      "wireless_earbuds_01_flawless_varyasyon1", "wireless_earbuds_01_flawless_varyasyon2", "wireless_earbuds_01_flawless_varyasyon3", "wireless_earbuds_01_flawless_varyasyon4",
+      "wireless_earbuds_02_lightly_used_varyasyon2", "wireless_earbuds_02_lightly_used_varyasyon3", "wireless_earbuds_02_lightly_used_varyasyon4",
+      "wireless_earbuds_03_worn_out_varyasyon2", "wireless_earbuds_03_worn_out_varyasyon4",
+      "wireless_earbuds_05_missing_parts_varyasyon2", "wireless_earbuds_05_missing_parts_varyasyon4",
+      "wireless_earbuds_06_repaired_duct_tape_varyasyon1", "wireless_earbuds_06_repaired_duct_tape_varyasyon2", "wireless_earbuds_06_repaired_duct_tape_varyasyon3",
+      "wireless_earbuds_08_burned_varyasyon1", "wireless_earbuds_08_burned_varyasyon2",
+      "wireless_earbuds_09_custom_painted_varyasyon2", "wireless_earbuds_09_custom_painted_varyasyon3", "wireless_earbuds_09_custom_painted_varyasyon4"
+    ]
+  },
+  {
+    "id": 59,
+    "asset": "dslr_camera",
+    "name": "DSLR Fotoğraf Makinesi",
+    "category": "electronics",
+    "basePrice": 15000,
+    "rarity": 4,
+    "variants": [
+      "dslr_camera_01_flawless_varyasyon1", "dslr_camera_01_flawless_varyasyon2", "dslr_camera_01_flawless_varyasyon3", "dslr_camera_01_flawless_varyasyon4",
+      "dslr_camera_02_lightly_used_varyasyon1", "dslr_camera_02_lightly_used_varyasyon2", "dslr_camera_02_lightly_used_varyasyon3", "dslr_camera_02_lightly_used_varyasyon4"
+    ]
+  },
+  {
+    "id": 60,
+    "asset": "baseball_cap",
+    "name": "Beyzbol Şapkası",
+    "category": "clothing",
+    "basePrice": 250,
+    "rarity": 1,
+    "variants": [
+      "blankbaseballcap", "blankwhitecap", "cleanbeigecap", "cleanwhitecap",
+      "dustybeigecap", "fadedbluecap", "heavilymuddycap", "muddybaseballcap",
+      "muddybrowncap", "pristinebeigecap", "pristinewhitecap", "ruinedmuddycap",
+      "sunbleachedcap", "wornbeigecap", "worngreybaseballcap"
+    ]
+  },
+  {
+    "id": 61,
+    "asset": "camping_tent",
+    "name": "Kamp Çadırı",
+    "category": "sports",
+    "basePrice": 1200,
+    "rarity": 2,
+    "variants": [
+      "browncampingtent", "orangecampingtent", "ruinedmuddytent", "yellowcampingtent"
+    ]
+  },
+  {
+    "id": 62,
+    "asset": "toolbox",
+    "name": "Alet Kutusu",
+    "category": "spare_parts",
+    "basePrice": 600,
+    "rarity": 1,
+    "variants": [
+      "bluetoolboxwithyellowwrench", "greytoolboxwithwrench", "orangetoolboxwithwrench",
+      "smashedbrowntoolbox"
+    ]
+  },
+  {
+    "id": 63,
+    "asset": "fishing_rod",
+    "name": "Balık Oltası",
+    "category": "sports",
+    "basePrice": 400,
+    "rarity": 1,
+    "variants": [
+      "brokenfishingrod", "classicfishingrod", "fishingrodwithbox", "standardfishingrod"
+    ]
+  },
+  {
+    "id": 64,
+    "asset": "folding_table",
+    "name": "Katlanır Masa",
+    "category": "home_appliances",
+    "basePrice": 450,
+    "rarity": 1,
+    "variants": [
+      "basicfoldingtable", "brokenfoldingtable", "cleanfoldingtable", "scratchedfoldingtable"
+    ]
+  },
+  {
+    "id": 65,
+    "asset": "aviator_sunglasses",
+    "name": "Aviator Güneş Gözlüğü",
+    "category": "accessories",
+    "basePrice": 300,
+    "rarity": 1,
+    "variants": [
+      "brokenaviratorsunglasses", "classicaviatorsunglasses", "greenaviatorsunglasses"
+    ]
+  },
+  {
+    "id": 66,
+    "asset": "sneakers",
+    "name": "Spor Ayakkabı",
+    "category": "clothing",
+    "basePrice": 800,
+    "rarity": 2,
+    "variants": [
+      "chunkywhitesneakers", "pristinewhitesneakers", "ruinedmuddysneakers",
+      "slightlydirtysneakers", "wornwhitesneakers"
+    ]
+  },
+  {
+    "id": 67,
+    "asset": "car_radio",
+    "name": "Araba Radyosu",
+    "category": "electronics",
+    "basePrice": 750,
+    "rarity": 1,
+    "variants": [
+      "blackscreencarradio", "greenscreencarradio", "hollowcarradio", "smashedcarradio"
+    ]
+  },
+  {
+    "id": 68,
+    "asset": "mystery_box",
+    "name": "Gizemli Kutu",
+    "category": "toys",
+    "basePrice": 500,
+    "rarity": 3,
+    "variants": [
+      "cardboardmysterybox", "mysterybox", "squaremysterybox"
+    ]
+  },
+  {
+    "id": 69,
+    "asset": "ufo_lamp",
+    "name": "UFO Masa Lambası",
+    "category": "home_appliances",
+    "basePrice": 900,
+    "rarity": 2,
+    "variants": [
+      "damagedufolamp", "neonufolamp", "retroufolamp", "ufodesklampp2"
+    ]
+  },
+  {
+    "id": 70,
+    "asset": "treasure_map",
+    "name": "Hazine Haritası",
+    "category": "toys",
+    "basePrice": 1500,
+    "rarity": 4,
+    "variants": [
+      "pristinetreasuremap", "vintagetreasuremap"
+    ]
+  },
+  {
+    "id": 71,
+    "asset": "trex_skull",
+    "name": "T-Rex Kafatası Replikası",
+    "category": "toys",
+    "basePrice": 3000,
+    "rarity": 4,
+    "variants": [
+      "floatingtrexskull", "rexskullreplica", "trexskulllonstand"
+    ]
+  },
+  {
+    "id": 72,
+    "asset": "polo_shirt",
+    "name": "Polo Tişört",
+    "category": "clothing",
+    "basePrice": 200,
+    "rarity": 1,
+    "variants": [
+      "foldedpoloshirts", "foldedstripedjersey", "foldedvnecksweater"
+    ]
+  },
+  {
+    "id": 73,
+    "asset": "leather_jacket_folded",
+    "name": "Deri Ceket (Katlanmış)",
+    "category": "clothing",
+    "basePrice": 2500,
+    "rarity": 2,
+    "variants": [
+      "foldedleatherjackets"
+    ]
+  },
+  {
+    "id": 74,
+    "asset": "silver_watch",
+    "name": "Gümüş Metal Saat",
+    "category": "accessories",
+    "basePrice": 2000,
+    "rarity": 2,
+    "variants": [
+      "silvermetalwatch", "smashedmetalwatch"
+    ]
   }
 ]

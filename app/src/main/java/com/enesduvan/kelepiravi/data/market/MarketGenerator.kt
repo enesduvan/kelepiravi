@@ -28,169 +28,301 @@ object MarketGenerator {
     }
 
     private val IMAGE_POOLS = mapOf(
-        "smartphone" to ImagePool(
-            clean = listOf(
-                "smartphone_clean_1", "smartphone_clean_2", "smartphone_clean_3",
-                "smartphone_clean_4", "smartphone_clean_5", "smartphone_clean_6",
-                "smartphone_clean_7", "smartphone_clean_8", "smartphone_clean_9",
-                "smartphone_clean_10", "smartphone_clean_11", "smartphone_clean_12",
-                "smartphone_scratched_1", "smartphone_dirty_1", "smartphone_dirty_2"
-            ),
-            damaged = listOf(
-                "smartphone_cracked_1", "smartphone_cracked_2", "smartphone_cracked_3",
-                "smartphone_cracked_4", "smartphone_cracked_5", "smartphone_cracked_6",
-                "smartphone_cracked_7", "smartphone_cracked_8",
-                "smartphone_dirty_3", "smartphone_dirty_4", "smartphone_melted_back"
-            )
+        "rubber_duck" to ImagePool(
+            clean = listOf("rubber_duck_1", "rubber_duck_2", "rubber_duck_3", "rubber_duck_4", "rubber_duck_5", "rubber_duck_6", "rubber_duck_7"),
+            damaged = listOf("rubber_duck_1", "rubber_duck_2", "rubber_duck_3", "rubber_duck_4", "rubber_duck_5", "rubber_duck_6", "rubber_duck_7")
         ),
-        "laptop" to ImagePool(
-            clean = listOf("laptop_clean_1", "laptop_clean_2"),
-            damaged = listOf("laptop_clean_1", "laptop_clean_2")
+        "rubber_duck_egg" to ImagePool(
+            clean = listOf("rubber_duck_egg_1", "rubber_duck_egg_2", "rubber_duck_egg_3", "rubber_duck_egg_4", "rubber_duck_egg_5"),
+            damaged = listOf("rubber_duck_egg_1", "rubber_duck_egg_2", "rubber_duck_egg_3", "rubber_duck_egg_4", "rubber_duck_egg_5")
         ),
-        "tablet" to ImagePool(
+        "smartphone_clean" to ImagePool(
+            clean = listOf("smartphone_clean_1", "smartphone_clean_2", "smartphone_clean_3", "smartphone_clean_4", "smartphone_clean_5", "smartphone_clean_6", "smartphone_clean_7", "smartphone_clean_8", "smartphone_clean_9", "smartphone_clean_10"),
+            damaged = listOf("smartphone_clean_1", "smartphone_clean_2", "smartphone_clean_3", "smartphone_clean_4", "smartphone_clean_5", "smartphone_clean_6", "smartphone_clean_7", "smartphone_clean_8", "smartphone_clean_9", "smartphone_clean_10")
+        ),
+        "smartphone_cracked" to ImagePool(
+            clean = listOf("smartphone_cracked_1", "smartphone_cracked_2", "smartphone_cracked_3", "smartphone_cracked_4", "smartphone_cracked_5", "smartphone_cracked_6", "smartphone_cracked_7", "smartphone_cracked_8", "smartphone_cracked_9", "smartphone_cracked_10"),
+            damaged = listOf("smartphone_cracked_1", "smartphone_cracked_2", "smartphone_cracked_3", "smartphone_cracked_4", "smartphone_cracked_5", "smartphone_cracked_6", "smartphone_cracked_7", "smartphone_cracked_8", "smartphone_cracked_9", "smartphone_cracked_10")
+        ),
+        "smartphone_scratched" to ImagePool(
+            clean = listOf("smartphone_scratched_1", "smartphone_scratched_2", "smartphone_scratched_3"),
+            damaged = listOf("smartphone_scratched_1", "smartphone_scratched_2", "smartphone_scratched_3")
+        ),
+        "smartphone_dirty" to ImagePool(
+            clean = listOf("smartphone_dirty_1", "smartphone_dirty_2", "smartphone_dirty_3", "smartphone_dirty_4"),
+            damaged = listOf("smartphone_dirty_1", "smartphone_dirty_2", "smartphone_dirty_3", "smartphone_dirty_4")
+        ),
+        "smartphone_melted_back" to ImagePool(
+            clean = listOf("smartphone_melted_back"),
+            damaged = listOf("smartphone_melted_back")
+        ),
+        "tablet_galaxy" to ImagePool(
             clean = listOf("tablet_galaxy"),
+            damaged = listOf("tablet_galaxy")
+        ),
+        "tablet_scratched" to ImagePool(
+            clean = listOf("tablet_scratched_1", "tablet_scratched_2"),
             damaged = listOf("tablet_scratched_1", "tablet_scratched_2")
         ),
-        "headphones" to ImagePool(
-            clean = listOf("oyun_kulakligi"),
-            damaged = listOf("oyun_kulakligi")
-        ),
-        "camera" to ImagePool(
-            clean = listOf("kamera_resim"),
-            damaged = listOf("kamera_resim")
-        ),
-        "nasa_bilgisayari" to ImagePool(
-            clean = listOf("nasa_bilgisayari"),
-            damaged = listOf("nasa_bilgisayari")
-        ),
-        "satilik_kaynana" to ImagePool(
-            clean = listOf("satilik_kaynana"),
-            damaged = listOf("satilik_kaynana")
-        ),
-        "koy_kahvesi" to ImagePool(
-            clean = listOf("koy_kahvesi"),
-            damaged = listOf("koy_kahvesi")
-        ),
-        "f_16" to ImagePool(
-            clean = listOf("f_16"),
-            damaged = listOf("f_16")
-        ),
-        "oven" to ImagePool(
-            clean = listOf("mini_firin"),
-            damaged = listOf("mini_firin")
-        ),
-        "backpack" to ImagePool(
-            clean = listOf("bez_canta"),
-            damaged = listOf("bez_canta")
-        ),
-        "bogaz_koprusu" to ImagePool(
-            clean = listOf("bogaz_koprusu"),
-            damaged = listOf("bogaz_koprusu")
-        ),
-        "gamepad" to ImagePool(
-            clean = listOf("gamepad_broken_1"),
-            damaged = listOf("gamepad_broken_1", "gamepad_broken_2")
-        ),
-        "monitor" to ImagePool(
-            clean = listOf("monitor_cracked_1"),
-            damaged = listOf("monitor_cracked_1", "monitor_cracked_2", "monitor_cracked_3")
-        ),
-        "keyboard" to ImagePool(
-            clean = listOf("mech_keyboard_clean_1"),
-            damaged = listOf("mech_keyboard_missing_key_1")
-        ),
         "blender" to ImagePool(
-            clean = listOf("blender_1", "blender_2", "blender_3", "blender_4"),
-            damaged = listOf("blender_1", "blender_2")
+            clean = listOf("blender_1", "blender_2", "blender_3", "blender_4", "blender_5"),
+            damaged = listOf("blender_1", "blender_2", "blender_3", "blender_4", "blender_5")
         ),
         "coffee_maker" to ImagePool(
-            clean = listOf("coffee_maker_1", "coffee_maker_2", "coffee_maker_3", "coffee_maker_4"),
-            damaged = listOf("coffee_maker_1", "coffee_maker_4")
+            clean = listOf("coffee_maker_1", "coffee_maker_2"),
+            damaged = listOf("coffee_maker_1", "coffee_maker_2")
         ),
-        "fridge" to ImagePool(
-            clean = listOf("mini_fridge_1", "mini_fridge_2"),
-            damaged = listOf("mini_fridge_1", "mini_fridge_2")
+        "mini_fridge" to ImagePool(
+            clean = listOf("mini_fridge_1", "mini_fridge_2", "mini_fridge_3"),
+            damaged = listOf("mini_fridge_1", "mini_fridge_2", "mini_fridge_3")
         ),
-        "watch" to ImagePool(
-            clean = listOf("classic_watch_1", "classic_watch_2"),
-            damaged = listOf("classic_watch_1", "classic_watch_2")
+        "headphones_duct_tape" to ImagePool(
+            clean = listOf("headphones_duct_tape_1", "headphones_duct_tape_2", "headphones_duct_tape_3"),
+            damaged = listOf("headphones_duct_tape_1", "headphones_duct_tape_2", "headphones_duct_tape_3")
         ),
-        "backpack" to ImagePool(
-            clean = listOf("canvas_backpack_1", "canvas_backpack_2"),
-            damaged = listOf("canvas_backpack_1", "canvas_backpack_2")
+        "classic_watch" to ImagePool(
+            clean = listOf("classic_watch_1", "classic_watch_2", "classic_watch_3"),
+            damaged = listOf("classic_watch_1", "classic_watch_2", "classic_watch_3")
         ),
-        "bicycle" to ImagePool(
+        "classic_bicycle" to ImagePool(
             clean = listOf("classic_bicycle_1"),
             damaged = listOf("classic_bicycle_1")
         ),
-        "scooter" to ImagePool(
-            clean = listOf("electric_scooter_1"),
-            damaged = listOf("electric_scooter_1")
+        "canvas_backpack" to ImagePool(
+            clean = listOf("canvas_backpack_1", "canvas_backpack_2"),
+            damaged = listOf("canvas_backpack_1", "canvas_backpack_2")
         ),
-        "jersey" to ImagePool(
-            clean = listOf("dirty_jersey_1"),
-            damaged = listOf("dirty_jersey_1", "dirty_jersey_2")
+        "dirty_jersey" to ImagePool(
+            clean = listOf("dirty_jersey_19"),
+            damaged = listOf("dirty_jersey_19")
         ),
-        "leather_jacket" to ImagePool(
-            clean = listOf("leather_jacket_clean_1"),
-            damaged = listOf("leather_jacket_torn_1")
+        "gamepad_broken" to ImagePool(
+            clean = listOf("gamepad_broken_1"),
+            damaged = listOf("gamepad_broken_1")
         ),
-        "toy" to ImagePool(
-            clean = listOf("rubber_duck_1", "rubber_duck_2", "rubber_duck_3",
-                           "rubber_duck_4", "rubber_duck_5", "rubber_duck_6", "rubber_duck_7"),
-            damaged = listOf("rubber_duck_egg_1", "rubber_duck_egg_2", "ufo_toy_1", "ufo_toy_2")
+        "monitor_cracked" to ImagePool(
+            clean = listOf("monitor_cracked_1", "monitor_cracked_2", "monitor_cracked_3"),
+            damaged = listOf("monitor_cracked_1", "monitor_cracked_2", "monitor_cracked_3")
         ),
-        "guitar" to ImagePool(
-            clean = listOf("acoustic_guitar_clean_1"),
-            damaged = listOf("acoustic_guitar_broken_string_1")
-        ),
-        "vr" to ImagePool(
+        "vr_headset_clean" to ImagePool(
             clean = listOf("vr_headset_clean_1"),
+            damaged = listOf("vr_headset_clean_1")
+        ),
+        "vr_headset_scratched" to ImagePool(
+            clean = listOf("vr_headset_scratched_1"),
             damaged = listOf("vr_headset_scratched_1")
         ),
-        
-        // Emlak (Ev) Modelleri
-        "house_apartment" to ImagePool(
-            clean = listOf("house_apartment_01_flawless_varyasyon1"),
-            damaged = listOf("house_apartment_04_heavily_damaged_varyasyon1")
+        "mech_keyboard_clean" to ImagePool(
+            clean = listOf("mech_keyboard_clean_1"),
+            damaged = listOf("mech_keyboard_clean_1")
         ),
-        "house_villa" to ImagePool(
-            clean = listOf("house_villa_01_flawless_varyasyon1"),
-            damaged = listOf("house_villa_04_heavily_damaged_varyasyon1")
+        "mech_keyboard_missing_key" to ImagePool(
+            clean = listOf("mech_keyboard_missing_key_1"),
+            damaged = listOf("mech_keyboard_missing_key_1")
         ),
-        "house_village" to ImagePool(
-            clean = listOf("house_village_01_flawless_varyasyon1"),
-            damaged = listOf("house_village_04_heavily_damaged_varyasyon1")
+        "acoustic_guitar_clean" to ImagePool(
+            clean = listOf("acoustic_guitar_clean_1"),
+            damaged = listOf("acoustic_guitar_clean_1")
         ),
-        "house_mansion" to ImagePool(
-            clean = listOf("house_mansion_01_flawless_varyasyon1"),
-            damaged = listOf("house_mansion_04_heavily_damaged_varyasyon1")
+        "acoustic_guitar_broken_string" to ImagePool(
+            clean = listOf("acoustic_guitar_broken_string_1"),
+            damaged = listOf("acoustic_guitar_broken_string_1")
         ),
-        "house_prefab" to ImagePool(
-            clean = listOf("house_prefab_01_flawless_varyasyon1"),
-            damaged = listOf("house_prefab_04_heavily_damaged_varyasyon1")
+        "leather_jacket_clean" to ImagePool(
+            clean = listOf("leather_jacket_clean_1"),
+            damaged = listOf("leather_jacket_clean_1")
         ),
-
-        // Araç Modelleri
-        "car_sports" to ImagePool(
-            clean = listOf("car_sports_01_flawless_varyasyon1"),
-            damaged = listOf("car_sports_04_heavily_damaged_varyasyon1")
+        "leather_jacket_torn" to ImagePool(
+            clean = listOf("leather_jacket_torn_1"),
+            damaged = listOf("leather_jacket_torn_1")
         ),
-        "car_sedan" to ImagePool(
-            clean = listOf("car_sedan_01_flawless_varyasyon1"),
-            damaged = listOf("car_sedan_04_heavily_damaged_varyasyon1")
+        "city_bike" to ImagePool(
+            clean = listOf("blackcitybike", "bluecitybike", "greencitybike", "lightbluecitybike"),
+            damaged = listOf("blackcitybike", "bluecitybike", "greencitybike", "lightbluecitybike")
         ),
-        "car_suv" to ImagePool(
-            clean = listOf("car_suv_01_flawless_varyasyon1"),
-            damaged = listOf("car_suv_04_heavily_damaged_varyasyon1")
+        "mountain_bike" to ImagePool(
+            clean = listOf("darkgreymountainbike", "matteblackmountainbike", "tealmountainbike", "tealwhitemountainbike"),
+            damaged = listOf("darkgreymountainbike", "matteblackmountainbike", "tealmountainbike", "tealwhitemountainbike")
         ),
-        "car_van" to ImagePool(
-            clean = listOf("car_van_01_flawless_varyasyon1"),
-            damaged = listOf("car_van_04_heavily_damaged_varyasyon1")
+        "retro_console" to ImagePool(
+            clean = listOf("classicgreyretroconsole", "retroconsolewithscreena", "retroconsolewithscreenb", "modernsilverconsole", "classicretroconsole", "turkokonsoleretro"),
+            damaged = listOf("classicgreyretroconsole", "retroconsolewithscreena", "retroconsolewithscreenb", "modernsilverconsole", "classicretroconsole", "turkokonsoleretro")
         ),
-        "car_toros" to ImagePool(
-            clean = listOf("car_toros_01_flawless_varyasyon1"),
-            damaged = listOf("car_toros_04_heavily_damaged_varyasyon1")
+        "vr_headset_extra" to ImagePool(
+            clean = listOf("chunkyvrheadset", "genericvrheadseta", "sleekvrheadset", "vrheadsetwithaudio"),
+            damaged = listOf("chunkyvrheadset", "genericvrheadseta", "sleekvrheadset", "vrheadsetwithaudio")
+        ),
+        "rc_car" to ImagePool(
+            clean = listOf("redrcbuggy", "redblackrcbuggy", "redwhitercbuggy"),
+            damaged = listOf("redrcbuggy", "redblackrcbuggy", "redwhitercbuggy")
+        ),
+        "rc_truck_muddy" to ImagePool(
+            clean = listOf("muddyredrctruck"),
+            damaged = listOf("muddyredrctruck")
+        ),
+        "electric_scooter" to ImagePool(
+            clean = listOf("scooter", "scooter2", "scooter3"),
+            damaged = listOf("scooter", "scooter2", "scooter3")
+        ),
+        "jigsaw_puzzle" to ImagePool(
+            clean = listOf("boxedbluejigsawpuzzle", "openbluejigsawpuzzle", "squarebluepuzzle", "bluepuzzlebox"),
+            damaged = listOf("boxedbluejigsawpuzzle", "openbluejigsawpuzzle", "squarebluepuzzle", "bluepuzzlebox")
+        ),
+        "toy_blocks" to ImagePool(
+            clean = listOf("boxofcolorfultoyblocks", "boxofgreytoyblocks", "boxoftantoyblocks", "cardboardboxgreyblocks"),
+            damaged = listOf("boxofcolorfultoyblocks", "boxofgreytoyblocks", "boxoftantoyblocks", "cardboardboxgreyblocks")
+        ),
+        "chess_set" to ImagePool(
+            clean = listOf("woodenchessseta", "woodenchesssetb", "woodenchesssetc", "woodenchesssetd"),
+            damaged = listOf("woodenchessseta", "woodenchesssetb", "woodenchesssetc", "woodenchesssetd")
+        ),
+        "car_tire" to ImagePool(
+            clean = listOf("flatcartire", "standingcartirea", "standingcartireb", "standingcartirec"),
+            damaged = listOf("flatcartire", "standingcartirea", "standingcartireb", "standingcartirec")
+        ),
+        "luxury_watch" to ImagePool(
+            clean = listOf("classicbluewatch", "luxuryreginowatch", "leathersmartwatch"),
+            damaged = listOf("classicbluewatch", "luxuryreginowatch", "leathersmartwatch")
+        ),
+        "smashed_watch" to ImagePool(
+            clean = listOf("smashedclassicwatch"),
+            damaged = listOf("smashedclassicwatch")
+        ),
+        "gaming_laptop_v2" to ImagePool(
+            clean = listOf("gaminglaptop", "heavydutygaminglaptop"),
+            damaged = listOf("gaminglaptop", "heavydutygaminglaptop")
+        ),
+        "laptop_damaged" to ImagePool(
+            clean = listOf("genericsilverlaptop"),
+            damaged = listOf("damagedsilverlaptop")
+        ),
+        "retro_mobile" to ImagePool(
+            clean = listOf("retromobilephone"),
+            damaged = listOf("retromobilephone")
+        ),
+        "smartphone_scratched_v2" to ImagePool(
+            clean = listOf("scratchedsmartphone"),
+            damaged = listOf("scratchedsmartphone")
+        ),
+        "smartphone_missing" to ImagePool(
+            clean = listOf("smartphone_05_missing_parts_varyasyon1", "smartphone_05_missing_parts_varyasyon2", "smartphone_05_missing_parts_varyasyon3", "smartphone_05_missing_parts_varyasyon4"),
+            damaged = listOf("smartphone_05_missing_parts_varyasyon1", "smartphone_05_missing_parts_varyasyon2", "smartphone_05_missing_parts_varyasyon3", "smartphone_05_missing_parts_varyasyon4")
+        ),
+        "smartphone_scrap" to ImagePool(
+            clean = listOf("smartphone_10_scrap_varyasyon1", "smartphone_10_scrap_varyasyon2", "smartphone_10_scrap_varyasyon3", "smartphone_10_scrap_varyasyon4"),
+            damaged = listOf("smartphone_10_scrap_varyasyon1", "smartphone_10_scrap_varyasyon2", "smartphone_10_scrap_varyasyon3", "smartphone_10_scrap_varyasyon4")
+        ),
+        "smartphone_custom" to ImagePool(
+            clean = listOf("smartphone_09_custom_painted_varyasyon1"),
+            damaged = listOf("smartphone_09_custom_painted_varyasyon1")
+        ),
+        "gaming_headset_new" to ImagePool(
+            clean = listOf("gaming_headset_01_flawless_varyasyon1", "gaming_headset_01_flawless_varyasyon2", "gaming_headset_01_flawless_varyasyon3", "gaming_headset_01_flawless_varyasyon4", "gaming_headset_02_lightly_used_varyasyon1", "gaming_headset_02_lightly_used_varyasyon2", "gaming_headset_02_lightly_used_varyasyon3", "gaming_headset_02_lightly_used_varyasyon4", "gaming_headset_03_worn_out_varyasyon1", "gaming_headset_03_worn_out_varyasyon2", "gaming_headset_03_worn_out_varyasyon3", "gaming_headset_03_worn_out_varyasyon4", "gaming_headset_05_missing_parts_varyasyon1", "gaming_headset_05_missing_parts_varyasyon2", "gaming_headset_05_missing_parts_varyasyon3", "gaming_headset_05_missing_parts_varyasyon4", "gaming_headset_06_repaired_duct_tape_varyasyon1", "gaming_headset_06_repaired_duct_tape_varyasyon2", "gaming_headset_06_repaired_duct_tape_varyasyon3", "gaming_headset_06_repaired_duct_tape_varyasyon4", "gaming_headset_08_burned_varyasyon1", "gaming_headset_08_burned_varyasyon2", "gaming_headset_08_burned_varyasyon3", "gaming_headset_08_burned_varyasyon4", "gaming_headset_09_custom_painted_varyasyon1", "gaming_headset_09_custom_painted_varyasyon2", "gaming_headset_09_custom_painted_varyasyon3", "gaming_headset_09_custom_painted_varyasyon4", "gaming_headset_10_scrap_varyasyon1", "gaming_headset_10_scrap_varyasyon2", "gaming_headset_10_scrap_varyasyon3", "gaming_headset_10_scrap_varyasyon4"),
+            damaged = listOf("gaming_headset_04_heavily_damaged_varyasyon1", "gaming_headset_04_heavily_damaged_varyasyon3", "gaming_headset_04_heavily_damaged_varyasyon4", "gaming_headset_07_dirty_rusty_varyasyon1", "gaming_headset_07_dirty_rusty_varyasyon2", "gaming_headset_07_dirty_rusty_varyasyon3", "gaming_headset_07_dirty_rusty_varyasyon4")
+        ),
+        "bluetooth_speaker_new" to ImagePool(
+            clean = listOf("bluetooth_speaker_01_flawless_varyasyon1", "bluetooth_speaker_01_flawless_varyasyon2", "bluetooth_speaker_01_flawless_varyasyon3", "bluetooth_speaker_01_flawless_varyasyon4", "bluetooth_speaker_02_lightly_used_varyasyon1", "bluetooth_speaker_02_lightly_used_varyasyon2", "bluetooth_speaker_02_lightly_used_varyasyon3", "bluetooth_speaker_02_lightly_used_varyasyon4", "bluetooth_speaker_03_worn_out_varyasyon2", "bluetooth_speaker_03_worn_out_varyasyon3", "bluetooth_speaker_05_missing_parts_varyasyon3", "bluetooth_speaker_06_repaired_duct_tape_varyasyon2", "bluetooth_speaker_06_repaired_duct_tape_varyasyon3", "bluetooth_speaker_06_repaired_duct_tape_varyasyon4", "bluetooth_speaker_08_burned_varyasyon1", "bluetooth_speaker_08_burned_varyasyon2", "bluetooth_speaker_08_burned_varyasyon3", "bluetooth_speaker_08_burned_varyasyon4", "bluetooth_speaker_09_custom_painted_varyasyon1", "bluetooth_speaker_09_custom_painted_varyasyon2", "bluetooth_speaker_09_custom_painted_varyasyon3", "bluetooth_speaker_09_custom_painted_varyasyon4", "bluetooth_speaker_10_scrap_varyasyon2", "bluetooth_speaker_10_scrap_varyasyon3", "bluetooth_speaker_10_scrap_varyasyon4"),
+            damaged = listOf("bluetooth_speaker_07_dirty_rusty_varyasyon1", "bluetooth_speaker_07_dirty_rusty_varyasyon2", "bluetooth_speaker_07_dirty_rusty_varyasyon3", "bluetooth_speaker_07_dirty_rusty_varyasyon4")
+        ),
+        "game_console_new" to ImagePool(
+            clean = listOf("game_console_01_flawless_varyasyon1", "game_console_01_flawless_varyasyon2", "game_console_01_flawless_varyasyon3", "game_console_01_flawless_varyasyon4", "game_console_02_lightly_used_varyasyon1", "game_console_02_lightly_used_varyasyon2", "game_console_02_lightly_used_varyasyon3", "game_console_02_lightly_used_varyasyon4", "game_console_03_worn_out_varyasyon1", "game_console_03_worn_out_varyasyon2", "game_console_03_worn_out_varyasyon3", "game_console_03_worn_out_varyasyon4", "game_console_05_missing_parts_varyasyon1", "game_console_05_missing_parts_varyasyon2", "game_console_05_missing_parts_varyasyon3", "game_console_05_missing_parts_varyasyon4", "game_console_06_repaired_duct_tape_varyasyon1", "game_console_06_repaired_duct_tape_varyasyon2", "game_console_06_repaired_duct_tape_varyasyon4", "game_console_08_burned_varyasyon1", "game_console_08_burned_varyasyon2", "game_console_08_burned_varyasyon3", "game_console_08_burned_varyasyon4", "game_console_09_custom_painted_varyasyon1", "game_console_09_custom_painted_varyasyon2", "game_console_09_custom_painted_varyasyon4"),
+            damaged = listOf("game_console_04_heavily_damaged_varyasyon1", "game_console_04_heavily_damaged_varyasyon2", "game_console_04_heavily_damaged_varyasyon3", "game_console_04_heavily_damaged_varyasyon4", "game_console_07_dirty_rusty_varyasyon1", "game_console_07_dirty_rusty_varyasyon2", "game_console_07_dirty_rusty_varyasyon3", "game_console_07_dirty_rusty_varyasyon4")
+        ),
+        "gaming_laptop_new" to ImagePool(
+            clean = listOf("gaming_laptop_01_flawless_varyasyon2", "gaming_laptop_01_flawless_varyasyon3", "gaming_laptop_01_flawless_varyasyon4", "gaming_laptop_02_lightly_used_varyasyon2", "gaming_laptop_03_worn_out_varyasyon1", "gaming_laptop_03_worn_out_varyasyon2", "gaming_laptop_03_worn_out_varyasyon3", "gaming_laptop_03_worn_out_varyasyon4", "gaming_laptop_05_missing_parts_varyasyon1", "gaming_laptop_05_missing_parts_varyasyon2", "gaming_laptop_05_missing_parts_varyasyon3", "gaming_laptop_05_missing_parts_varyasyon4", "gaming_laptop_06_repaired_duct_tape_varyasyon1", "gaming_laptop_06_repaired_duct_tape_varyasyon2", "gaming_laptop_06_repaired_duct_tape_varyasyon3", "gaming_laptop_06_repaired_duct_tape_varyasyon4", "gaming_laptop_08_burned_varyasyon1", "gaming_laptop_08_burned_varyasyon2", "gaming_laptop_08_burned_varyasyon3", "gaming_laptop_08_burned_varyasyon4", "gaming_laptop_09_custom_painted_varyasyon1", "gaming_laptop_09_custom_painted_varyasyon2", "gaming_laptop_09_custom_painted_varyasyon3", "gaming_laptop_09_custom_painted_varyasyon4", "gaming_laptop_10_scrap_varyasyon1", "gaming_laptop_10_scrap_varyasyon2", "gaming_laptop_10_scrap_varyasyon3", "gaming_laptop_10_scrap_varyasyon4"),
+            damaged = listOf("gaming_laptop_04_heavily_damaged_varyasyon1", "gaming_laptop_04_heavily_damaged_varyasyon2", "gaming_laptop_04_heavily_damaged_varyasyon3", "gaming_laptop_07_dirty_rusty_varyasyon1", "gaming_laptop_07_dirty_rusty_varyasyon2", "gaming_laptop_07_dirty_rusty_varyasyon3", "gaming_laptop_07_dirty_rusty_varyasyon4")
+        ),
+        "office_laptop" to ImagePool(
+            clean = listOf("office_laptop_01_flawless_varyasyon1", "office_laptop_01_flawless_varyasyon2", "office_laptop_01_flawless_varyasyon3", "office_laptop_01_flawless_varyasyon4", "office_laptop_02_lightly_used_varyasyon1", "office_laptop_02_lightly_used_varyasyon2", "office_laptop_02_lightly_used_varyasyon3", "office_laptop_02_lightly_used_varyasyon4", "office_laptop_05_missing_parts_varyasyon1", "office_laptop_05_missing_parts_varyasyon3", "office_laptop_06_repaired_duct_tape_varyasyon1", "office_laptop_06_repaired_duct_tape_varyasyon2", "office_laptop_06_repaired_duct_tape_varyasyon3", "office_laptop_06_repaired_duct_tape_varyasyon4", "office_laptop_08_burned_varyasyon1", "office_laptop_08_burned_varyasyon2", "office_laptop_08_burned_varyasyon3", "office_laptop_08_burned_varyasyon4", "office_laptop_09_custom_painted_varyasyon1", "office_laptop_09_custom_painted_varyasyon2", "office_laptop_09_custom_painted_varyasyon3", "office_laptop_09_custom_painted_varyasyon4"),
+            damaged = listOf("office_laptop_07_dirty_rusty_varyasyon1", "office_laptop_07_dirty_rusty_varyasyon2", "office_laptop_07_dirty_rusty_varyasyon3", "office_laptop_07_dirty_rusty_varyasyon4")
+        ),
+        "keypad_phone" to ImagePool(
+            clean = listOf("keypad_phone_01_flawless_varyasyon1", "keypad_phone_01_flawless_varyasyon2", "keypad_phone_01_flawless_varyasyon3", "keypad_phone_01_flawless_varyasyon4", "keypad_phone_02_lightly_used_varyasyon1", "keypad_phone_02_lightly_used_varyasyon2", "keypad_phone_02_lightly_used_varyasyon3", "keypad_phone_02_lightly_used_varyasyon4", "keypad_phone_03_worn_out_varyasyon1", "keypad_phone_03_worn_out_varyasyon2", "keypad_phone_03_worn_out_varyasyon3", "keypad_phone_03_worn_out_varyasyon4", "keypad_phone_05_missing_parts_varyasyon1", "keypad_phone_05_missing_parts_varyasyon2", "keypad_phone_05_missing_parts_varyasyon3", "keypad_phone_05_missing_parts_varyasyon4", "keypad_phone_06_repaired_duct_tape_varyasyon1", "keypad_phone_06_repaired_duct_tape_varyasyon2", "keypad_phone_06_repaired_duct_tape_varyasyon3", "keypad_phone_06_repaired_duct_tape_varyasyon4", "keypad_phone_08_burned_varyasyon1", "keypad_phone_08_burned_varyasyon2", "keypad_phone_08_burned_varyasyon3", "keypad_phone_08_burned_varyasyon4", "keypad_phone_09_custom_painted_varyasyon1", "keypad_phone_09_custom_painted_varyasyon2", "keypad_phone_09_custom_painted_varyasyon3", "keypad_phone_09_custom_painted_varyasyon4"),
+            damaged = listOf("keypad_phone_04_heavily_damaged_varyasyon1", "keypad_phone_04_heavily_damaged_varyasyon2", "keypad_phone_04_heavily_damaged_varyasyon3", "keypad_phone_04_heavily_damaged_varyasyon4", "keypad_phone_07_dirty_rusty_varyasyon1", "keypad_phone_07_dirty_rusty_varyasyon2", "keypad_phone_07_dirty_rusty_varyasyon3", "keypad_phone_07_dirty_rusty_varyasyon4")
+        ),
+        "mini_projector" to ImagePool(
+            clean = listOf("mini_projector_01_flawless_varyasyon1", "mini_projector_01_flawless_varyasyon2", "mini_projector_01_flawless_varyasyon3", "mini_projector_01_flawless_varyasyon4", "mini_projector_02_lightly_used_varyasyon1", "mini_projector_02_lightly_used_varyasyon2", "mini_projector_02_lightly_used_varyasyon3", "mini_projector_02_lightly_used_varyasyon4", "mini_projector_03_worn_out_varyasyon1", "mini_projector_03_worn_out_varyasyon2", "mini_projector_03_worn_out_varyasyon3", "mini_projector_03_worn_out_varyasyon4", "mini_projector_05_missing_parts_varyasyon1", "mini_projector_05_missing_parts_varyasyon2", "mini_projector_05_missing_parts_varyasyon3", "mini_projector_05_missing_parts_varyasyon4", "mini_projector_06_repaired_duct_tape_varyasyon1", "mini_projector_06_repaired_duct_tape_varyasyon3", "mini_projector_06_repaired_duct_tape_varyasyon4", "mini_projector_08_burned_varyasyon1", "mini_projector_08_burned_varyasyon2", "mini_projector_08_burned_varyasyon3", "mini_projector_08_burned_varyasyon4", "mini_projector_09_custom_painted_varyasyon1", "mini_projector_09_custom_painted_varyasyon2", "mini_projector_09_custom_painted_varyasyon3", "mini_projector_09_custom_painted_varyasyon4"),
+            damaged = listOf("mini_projector_04_heavily_damaged_varyasyon1", "mini_projector_04_heavily_damaged_varyasyon2", "mini_projector_04_heavily_damaged_varyasyon3", "mini_projector_04_heavily_damaged_varyasyon4", "mini_projector_07_dirty_rusty_varyasyon1", "mini_projector_07_dirty_rusty_varyasyon2", "mini_projector_07_dirty_rusty_varyasyon3", "mini_projector_07_dirty_rusty_varyasyon4")
+        ),
+        "pc_monitor" to ImagePool(
+            clean = listOf("pc_monitor_01_flawless_varyasyon1", "pc_monitor_01_flawless_varyasyon2", "pc_monitor_01_flawless_varyasyon3", "pc_monitor_01_flawless_varyasyon4", "pc_monitor_02_lightly_used_varyasyon1", "pc_monitor_02_lightly_used_varyasyon2", "pc_monitor_02_lightly_used_varyasyon3", "pc_monitor_02_lightly_used_varyasyon4", "pc_monitor_03_worn_out_varyasyon1", "pc_monitor_03_worn_out_varyasyon2", "pc_monitor_03_worn_out_varyasyon3", "pc_monitor_03_worn_out_varyasyon4", "pc_monitor_05_missing_parts_varyasyon2", "pc_monitor_05_missing_parts_varyasyon3", "pc_monitor_06_repaired_duct_tape_varyasyon1", "pc_monitor_06_repaired_duct_tape_varyasyon4", "pc_monitor_09_custom_painted_varyasyon1", "pc_monitor_09_custom_painted_varyasyon2", "pc_monitor_09_custom_painted_varyasyon3", "pc_monitor_09_custom_painted_varyasyon4", "pc_monitor_10_scrap_varyasyon4"),
+            damaged = listOf("pc_monitor_04_heavily_damaged_varyasyon1", "pc_monitor_04_heavily_damaged_varyasyon2", "pc_monitor_04_heavily_damaged_varyasyon3", "pc_monitor_04_heavily_damaged_varyasyon4", "pc_monitor_07_dirty_rusty_varyasyon1", "pc_monitor_07_dirty_rusty_varyasyon2", "pc_monitor_07_dirty_rusty_varyasyon3", "pc_monitor_07_dirty_rusty_varyasyon4")
+        ),
+        "smartwatch_new" to ImagePool(
+            clean = listOf("smartwatch_01_flawless_varyasyon1", "smartwatch_01_flawless_varyasyon2", "smartwatch_01_flawless_varyasyon3", "smartwatch_01_flawless_varyasyon4", "smartwatch_02_lightly_used_varyasyon1", "smartwatch_02_lightly_used_varyasyon2", "smartwatch_02_lightly_used_varyasyon3", "smartwatch_02_lightly_used_varyasyon4", "smartwatch_03_worn_out_varyasyon1", "smartwatch_03_worn_out_varyasyon2", "smartwatch_03_worn_out_varyasyon3", "smartwatch_03_worn_out_varyasyon4", "smartwatch_06_repaired_duct_tape_varyasyon1", "smartwatch_06_repaired_duct_tape_varyasyon2", "smartwatch_06_repaired_duct_tape_varyasyon3", "smartwatch_06_repaired_duct_tape_varyasyon4", "smartwatch_08_burned_varyasyon1", "smartwatch_08_burned_varyasyon2", "smartwatch_08_burned_varyasyon3", "smartwatch_08_burned_varyasyon4", "smartwatch_09_custom_painted_varyasyon1", "smartwatch_09_custom_painted_varyasyon2", "smartwatch_09_custom_painted_varyasyon3", "smartwatch_09_custom_painted_varyasyon4", "smartwatch_10_scrap_varyasyon4"),
+            damaged = listOf("smartwatch_04_heavily_damaged_varyasyon1", "smartwatch_04_heavily_damaged_varyasyon2", "smartwatch_04_heavily_damaged_varyasyon3", "smartwatch_04_heavily_damaged_varyasyon4", "smartwatch_07_dirty_rusty_varyasyon1", "smartwatch_07_dirty_rusty_varyasyon2", "smartwatch_07_dirty_rusty_varyasyon3", "smartwatch_07_dirty_rusty_varyasyon4")
+        ),
+        "tablet_new" to ImagePool(
+            clean = listOf("tablet_01_flawless_varyasyon1", "tablet_01_flawless_varyasyon2", "tablet_01_flawless_varyasyon3", "tablet_01_flawless_varyasyon4", "tablet_02_lightly_used_varyasyon1", "tablet_02_lightly_used_varyasyon2", "tablet_02_lightly_used_varyasyon3", "tablet_02_lightly_used_varyasyon4", "tablet_03_worn_out_varyasyon1", "tablet_03_worn_out_varyasyon2", "tablet_03_worn_out_varyasyon3", "tablet_03_worn_out_varyasyon4", "tablet_05_missing_parts_varyasyon3", "tablet_06_repaired_duct_tape_varyasyon2", "tablet_06_repaired_duct_tape_varyasyon3", "tablet_06_repaired_duct_tape_varyasyon4", "tablet_08_burned_varyasyon1", "tablet_08_burned_varyasyon2", "tablet_08_burned_varyasyon3", "tablet_09_custom_painted_varyasyon1", "tablet_09_custom_painted_varyasyon2", "tablet_09_custom_painted_varyasyon3", "tablet_09_custom_painted_varyasyon4"),
+            damaged = listOf("tablet_04_heavily_damaged_varyasyon3", "tablet_07_dirty_rusty_varyasyon2", "tablet_07_dirty_rusty_varyasyon3", "tablet_07_dirty_rusty_varyasyon4")
+        ),
+        "wireless_earbuds_new" to ImagePool(
+            clean = listOf("wireless_earbuds_01_flawless_varyasyon1", "wireless_earbuds_01_flawless_varyasyon2", "wireless_earbuds_01_flawless_varyasyon3", "wireless_earbuds_01_flawless_varyasyon4", "wireless_earbuds_02_lightly_used_varyasyon2", "wireless_earbuds_02_lightly_used_varyasyon3", "wireless_earbuds_02_lightly_used_varyasyon4", "wireless_earbuds_03_worn_out_varyasyon2", "wireless_earbuds_03_worn_out_varyasyon4", "wireless_earbuds_05_missing_parts_varyasyon2", "wireless_earbuds_05_missing_parts_varyasyon4", "wireless_earbuds_06_repaired_duct_tape_varyasyon1", "wireless_earbuds_06_repaired_duct_tape_varyasyon2", "wireless_earbuds_06_repaired_duct_tape_varyasyon3", "wireless_earbuds_08_burned_varyasyon1", "wireless_earbuds_08_burned_varyasyon2", "wireless_earbuds_09_custom_painted_varyasyon2", "wireless_earbuds_09_custom_painted_varyasyon3", "wireless_earbuds_09_custom_painted_varyasyon4"),
+            damaged = listOf("wireless_earbuds_01_flawless_varyasyon1", "wireless_earbuds_01_flawless_varyasyon2", "wireless_earbuds_01_flawless_varyasyon3", "wireless_earbuds_01_flawless_varyasyon4", "wireless_earbuds_02_lightly_used_varyasyon2", "wireless_earbuds_02_lightly_used_varyasyon3", "wireless_earbuds_02_lightly_used_varyasyon4", "wireless_earbuds_03_worn_out_varyasyon2", "wireless_earbuds_03_worn_out_varyasyon4", "wireless_earbuds_05_missing_parts_varyasyon2", "wireless_earbuds_05_missing_parts_varyasyon4", "wireless_earbuds_06_repaired_duct_tape_varyasyon1", "wireless_earbuds_06_repaired_duct_tape_varyasyon2", "wireless_earbuds_06_repaired_duct_tape_varyasyon3", "wireless_earbuds_08_burned_varyasyon1", "wireless_earbuds_08_burned_varyasyon2", "wireless_earbuds_09_custom_painted_varyasyon2", "wireless_earbuds_09_custom_painted_varyasyon3", "wireless_earbuds_09_custom_painted_varyasyon4")
+        ),
+        "dslr_camera" to ImagePool(
+            clean = listOf("dslr_camera_01_flawless_varyasyon1", "dslr_camera_01_flawless_varyasyon2", "dslr_camera_01_flawless_varyasyon3", "dslr_camera_01_flawless_varyasyon4", "dslr_camera_02_lightly_used_varyasyon1", "dslr_camera_02_lightly_used_varyasyon2", "dslr_camera_02_lightly_used_varyasyon3", "dslr_camera_02_lightly_used_varyasyon4"),
+            damaged = listOf("dslr_camera_01_flawless_varyasyon1", "dslr_camera_01_flawless_varyasyon2", "dslr_camera_01_flawless_varyasyon3", "dslr_camera_01_flawless_varyasyon4", "dslr_camera_02_lightly_used_varyasyon1", "dslr_camera_02_lightly_used_varyasyon2", "dslr_camera_02_lightly_used_varyasyon3", "dslr_camera_02_lightly_used_varyasyon4")
+        ),
+        "baseball_cap" to ImagePool(
+            clean = listOf("blankbaseballcap", "blankwhitecap", "cleanbeigecap", "cleanwhitecap", "dustybeigecap", "fadedbluecap", "heavilymuddycap", "muddybaseballcap", "muddybrowncap", "pristinebeigecap", "pristinewhitecap", "ruinedmuddycap", "sunbleachedcap", "wornbeigecap", "worngreybaseballcap"),
+            damaged = listOf("blankbaseballcap", "blankwhitecap", "cleanbeigecap", "cleanwhitecap", "dustybeigecap", "fadedbluecap", "heavilymuddycap", "muddybaseballcap", "muddybrowncap", "pristinebeigecap", "pristinewhitecap", "ruinedmuddycap", "sunbleachedcap", "wornbeigecap", "worngreybaseballcap")
+        ),
+        "camping_tent" to ImagePool(
+            clean = listOf("browncampingtent", "orangecampingtent", "ruinedmuddytent", "yellowcampingtent"),
+            damaged = listOf("browncampingtent", "orangecampingtent", "ruinedmuddytent", "yellowcampingtent")
+        ),
+        "toolbox" to ImagePool(
+            clean = listOf("bluetoolboxwithyellowwrench", "greytoolboxwithwrench", "orangetoolboxwithwrench", "smashedbrowntoolbox"),
+            damaged = listOf("bluetoolboxwithyellowwrench", "greytoolboxwithwrench", "orangetoolboxwithwrench", "smashedbrowntoolbox")
+        ),
+        "fishing_rod" to ImagePool(
+            clean = listOf("classicfishingrod", "fishingrodwithbox", "standardfishingrod"),
+            damaged = listOf("brokenfishingrod")
+        ),
+        "folding_table" to ImagePool(
+            clean = listOf("basicfoldingtable", "cleanfoldingtable", "scratchedfoldingtable"),
+            damaged = listOf("brokenfoldingtable")
+        ),
+        "aviator_sunglasses" to ImagePool(
+            clean = listOf("classicaviatorsunglasses", "greenaviatorsunglasses"),
+            damaged = listOf("brokenaviratorsunglasses")
+        ),
+        "sneakers" to ImagePool(
+            clean = listOf("chunkywhitesneakers", "pristinewhitesneakers", "ruinedmuddysneakers", "wornwhitesneakers"),
+            damaged = listOf("slightlydirtysneakers")
+        ),
+        "car_radio" to ImagePool(
+            clean = listOf("blackscreencarradio", "greenscreencarradio", "hollowcarradio", "smashedcarradio"),
+            damaged = listOf("blackscreencarradio", "greenscreencarradio", "hollowcarradio", "smashedcarradio")
+        ),
+        "mystery_box" to ImagePool(
+            clean = listOf("cardboardmysterybox", "mysterybox", "squaremysterybox"),
+            damaged = listOf("cardboardmysterybox", "mysterybox", "squaremysterybox")
+        ),
+        "ufo_lamp" to ImagePool(
+            clean = listOf("neonufolamp", "retroufolamp", "ufodesklampp2"),
+            damaged = listOf("damagedufolamp")
+        ),
+        "treasure_map" to ImagePool(
+            clean = listOf("pristinetreasuremap", "vintagetreasuremap"),
+            damaged = listOf("pristinetreasuremap", "vintagetreasuremap")
+        ),
+        "trex_skull" to ImagePool(
+            clean = listOf("floatingtrexskull", "rexskullreplica", "trexskulllonstand"),
+            damaged = listOf("floatingtrexskull", "rexskullreplica", "trexskulllonstand")
+        ),
+        "polo_shirt" to ImagePool(
+            clean = listOf("foldedpoloshirts", "foldedstripedjersey", "foldedvnecksweater"),
+            damaged = listOf("foldedpoloshirts", "foldedstripedjersey", "foldedvnecksweater")
+        ),
+        "leather_jacket_folded" to ImagePool(
+            clean = listOf("foldedleatherjackets"),
+            damaged = listOf("foldedleatherjackets")
+        ),
+        "silver_watch" to ImagePool(
+            clean = listOf("silvermetalwatch", "smashedmetalwatch"),
+            damaged = listOf("silvermetalwatch", "smashedmetalwatch")
         )
     )
 
@@ -204,53 +336,80 @@ object MarketGenerator {
         val baseMaxValue: Int
     )
 
-    val NORMAL_PRODUCTS = listOf(
-        ProductTemplate("Akıllı Telefon",         "Elektronik",  "smartphone",    2000, 18000),
-        ProductTemplate("Laptop",                  "Elektronik",  "laptop",        4000, 25000),
-        ProductTemplate("Gaming Laptop",           "Elektronik",  "laptop",        8000, 35000),
-        ProductTemplate("Tablet",                  "Elektronik",  "tablet",        1500, 12000),
-        ProductTemplate("Oyun Kulaklığı",          "Elektronik",  "headphones",     300,  4000),
-        ProductTemplate("Oyun Konsolu Kolu",        "Elektronik",  "gamepad",        800,  4000),
-        ProductTemplate("Oyun Konsolu",            "Elektronik",  "console",       1500, 10000),
-        ProductTemplate("Monitör",                 "Elektronik",  "monitor",       2000, 12000),
-        ProductTemplate("Mekanik Klavye",           "Elektronik",  "keyboard",       400,  4000),
-        ProductTemplate("VR Gözlüğü",             "Elektronik",  "vr",            3000, 15000),
-        ProductTemplate("Kamera",                  "Elektronik",  "camera",        1000, 8000),
-
-        // Ev Aletleri
-        ProductTemplate("Blender",                 "Ev Aletleri", "blender",        200,  1500),
-        ProductTemplate("Kahve Makinesi",          "Ev Aletleri", "coffee_maker",   400,  4000),
-        ProductTemplate("Mini Buzdolabı",          "Ev Aletleri", "fridge",        1000,  6000),
-        ProductTemplate("Mini Fırın",              "Ev Aletleri", "oven",           300,  2000),
-
-        // Giyim & Aksesuar
-        ProductTemplate("Kol Saati",               "Giyim",       "watch",          500, 15000),
-        ProductTemplate("Antika Köstekli Saat",    "Giyim",       "watch",         5000, 20000),
-        ProductTemplate("Bez Çanta",               "Giyim",       "backpack",       200,  2000),
-        ProductTemplate("Forma",                   "Giyim",       "jersey",         100,  1500),
-        ProductTemplate("Deri Ceket",              "Giyim",       "leather_jacket", 400,  5000),
-
-        // Spor
-        ProductTemplate("Klasik Bisiklet",         "Spor",        "bicycle",       1500, 10000),
-        ProductTemplate("Elektrikli Scooter",      "Spor",        "scooter",       2000, 12000),
-
-        // Koleksiyon & Hobi
-        ProductTemplate("Koleksiyon Oyuncağı",     "Koleksiyon",  "toy",             50,  3000),
-        ProductTemplate("Akustik Gitar",           "Koleksiyon",  "guitar",         500,  5000),
-
-        // Emlak (Evler)
-        ProductTemplate("1+1 Apartman Dairesi",    "Emlak",       "house_apartment", 1000000, 3000000),
-        ProductTemplate("Müstakil Villa",          "Emlak",       "house_villa",     5000000, 15000000),
-        ProductTemplate("Köy Evi",                 "Emlak",       "house_village",   500000,  1500000),
-        ProductTemplate("Lüks Yalı",               "Emlak",       "house_mansion",   20000000, 100000000),
-        ProductTemplate("Prefabrik Ev",            "Emlak",       "house_prefab",    300000,  800000),
-
-        // Araçlar (Arabalar)
-        ProductTemplate("Spor Araba",              "Araç",        "car_sports",      2000000, 6000000),
-        ProductTemplate("Klasik Sedan",            "Araç",        "car_sedan",       500000,  1500000),
-        ProductTemplate("SUV Jip",                 "Araç",        "car_suv",         1000000, 3000000),
-        ProductTemplate("Panelvan Minibüs",        "Araç",        "car_van",         400000,  900000),
-        ProductTemplate("Külüstür Toros",          "Araç",        "car_toros",       150000,  300000)
+        val NORMAL_PRODUCTS = listOf(ProductTemplate("Klasik Plastik Ördek", "Toys", "rubber_duck", 56, 120),
+        ProductTemplate("Yumurtadan Çıkan Ördek", "Toys", "rubber_duck_egg", 84, 180),
+        ProductTemplate("Akıllı Telefon (Temiz)", "Electronics", "smartphone_clean", 8400, 18000),
+        ProductTemplate("Akıllı Telefon (Ekranı Kırık)", "Electronics", "smartphone_cracked", 3150, 6750),
+        ProductTemplate("Akıllı Telefon (Çizik Kasa)", "Electronics", "smartphone_scratched", 5950, 12750),
+        ProductTemplate("Akıllı Telefon (Bakımsız)", "Electronics", "smartphone_dirty", 4900, 10500),
+        ProductTemplate("Akıllı Telefon (Arkası Yanık)", "Electronics", "smartphone_melted_back", 1750, 3750),
+        ProductTemplate("10 inç Android Tablet", "Electronics", "tablet_galaxy", 3500, 7500),
+        ProductTemplate("Tablet (Kılcal Çizikli)", "Electronics", "tablet_scratched", 2240, 4800),
+        ProductTemplate("Mutfak Blender", "Home_appliances", "blender", 665, 1425),
+        ProductTemplate("Filtre Kahve Makinesi", "Home_appliances", "coffee_maker", 1540, 3300),
+        ProductTemplate("Mini Buzdolabı", "Home_appliances", "mini_fridge", 2660, 5700),
+        ProductTemplate("Oyuncu Kulaklığı (Bantlı)", "Accessories", "headphones_duct_tape", 315, 675),
+        ProductTemplate("Deri Kordonlu Klasik Saat", "Accessories", "classic_watch", 1050, 2250),
+        ProductTemplate("Şehir Bisikleti", "Sports", "classic_bicycle", 3360, 7200),
+        ProductTemplate("Kanvas Sırt Çantası", "Accessories", "canvas_backpack", 454, 975),
+        ProductTemplate("İkinci El Forma", "Sports", "dirty_jersey", 210, 450),
+        ProductTemplate("Ortadan Kırık Gamepad", "Electronics", "gamepad_broken", 105, 225),
+        ProductTemplate("Oyuncu Monitörü (Paneli Kırık)", "Electronics", "monitor_cracked", 840, 1800),
+        ProductTemplate("VR Gözlük (Temiz)", "Electronics", "vr_headset_clean", 4200, 9000),
+        ProductTemplate("VR Gözlük (Çizik)", "Electronics", "vr_headset_scratched", 2800, 6000),
+        ProductTemplate("Mekanik Klavye (Temiz)", "Electronics", "mech_keyboard_clean", 1050, 2250),
+        ProductTemplate("Mekanik Klavye (Tuşsuz)", "Electronics", "mech_keyboard_missing_key", 420, 900),
+        ProductTemplate("Akustik Gitar (Temiz)", "Hobby", "acoustic_guitar_clean", 1400, 3000),
+        ProductTemplate("Akustik Gitar (Teli Kopuk)", "Hobby", "acoustic_guitar_broken_string", 630, 1350),
+        ProductTemplate("Deri Ceket (Temiz)", "Clothing", "leather_jacket_clean", 2450, 5250),
+        ProductTemplate("Deri Ceket (Yırtık)", "Clothing", "leather_jacket_torn", 560, 1200),
+        ProductTemplate("Şehir Bisikleti", "Sports", "city_bike", 2450, 5250),
+        ProductTemplate("Dağ Bisikleti", "Sports", "mountain_bike", 3639, 7800),
+        ProductTemplate("Retro Oyun Konsolu", "Electronics", "retro_console", 1959, 4200),
+        ProductTemplate("VR Gözlük (Çeşitli Model)", "Electronics", "vr_headset_extra", 3150, 6750),
+        ProductTemplate("RC Araba", "Toys", "rc_car", 1260, 2700),
+        ProductTemplate("RC Kamyon (Çamurlu)", "Toys", "rc_truck_muddy", 630, 1350),
+        ProductTemplate("Elektrikli Scooter", "Sports", "electric_scooter", 4550, 9750),
+        ProductTemplate("Yapboz Bulmaca", "Toys", "jigsaw_puzzle", 244, 525),
+        ProductTemplate("Renkli Lego Blok", "Toys", "toy_blocks", 175, 375),
+        ProductTemplate("Ahşap Satranç Takımı", "Toys", "chess_set", 840, 1800),
+        ProductTemplate("Araba Lastiği", "Spare_parts", "car_tire", 560, 1200),
+        ProductTemplate("Lüks Kol Saati", "Accessories", "luxury_watch", 10500, 22500),
+        ProductTemplate("Ezilmiş Kol Saati", "Accessories", "smashed_watch", 1400, 3000),
+        ProductTemplate("Oyuncu Laptopu (Ağır Seri)", "Electronics", "gaming_laptop_v2", 24500, 52500),
+        ProductTemplate("Laptop (Hasarlı)", "Electronics", "laptop_damaged", 5600, 12000),
+        ProductTemplate("Retro Cep Telefonu", "Electronics", "retro_mobile", 1750, 3750),
+        ProductTemplate("Akıllı Telefon (Çizik)", "Electronics", "smartphone_scratched_v2", 5250, 11250),
+        ProductTemplate("Akıllı Telefon (Parçalı)", "Electronics", "smartphone_missing", 2100, 4500),
+        ProductTemplate("Akıllı Telefon (Hurda)", "Electronics", "smartphone_scrap", 560, 1200),
+        ProductTemplate("Akıllı Telefon (Özel Boyalı)", "Electronics", "smartphone_custom", 6650, 14250),
+        ProductTemplate("Oyuncu Kulaklığı", "Electronics", "gaming_headset_new", 2450, 5250),
+        ProductTemplate("Bluetooth Hoparlör", "Electronics", "bluetooth_speaker_new", 1959, 4200),
+        ProductTemplate("Oyun Konsolu (Modern)", "Electronics", "game_console_new", 5600, 12000),
+        ProductTemplate("Oyuncu Laptopu (Varyantlı)", "Electronics", "gaming_laptop_new", 21000, 45000),
+        ProductTemplate("Ofis Laptopu", "Electronics", "office_laptop", 8400, 18000),
+        ProductTemplate("Tuş Takımlı Telefon", "Electronics", "keypad_phone", 1050, 2250),
+        ProductTemplate("Mini Projektör", "Electronics", "mini_projector", 3150, 6750),
+        ProductTemplate("PC Monitör", "Electronics", "pc_monitor", 3849, 8250),
+        ProductTemplate("Akıllı Saat (Varyantlı)", "Accessories", "smartwatch_new", 4200, 9000),
+        ProductTemplate("Tablet (Varyantlı)", "Electronics", "tablet_new", 4900, 10500),
+        ProductTemplate("Kablosuz Kulaklık", "Electronics", "wireless_earbuds_new", 1750, 3750),
+        ProductTemplate("DSLR Fotoğraf Makinesi", "Electronics", "dslr_camera", 10500, 22500),
+        ProductTemplate("Beyzbol Şapkası", "Clothing", "baseball_cap", 175, 375),
+        ProductTemplate("Kamp Çadırı", "Sports", "camping_tent", 840, 1800),
+        ProductTemplate("Alet Kutusu", "Spare_parts", "toolbox", 420, 900),
+        ProductTemplate("Balık Oltası", "Sports", "fishing_rod", 280, 600),
+        ProductTemplate("Katlanır Masa", "Home_appliances", "folding_table", 315, 675),
+        ProductTemplate("Aviator Güneş Gözlüğü", "Accessories", "aviator_sunglasses", 210, 450),
+        ProductTemplate("Spor Ayakkabı", "Clothing", "sneakers", 560, 1200),
+        ProductTemplate("Araba Radyosu", "Electronics", "car_radio", 525, 1125),
+        ProductTemplate("Gizemli Kutu", "Toys", "mystery_box", 350, 750),
+        ProductTemplate("UFO Masa Lambası", "Home_appliances", "ufo_lamp", 630, 1350),
+        ProductTemplate("Hazine Haritası", "Toys", "treasure_map", 1050, 2250),
+        ProductTemplate("T-Rex Kafatası Replikası", "Toys", "trex_skull", 2100, 4500),
+        ProductTemplate("Polo Tişört", "Clothing", "polo_shirt", 140, 300),
+        ProductTemplate("Deri Ceket (Katlanmış)", "Clothing", "leather_jacket_folded", 1750, 3750),
+        ProductTemplate("Gümüş Metal Saat", "Accessories", "silver_watch", 1400, 3000)
     )
 
     val ABSURD_PRODUCTS = listOf(

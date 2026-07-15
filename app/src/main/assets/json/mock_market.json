@@ -686,5 +686,517 @@
     "salesValue": "640",
     "estimatedValue": "800",
     "imageName": "leather_jacket_torn_1"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Şehir Bisikleti",
+    "salesValue": "2800",
+    "estimatedValue": "3500",
+    "imageName": "blackcitybike"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Şehir Bisikleti",
+    "salesValue": "2800",
+    "estimatedValue": "3500",
+    "imageName": "bluecitybike"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Şehir Bisikleti",
+    "salesValue": "2800",
+    "estimatedValue": "3500",
+    "imageName": "greencitybike"
+  },
+  {
+    "condition": "Az Kullanılmış",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Şehir Bisikleti",
+    "salesValue": "2450",
+    "estimatedValue": "3500",
+    "imageName": "lightbluecitybike"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Dağ Bisikleti",
+    "salesValue": "4160",
+    "estimatedValue": "5200",
+    "imageName": "darkgreymountainbike"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Dağ Bisikleti",
+    "salesValue": "4160",
+    "estimatedValue": "5200",
+    "imageName": "matteblackmountainbike"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Dağ Bisikleti",
+    "salesValue": "4160",
+    "estimatedValue": "5200",
+    "imageName": "tealmountainbike"
+  },
+  {
+    "condition": "Az Kullanılmış",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Dağ Bisikleti",
+    "salesValue": "3640",
+    "estimatedValue": "5200",
+    "imageName": "tealwhitemountainbike"
+  },
+  {
+    "condition": "Nostalji",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Retro Oyun Konsolu",
+    "salesValue": "2240",
+    "estimatedValue": "2800",
+    "imageName": "classicgreyretroconsole"
+  },
+  {
+    "condition": "Ekranlı",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Retro Oyun Konsolu",
+    "salesValue": "2240",
+    "estimatedValue": "2800",
+    "imageName": "retroconsolewithscreena"
+  },
+  {
+    "condition": "Ekranlı",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Retro Oyun Konsolu",
+    "salesValue": "2240",
+    "estimatedValue": "2800",
+    "imageName": "retroconsolewithscreenb"
+  },
+  {
+    "condition": "Modern",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Retro Oyun Konsolu",
+    "salesValue": "2240",
+    "estimatedValue": "2800",
+    "imageName": "modernsilverconsole"
+  },
+  {
+    "condition": "Klasik",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Retro Oyun Konsolu",
+    "salesValue": "2240",
+    "estimatedValue": "2800",
+    "imageName": "classicretroconsole"
+  },
+  {
+    "condition": "Nadir Koleksiyon",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Retro Oyun Konsolu",
+    "salesValue": "3500",
+    "estimatedValue": "4500",
+    "imageName": "turkokonsoleretro"
+  },
+  {
+    "condition": "Şişman Model",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "VR Gözlük",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "chunkyvrheadset"
+  },
+  {
+    "condition": "Jenerik Model",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "VR Gözlük",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "genericvrheadseta"
+  },
+  {
+    "condition": "Şık Model",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "VR Gözlük",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "sleekvrheadset"
+  },
+  {
+    "condition": "Ses Sistemli",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "VR Gözlük",
+    "salesValue": "3600",
+    "estimatedValue": "4500",
+    "imageName": "vrheadsetwithaudio"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "RC Araba",
+    "salesValue": "1440",
+    "estimatedValue": "1800",
+    "imageName": "redrcbuggy"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "RC Araba",
+    "salesValue": "1440",
+    "estimatedValue": "1800",
+    "imageName": "redblackrcbuggy"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "RC Araba",
+    "salesValue": "1440",
+    "estimatedValue": "1800",
+    "imageName": "redwhitercbuggy"
+  },
+  {
+    "condition": "Çamurlu",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "RC Kamyon",
+    "salesValue": "720",
+    "estimatedValue": "900",
+    "imageName": "muddyredrctruck"
+  },
+  {
+    "condition": "Temiz",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Elektrikli Scooter",
+    "salesValue": "5200",
+    "estimatedValue": "6500",
+    "imageName": "scooter"
+  },
+  {
+    "condition": "Az Kullanılmış",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Elektrikli Scooter",
+    "salesValue": "4550",
+    "estimatedValue": "6500",
+    "imageName": "scooter2"
+  },
+  {
+    "condition": "Hasarlı",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Elektrikli Scooter",
+    "salesValue": "3250",
+    "estimatedValue": "6500",
+    "imageName": "scooter3"
+  },
+  {
+    "condition": "Kutu Kapalı",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Yapboz Bulmaca",
+    "salesValue": "280",
+    "estimatedValue": "350",
+    "imageName": "boxedbluejigsawpuzzle"
+  },
+  {
+    "condition": "Açık Paket",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Yapboz Bulmaca",
+    "salesValue": "245",
+    "estimatedValue": "350",
+    "imageName": "openbluejigsawpuzzle"
+  },
+  {
+    "condition": "Sağlam",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Yapboz Bulmaca",
+    "salesValue": "280",
+    "estimatedValue": "350",
+    "imageName": "squarebluepuzzle"
+  },
+  {
+    "condition": "Karton Kutu",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Yapboz Bulmaca",
+    "salesValue": "245",
+    "estimatedValue": "350",
+    "imageName": "bluepuzzlebox"
+  },
+  {
+    "condition": "Renkli Set",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Renkli Lego Blok",
+    "salesValue": "200",
+    "estimatedValue": "250",
+    "imageName": "boxofcolorfultoyblocks"
+  },
+  {
+    "condition": "Gri Set",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Renkli Lego Blok",
+    "salesValue": "200",
+    "estimatedValue": "250",
+    "imageName": "boxofgreytoyblocks"
+  },
+  {
+    "condition": "Bej Set",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Renkli Lego Blok",
+    "salesValue": "200",
+    "estimatedValue": "250",
+    "imageName": "boxoftantoyblocks"
+  },
+  {
+    "condition": "Karton Kutu",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Renkli Lego Blok",
+    "salesValue": "175",
+    "estimatedValue": "250",
+    "imageName": "cardboardboxgreyblocks"
+  },
+  {
+    "condition": "Temiz A",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Ahşap Satranç Takımı",
+    "salesValue": "960",
+    "estimatedValue": "1200",
+    "imageName": "woodenchessseta"
+  },
+  {
+    "condition": "Temiz B",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Ahşap Satranç Takımı",
+    "salesValue": "960",
+    "estimatedValue": "1200",
+    "imageName": "woodenchesssetb"
+  },
+  {
+    "condition": "Temiz C",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Ahşap Satranç Takımı",
+    "salesValue": "960",
+    "estimatedValue": "1200",
+    "imageName": "woodenchesssetc"
+  },
+  {
+    "condition": "Antika",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Ahşap Satranç Takımı",
+    "salesValue": "1080",
+    "estimatedValue": "1200",
+    "imageName": "woodenchesssetd"
+  },
+  {
+    "condition": "Patlamış",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Araba Lastiği",
+    "salesValue": "480",
+    "estimatedValue": "800",
+    "imageName": "flatcartire"
+  },
+  {
+    "condition": "Sağlam A",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Araba Lastiği",
+    "salesValue": "640",
+    "estimatedValue": "800",
+    "imageName": "standingcartirea"
+  },
+  {
+    "condition": "Sağlam B",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Araba Lastiği",
+    "salesValue": "640",
+    "estimatedValue": "800",
+    "imageName": "standingcartireb"
+  },
+  {
+    "condition": "Sağlam C",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Araba Lastiği",
+    "salesValue": "640",
+    "estimatedValue": "800",
+    "imageName": "standingcartirec"
+  },
+  {
+    "condition": "Mavi Klasik",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Lüks Kol Saati",
+    "salesValue": "12000",
+    "estimatedValue": "15000",
+    "imageName": "classicbluewatch"
+  },
+  {
+    "condition": "Nadir Koleksiyon",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Lüks Kol Saati",
+    "salesValue": "15000",
+    "estimatedValue": "20000",
+    "imageName": "luxuryreginowatch"
+  },
+  {
+    "condition": "Deri Kordon",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Lüks Kol Saati",
+    "salesValue": "12000",
+    "estimatedValue": "15000",
+    "imageName": "leathersmartwatch"
+  },
+  {
+    "condition": "Ezik",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Ezilmiş Kol Saati",
+    "salesValue": "1600",
+    "estimatedValue": "2000",
+    "imageName": "smashedclassicwatch"
+  },
+  {
+    "condition": "Oyuncu Serisi",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Oyuncu Laptopu",
+    "salesValue": "28000",
+    "estimatedValue": "35000",
+    "imageName": "gaminglaptop"
+  },
+  {
+    "condition": "Ağır Seri",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Oyuncu Laptopu",
+    "salesValue": "28000",
+    "estimatedValue": "35000",
+    "imageName": "heavydutygaminglaptop"
+  },
+  {
+    "condition": "Hasarlı",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Laptop (Hasarlı)",
+    "salesValue": "6400",
+    "estimatedValue": "8000",
+    "imageName": "damagedsilverlaptop"
+  },
+  {
+    "condition": "Genel Model",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Laptop (Hasarlı)",
+    "salesValue": "6400",
+    "estimatedValue": "8000",
+    "imageName": "genericsilverlaptop"
+  },
+  {
+    "condition": "Vintage",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Retro Cep Telefonu",
+    "salesValue": "2000",
+    "estimatedValue": "2500",
+    "imageName": "retromobilephone"
+  },
+  {
+    "condition": "Çizikli",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon (Çizik)",
+    "salesValue": "6000",
+    "estimatedValue": "7500",
+    "imageName": "scratchedsmartphone"
+  },
+  {
+    "condition": "Parça Eksik 1",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon (Parçalı)",
+    "salesValue": "2400",
+    "estimatedValue": "3000",
+    "imageName": "smartphone_05_missing_parts_varyasyon1"
+  },
+  {
+    "condition": "Parça Eksik 2",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon (Parçalı)",
+    "salesValue": "2400",
+    "estimatedValue": "3000",
+    "imageName": "smartphone_05_missing_parts_varyasyon2"
+  },
+  {
+    "condition": "Parça Eksik 3",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon (Parçalı)",
+    "salesValue": "2400",
+    "estimatedValue": "3000",
+    "imageName": "smartphone_05_missing_parts_varyasyon3"
+  },
+  {
+    "condition": "Parça Eksik 4",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Akıllı Telefon (Parçalı)",
+    "salesValue": "2400",
+    "estimatedValue": "3000",
+    "imageName": "smartphone_05_missing_parts_varyasyon4"
+  },
+  {
+    "condition": "Hurda 1",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon (Hurda)",
+    "salesValue": "640",
+    "estimatedValue": "800",
+    "imageName": "smartphone_10_scrap_varyasyon1"
+  },
+  {
+    "condition": "Hurda 2",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon (Hurda)",
+    "salesValue": "640",
+    "estimatedValue": "800",
+    "imageName": "smartphone_10_scrap_varyasyon2"
+  },
+  {
+    "condition": "Hurda 3",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon (Hurda)",
+    "salesValue": "640",
+    "estimatedValue": "800",
+    "imageName": "smartphone_10_scrap_varyasyon3"
+  },
+  {
+    "condition": "Hurda 4",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon (Hurda)",
+    "salesValue": "640",
+    "estimatedValue": "800",
+    "imageName": "smartphone_10_scrap_varyasyon4"
+  },
+  {
+    "condition": "Hafif Kullanılmış 1",
+    "sellerName": "Pazarlıkçı Ahmet Abi",
+    "itemName": "Akıllı Telefon (Temiz)",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_02_lightly_used_varyasyon1"
+  },
+  {
+    "condition": "Hafif Kullanılmış 2",
+    "sellerName": "Sabırsız Murat",
+    "itemName": "Akıllı Telefon (Temiz)",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_02_lightly_used_varyasyon2"
+  },
+  {
+    "condition": "Sıfır 1",
+    "sellerName": "Dolandırıcı Şahin",
+    "itemName": "Akıllı Telefon (Temiz)",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_01_flawless_varyasyon1"
+  },
+  {
+    "condition": "Sıfır 2",
+    "sellerName": "Temiz Aile Babası Kemal",
+    "itemName": "Akıllı Telefon (Temiz)",
+    "salesValue": "9600",
+    "estimatedValue": "12000",
+    "imageName": "smartphone_01_flawless_varyasyon2"
+  },
+  {
+    "condition": "Özel Boyalı",
+    "sellerName": "Öğrenci Kardeşimiz",
+    "itemName": "Akıllı Telefon (Özel Boyalı)",
+    "salesValue": "7600",
+    "estimatedValue": "9500",
+    "imageName": "smartphone_09_custom_painted_varyasyon1"
   }
 ]
