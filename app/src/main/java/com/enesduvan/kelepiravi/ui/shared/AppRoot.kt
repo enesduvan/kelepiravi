@@ -112,12 +112,18 @@ fun AppRoot(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel
                             NavItem(
                                 selected = selectedTab == 2,
                                 onClick = { selectedTab = 2 },
-                                label = "Tamir",
-                                painter = painterResource(id = R.drawable.tamir)
+                                label = "İlanlar",
+                                painter = painterResource(id = R.drawable.ic_tag)
                             )
                             NavItem(
                                 selected = selectedTab == 3,
                                 onClick = { selectedTab = 3 },
+                                label = "Tamir",
+                                painter = painterResource(id = R.drawable.tamir)
+                            )
+                            NavItem(
+                                selected = selectedTab == 4,
+                                onClick = { selectedTab = 4 },
                                 label = "Profil",
                                 painter = painterResource(id = R.drawable.person)
                             )
@@ -134,8 +140,9 @@ fun AppRoot(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel
                             when (tab) {
                                 0 -> MarketScreen(viewModel = marketViewModel)
                                 1 -> InventoryScreen(marketViewModel = marketViewModel, listingViewModel = listingViewModel)
-                                2 -> TamirEkrani(viewModel = marketViewModel)
-                                3 -> ProfilEkrani(viewModel = marketViewModel, listingViewModel = listingViewModel)
+                                2 -> com.enesduvan.kelepiravi.ui.inventory.ListingsScreen(marketViewModel = marketViewModel, listingViewModel = listingViewModel)
+                                3 -> TamirEkrani(viewModel = marketViewModel)
+                                4 -> ProfilEkrani(viewModel = marketViewModel, listingViewModel = listingViewModel)
                             }
                         }
                     }

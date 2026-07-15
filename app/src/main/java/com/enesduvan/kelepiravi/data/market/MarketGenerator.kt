@@ -52,8 +52,40 @@ object MarketGenerator {
             damaged = listOf("tablet_scratched_1", "tablet_scratched_2")
         ),
         "headphones" to ImagePool(
-            clean = listOf("headphones_duct_tape_1"),
-            damaged = listOf("headphones_duct_tape_1", "headphones_duct_tape_2", "headphones_duct_tape_3")
+            clean = listOf("oyun_kulakligi"),
+            damaged = listOf("oyun_kulakligi")
+        ),
+        "camera" to ImagePool(
+            clean = listOf("kamera_resim"),
+            damaged = listOf("kamera_resim")
+        ),
+        "nasa_bilgisayari" to ImagePool(
+            clean = listOf("nasa_bilgisayari"),
+            damaged = listOf("nasa_bilgisayari")
+        ),
+        "satilik_kaynana" to ImagePool(
+            clean = listOf("satilik_kaynana"),
+            damaged = listOf("satilik_kaynana")
+        ),
+        "koy_kahvesi" to ImagePool(
+            clean = listOf("koy_kahvesi"),
+            damaged = listOf("koy_kahvesi")
+        ),
+        "f_16" to ImagePool(
+            clean = listOf("f_16"),
+            damaged = listOf("f_16")
+        ),
+        "oven" to ImagePool(
+            clean = listOf("mini_firin"),
+            damaged = listOf("mini_firin")
+        ),
+        "backpack" to ImagePool(
+            clean = listOf("bez_canta"),
+            damaged = listOf("bez_canta")
+        ),
+        "bogaz_koprusu" to ImagePool(
+            clean = listOf("bogaz_koprusu"),
+            damaged = listOf("bogaz_koprusu")
         ),
         "gamepad" to ImagePool(
             clean = listOf("gamepad_broken_1"),
@@ -163,11 +195,11 @@ object MarketGenerator {
         ProductTemplate("Akustik Gitar",           "Koleksiyon",  "guitar",         500,  5000),
 
         // Absürt İlanlar (Nadir)
-        ProductTemplate("Boğaz Köprüsü (Hissedar)", "Emlak", "classic_watch_1", 5000000, 15000000),
-        ProductTemplate("NASA Bilgisayarı", "Elektronik", "laptop", 1000000, 5000000),
-        ProductTemplate("F-16 (Anahtarı Kayıp)", "Araç", "electric_scooter_1", 20000000, 50000000),
-        ProductTemplate("Satılık Kaynana", "Diğer", "blender_1", 10, 100),
-        ProductTemplate("Köy Kahvesi", "Emlak", "coffee_maker_1", 100000, 500000)
+        ProductTemplate("Boğaz Köprüsü (Hissedar)", "Emlak", "bogaz_koprusu", 5000000, 15000000),
+        ProductTemplate("NASA Bilgisayarı", "Elektronik", "nasa_bilgisayari", 1000000, 5000000),
+        ProductTemplate("F-16 (Anahtarı Kayıp)", "Araç", "f_16", 20000000, 50000000),
+        ProductTemplate("Satılık Kaynana", "Diğer", "satilik_kaynana", 10, 100),
+        ProductTemplate("Köy Kahvesi", "Emlak", "koy_kahvesi", 100000, 500000)
     )
 
     // ─── Kondisyon Havuzu (Ağırlıklı) ─────────────────────────────────────────

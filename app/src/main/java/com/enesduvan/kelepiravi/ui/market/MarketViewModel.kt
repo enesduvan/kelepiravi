@@ -544,6 +544,9 @@ class MarketViewModel(
     fun startSellBargain(item: MarketItem) {
         negotiationEngine.startSellBargain(item, playerState.value.npcRelationships)
     }
+    fun startSellBargainWithOffer(item: MarketItem, buyerName: String, offerAmount: Double) {
+        negotiationEngine.startSellBargainWithOffer(item, playerState.value.npcRelationships, buyerName, offerAmount)
+    }
     fun closeSellBargain() = negotiationEngine.closeSellBargain()
     fun sendSellOffer(offerAmount: Double) {
         soundManager.playClickSound()

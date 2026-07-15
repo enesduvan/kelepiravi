@@ -531,7 +531,11 @@ fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xEE000000))
-            .clickable { onDismiss() },
+            .clickable(
+                interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                indication = null,
+                onClick = {}
+            ),
         contentAlignment = Alignment.Center
     ) {
         Card(
@@ -557,10 +561,10 @@ fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
-                    modifier = Modifier.fillMaxWidth(0.6f)
+                    colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                    modifier = Modifier.fillMaxWidth(0.6f).height(48.dp)
                 ) {
-                    Text("Tamam", color = Color.Black, fontWeight = FontWeight.Bold)
+                    Text("Devam Et", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
             }
         }

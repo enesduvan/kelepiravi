@@ -12,6 +12,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.BorderStroke
@@ -44,7 +46,7 @@ import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.theme.*
 
-private val RED = Color(0xFFFF6B6B)
+val RED = Color(0xFFE53935)
 private val RED_BG = Color(0x22FF6B6B)
 private val GREEN_BG = Color(0x2254D548)
 private val RED_DARK = Color(0xFF3A1A1A)
@@ -59,43 +61,15 @@ fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingV
     val inventoryItems = playerState.inventory
     val roi = playerState.portfolioROI
     val roiPositive = roi >= 0
-    var selectedTab by remember { mutableStateOf(0) }
     var itemForListing by remember { mutableStateOf<MarketItem?>(null) }
-    var lastMinuteBargainOffer by remember { mutableStateOf<Triple<com.enesduvan.kelepiravi.data.model.Listing, com.enesduvan.kelepiravi.data.model.Offer, Double>?>(null) }
 
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
-        if (!isFastSell) {
-            TabRow(
-                selectedTabIndex = selectedTab,
-                containerColor = Surface,
-                contentColor = TextPrimary,
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                        color = PrimaryOrange
-                    )
-                }
-            ) {
-                Tab(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    text = { Text("Depo", fontWeight = FontWeight.Bold) }
-                )
-                Tab(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    text = { Text("Aktif İlanlar (${activeListings.size})", fontWeight = FontWeight.Bold) }
-                )
-            }
-        }
-
         LazyColumn(
             modifier = Modifier.fillMaxSize().weight(1f),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            if (selectedTab == 0 || isFastSell) {
-                item {
+            item {
                     // ── Başlık ──────────────────────────────────────────────────────────
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -194,39 +168,7 @@ fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingV
                         }
                     }
                 }
-            } else {
-                // Aktif İlanlar Sekmesi
-                if (activeListings.isEmpty()) {
-                    item {
-                        EmptyStateIndicator(
-                            iconRes = R.drawable.envanter,
-                            title = "Aktif İlanın Yok",
-                            description = "Depondaki eşyaları satmak için ilan ver.",
-                            modifier = Modifier.height(300.dp)
-                        )
-                    }
-                } else {
-                    items(items = activeListings, key = { it.id }) { listing ->
-                        ListingCard(
-                            listing = listing,
-                            onCancelClick = { listingViewModel.cancelListing(it) },
-                            onAcceptOffer = { l, amount -> 
-                                if (kotlin.random.Random.nextDouble() < 0.10) {
-                                    val offer = l.offers.find { it.offerAmount.toDoubleOrNull() == amount }
-                                    if (offer != null) {
-                                        lastMinuteBargainOffer = Triple(l, offer, amount)
-                                    } else {
-                                        listingViewModel.acceptOffer(l, amount)
-                                    }
-                                } else {
-                                    listingViewModel.acceptOffer(l, amount)
-                                }
-                            }
-                        )
-                    }
-                }
             }
-        }
     }
 
     if (itemForListing != null) {
@@ -236,39 +178,7 @@ fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingV
             onConfirm = { price ->
                 listingViewModel.addListing(itemForListing!!, price)
                 itemForListing = null
-                selectedTab = 1 // İlan verince ilanlar sekmesine geç
             }
-        )
-    }
-
-    if (lastMinuteBargainOffer != null) {
-        val (l, offer, originalAmount) = lastMinuteBargainOffer!!
-        val discount = (originalAmount * 0.05).toLong()
-        val newAmount = originalAmount - discount
-        AlertDialog(
-            onDismissRequest = { lastMinuteBargainOffer = null },
-            title = { Text("Son Saniye Pazarlığı!", color = MoneyGreen, fontWeight = FontWeight.Bold) },
-            text = { Text("Müşteri arıyor:\n\n'Abi yola çıktım ama ₺$discount kırar mısın? Son fiyat ₺${newAmount} olsun.'", color = TextPrimary) },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        listingViewModel.acceptOffer(l, newAmount)
-                        lastMinuteBargainOffer = null
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen)
-                ) { Text("Kabul Et") }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = {
-                    if (kotlin.random.Random.nextDouble() < 0.3) {
-                        listingViewModel.acceptOffer(l, originalAmount)
-                    } else {
-                        listingViewModel.removeOffer(l, offer.id)
-                    }
-                    lastMinuteBargainOffer = null
-                }) { Text("Kabul Etmiyorum", color = TextSecondary) }
-            },
-            containerColor = Color(0xFF1A1A1A)
         )
     }
 }
@@ -294,6 +204,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                 .fillMaxSize()
                 .background(MarketplaceBackground)
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             // Header
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 16.dp)) {
@@ -428,7 +339,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = { onConfirm(price.toLong().toString()) },
@@ -510,25 +421,45 @@ private fun ListingCard(
                             Text(offer.npcName, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                             Text("Teklifi: ₺${formatBalance(offer.offerAmount)}", color = MoneyGreen, fontSize = 13.sp)
                         }
-                        Button(
-                            onClick = { onAcceptOffer(listing, offer.offerAmount.toDouble()) },
-                            colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                            modifier = Modifier.height(30.dp)
-                        ) {
-                            Text("Kabul Et", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = { /* TODO: Open Bargain Screen */ },
+                                colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                                modifier = Modifier.height(30.dp)
+                            ) {
+                                Text("Pazarlık Yap", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            }
+                            Button(
+                                onClick = { onAcceptOffer(listing, offer.offerAmount.toDouble()) },
+                                colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                                modifier = Modifier.height(30.dp)
+                            ) {
+                                Text("Kabul Et", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            }
                         }
                     }
                 }
             }
 
-            Button(
-                onClick = { onCancelClick(listing) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                border = BorderStroke(1.dp, RED),
-                modifier = Modifier.fillMaxWidth().height(36.dp)
-            ) {
-                Text("İlanı Kaldır", color = RED, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = { /* TODO: Düzenle */ },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                    border = BorderStroke(1.dp, PrimaryOrange),
+                    modifier = Modifier.weight(1f).height(36.dp)
+                ) {
+                    Text("Düzenle", color = PrimaryOrange, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                }
+                Button(
+                    onClick = { onCancelClick(listing) },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                    border = BorderStroke(1.dp, RED),
+                    modifier = Modifier.weight(1f).height(36.dp)
+                ) {
+                    Text("İlanı Kaldır", color = RED, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }

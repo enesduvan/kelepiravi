@@ -306,6 +306,29 @@ class NegotiationEngine(
         )
     }
 
+    fun startSellBargainWithOffer(item: MarketItem, relationships: Map<String, Int>, buyerName: String, offerAmount: Double) {
+        val baseSellPrice = repository.calculateSellPrice(item)
+        
+        val initialMsg = BargainMessage(
+            text = "Daha önce anlaştığımız gibi, ${item.itemName} için ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(offerAmount.toString())} veriyorum. Son teklifim budur.",
+            isFromPlayer = false,
+            timestamp = getCurrentTime()
+        )
+        val relationshipScore = relationships[buyerName] ?: 0
+        val startingPatience = (BargainConstants.STARTING_PATIENCE + (relationshipScore * 2)).coerceIn(10, 100)
+
+        _sellBargainState.value = SellBargainState(
+            item = item,
+            buyerName = buyerName,
+            messages = listOf(initialMsg),
+            baseSellPrice = baseSellPrice,
+            buyerPatience = startingPatience,
+            buyerMood = calculateMood(startingPatience),
+            npcRelationshipScore = relationshipScore,
+            relationshipDelta = 0
+        )
+    }
+
     fun closeSellBargain() {
         _sellBargainState.value = null
     }

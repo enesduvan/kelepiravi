@@ -296,8 +296,8 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                             else -> TextSecondary
                         }
                         
-                        Text("${bargainState.item.sellerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp)
-                        Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text("${bargainState.item.sellerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.weight(1f, fill = false), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                        Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
                     Text("₺${formatBalance(bargainState.item.salesValue)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     Text("İlan Fiyatı", color = TextSecondary, fontSize = 11.sp)
