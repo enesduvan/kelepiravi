@@ -7,7 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.enesduvan.kelepiravi.data.local.AppDatabaseProvider
+import com.enesduvan.kelepiravi.data.local.SettingsManager
 import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.ui.listing.ListingUseCase
+import com.enesduvan.kelepiravi.ui.listing.ListingViewModel
+import com.enesduvan.kelepiravi.ui.listing.ListingViewModelFactory
 import com.enesduvan.kelepiravi.ui.market.MarketViewModel
 import com.enesduvan.kelepiravi.ui.market.MarketViewModelFactory
 import com.enesduvan.kelepiravi.ui.shared.AppRoot
@@ -15,16 +19,24 @@ import com.enesduvan.kelepiravi.ui.theme.KelepiraviTheme
 
 class MainActivity : ComponentActivity() {
 
-    /**
-     * Manuel DI zinciri:
-     * AppDatabaseProvider → KelepiraviDao → KelepiraviRepository → MarketViewModel
-     */
-    private val viewModel: MarketViewModel by viewModels {
-        MarketViewModelFactory(
-            repository = KelepiraviRepository(
-                database = AppDatabaseProvider.getDatabase(applicationContext),
-                context = applicationContext
-            )
+    private val repository by lazy {
+        KelepiraviRepository(
+            database = AppDatabaseProvider.getDatabase(applicationContext),
+            context = applicationContext
+        )
+    }
+
+    private val settingsManager by lazy { SettingsManager(applicationContext) }
+    private val soundManager by lazy { com.enesduvan.kelepiravi.data.local.SoundManager(applicationContext, settingsManager.isSoundEnabled) }
+
+    private val marketViewModel: MarketViewModel by viewModels {
+        MarketViewModelFactory(repository, settingsManager, soundManager)
+    }
+
+    private val listingViewModel: ListingViewModel by viewModels {
+        ListingViewModelFactory(
+            listingUseCase = ListingUseCase(repository),
+            settingsManager = settingsManager
         )
     }
 
@@ -34,8 +46,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             KelepiraviTheme {
-                AppRoot(viewModel = viewModel)
+                AppRoot(marketViewModel = marketViewModel, listingViewModel = listingViewModel)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        soundManager.release()
     }
 }

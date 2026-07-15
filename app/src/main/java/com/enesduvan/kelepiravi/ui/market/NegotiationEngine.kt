@@ -28,7 +28,7 @@ class NegotiationEngine(
         return java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
     }
 
-    fun startBargain(item: MarketItem) {
+    fun startBargain(item: MarketItem, relationships: Map<String, Int> = emptyMap()) {
         val initialPrice = item.salesValue.toDoubleOrNull() ?: 0.0
         val personality = SellerPersonality.fromName(item.sellerName)
 
@@ -52,10 +52,17 @@ class NegotiationEngine(
             isFromPlayer = false,
             timestamp = getCurrentTime()
         )
+        val relationshipScore = relationships[item.sellerName] ?: 0
+        val startingPatience = (BargainConstants.STARTING_PATIENCE + (relationshipScore * 2)).coerceIn(10, 100)
+
         _bargainState.value = BargainState(
             item = item,
             messages = listOf(initialMsg),
-            suggestedPrice = initialPrice * BargainConstants.BUY_SUGGESTED_RATIO
+            suggestedPrice = initialPrice * BargainConstants.BUY_SUGGESTED_RATIO,
+            sellerPatience = startingPatience,
+            sellerMood = calculateMood(startingPatience),
+            npcRelationshipScore = relationshipScore,
+            relationshipDelta = 0
         )
     }
 
@@ -181,23 +188,24 @@ class NegotiationEngine(
             )
         }
 
-        val mood = when {
-            newPatience >= BargainConstants.MOOD_HAPPY_MIN -> "Mutlu"
-            newPatience >= BargainConstants.MOOD_UNSURE_MIN -> "Kararsız"
-            newPatience >= BargainConstants.MOOD_TENSE_MIN -> "Gergin"
-            else -> "Sinirli"
+        var relationshipDelta = 0
+        if (isFailed) {
+            relationshipDelta = -10
+        } else if (finalDealClosed) {
+            relationshipDelta = if (newPatience > 60) 5 else if (newPatience < 30) -5 else 2
         }
 
         _bargainState.value = state.copy(
             messages = updatedMessages,
             sellerPatience = newPatience,
-            sellerMood = mood,
+            sellerMood = calculateMood(newPatience),
             isDealClosed = finalDealClosed,
             isScamPromptActive = finalScamPrompt,
             isFailed = isFailed,
             agreedPrice = agreedPrice,
             lastSellerOffer = lastSellerOffer,
-            lastPlayerOfferAmount = offerAmount
+            lastPlayerOfferAmount = offerAmount,
+            relationshipDelta = relationshipDelta
         )
     }
 
@@ -254,6 +262,9 @@ class NegotiationEngine(
                 if (state.item.isScammer && state.item.hiddenCondition.isNotEmpty()) {
                     scamRevealFlow.value = state.item
                 }
+                if (state.relationshipDelta != 0) {
+                    repository.updateNpcRelationship(state.item.sellerName, state.relationshipDelta)
+                }
                 closeBargain()
             } else {
                 val updatedMessages = state.messages.toMutableList()
@@ -267,7 +278,7 @@ class NegotiationEngine(
         }
     }
 
-    fun startSellBargain(item: MarketItem) {
+    fun startSellBargain(item: MarketItem, relationships: Map<String, Int> = emptyMap()) {
         val baseSellPrice = repository.calculateSellPrice(item)
         val initialOffer = baseSellPrice * (
             BargainConstants.SELL_INITIAL_MIN_RATIO +
@@ -279,11 +290,19 @@ class NegotiationEngine(
             isFromPlayer = false,
             timestamp = getCurrentTime()
         )
+        val buyerName = MarketGenerator.getRandomName()
+        val relationshipScore = relationships[buyerName] ?: 0
+        val startingPatience = (BargainConstants.STARTING_PATIENCE + (relationshipScore * 2)).coerceIn(10, 100)
+
         _sellBargainState.value = SellBargainState(
             item = item,
-            buyerName = MarketGenerator.getRandomName(),
+            buyerName = buyerName,
             messages = listOf(initialMsg),
-            baseSellPrice = baseSellPrice
+            baseSellPrice = baseSellPrice,
+            buyerPatience = startingPatience,
+            buyerMood = calculateMood(startingPatience),
+            npcRelationshipScore = relationshipScore,
+            relationshipDelta = 0
         )
     }
 
@@ -376,22 +395,23 @@ class NegotiationEngine(
             updatedMessages.add(buyerMsg)
         }
 
-        val mood = when {
-            newPatience >= BargainConstants.MOOD_HAPPY_MIN -> "Mutlu"
-            newPatience >= BargainConstants.MOOD_UNSURE_MIN -> "Kararsız"
-            newPatience >= BargainConstants.MOOD_TENSE_MIN -> "Gergin"
-            else -> "Sinirli"
+        var relationshipDelta = 0
+        if (isFailed) {
+            relationshipDelta = -10
+        } else if (isDealClosed) {
+            relationshipDelta = if (newPatience > 60) 5 else if (newPatience < 30) -5 else 2
         }
 
         _sellBargainState.value = state.copy(
             messages = updatedMessages,
             buyerPatience = newPatience,
-            buyerMood = mood,
+            buyerMood = calculateMood(newPatience),
             isDealClosed = isDealClosed,
             isFailed = isFailed,
             agreedPrice = agreedPrice,
             lastBuyerOffer = lastBuyerOffer,
-            lastPlayerOfferAmount = offerAmount
+            lastPlayerOfferAmount = offerAmount,
+            relationshipDelta = relationshipDelta
         )
     }
 
@@ -402,8 +422,20 @@ class NegotiationEngine(
         scope.launch {
             val success = repository.sellItem(state.item, state.agreedPrice)
             if (success) {
+                if (state.relationshipDelta != 0) {
+                    repository.updateNpcRelationship(state.buyerName, state.relationshipDelta)
+                }
                 closeSellBargain()
             }
+        }
+    }
+
+    private fun calculateMood(patience: Int): String {
+        return when {
+            patience >= BargainConstants.MOOD_HAPPY_MIN -> "Mutlu"
+            patience >= BargainConstants.MOOD_UNSURE_MIN -> "Kararsız"
+            patience >= BargainConstants.MOOD_TENSE_MIN -> "Gergin"
+            else -> "Sinirli"
         }
     }
 }

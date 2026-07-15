@@ -13,21 +13,30 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.data.model.Listing
 import com.enesduvan.kelepiravi.data.model.MarketItem
+import com.enesduvan.kelepiravi.ui.listing.ListingViewModel
 import com.enesduvan.kelepiravi.ui.market.MarketViewModel
 import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
@@ -42,115 +51,490 @@ private val RED_DARK = Color(0xFF3A1A1A)
 private val GREEN_DARK = Color(0xFF1A3A1A)
 
 @Composable
-fun InventoryScreen(viewModel: MarketViewModel) {
-    val playerState by viewModel.playerState.collectAsState()
+fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel) {
+    val playerState by marketViewModel.playerState.collectAsState()
+    val isFastSell by listingViewModel.isFastSellEnabled.collectAsState()
+    val activeListings by listingViewModel.activeListings.collectAsState()
+    
     val inventoryItems = playerState.inventory
     val roi = playerState.portfolioROI
     val roiPositive = roi >= 0
+    var selectedTab by remember { mutableStateOf(0) }
+    var itemForListing by remember { mutableStateOf<MarketItem?>(null) }
+    var lastMinuteBargainOffer by remember { mutableStateOf<Triple<com.enesduvan.kelepiravi.data.model.Listing, com.enesduvan.kelepiravi.data.model.Offer, Double>?>(null) }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().background(Background),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        item {
-            // ── Başlık ──────────────────────────────────────────────────────────
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+    Column(modifier = Modifier.fillMaxSize().background(Background)) {
+        if (!isFastSell) {
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = Surface,
+                contentColor = TextPrimary,
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                        color = PrimaryOrange
+                    )
+                }
             ) {
-                Column {
-                    Text("Envanter", color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
-                    Text("Satın aldığın fırsatlar.", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
-                }
-                Box(
-                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(SurfaceVariant).padding(horizontal = 12.dp, vertical = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("📅", fontSize = 14.sp)
-                        Text("Gün ${playerState.currentDay}", color = TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Portföy Özeti Kartı ──────────────────────────────────────────────
-            if (inventoryItems.isNotEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Surface)
-                        .border(
-                            1.dp,
-                            if (roiPositive) MoneyGreen.copy(0.3f) else RED.copy(0.3f),
-                            RoundedCornerShape(20.dp)
-                        )
-                        .padding(16.dp)
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text("Portföy Özeti", color = TextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            PortfolioStatBox("Yatırım", "₺${formatBalance(playerState.totalInvestment.toString())}", TextPrimary, Modifier.weight(1f))
-                            PortfolioStatBox("Değer", "₺${formatBalance(playerState.portfolioValue.toString())}", MoneyGreen, Modifier.weight(1f))
-                            val roiSign = if (roiPositive) "+" else ""
-                            PortfolioStatBox("ROI", "$roiSign${"%.1f".format(roi)}%", if (roiPositive) MoneyGreen else RED, Modifier.weight(1f))
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-            }
-
-            // ── Stat Kutuları ────────────────────────────────────────────────────
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                val maxCapacity = 5 + (playerState.shopLevel * 5)
-                InventoryStatBox("Depo Kapasitesi", "${inventoryItems.size} / $maxCapacity", TextPrimary, Modifier.weight(1f))
-                val totalProfit = playerState.portfolioValue - playerState.totalInvestment
-                InventoryStatBox(
-                    "Kâr/Zarar",
-                    "${if (totalProfit >= 0) "+" else ""}₺${formatBalance(totalProfit.toString())}",
-                    if (totalProfit >= 0) MoneyGreen else RED,
-                    Modifier.weight(2f)
+                Tab(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    text = { Text("Depo", fontWeight = FontWeight.Bold) }
+                )
+                Tab(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    text = { Text("Aktif İlanlar (${activeListings.size})", fontWeight = FontWeight.Bold) }
                 )
             }
         }
 
-        if (inventoryItems.isEmpty()) {
-            item {
-                EmptyStateIndicator(
-                    iconRes = R.drawable.envanter,
-                    title = "Envanterin Tam Takır!",
-                    description = "Hemen Market'e git ve kelepir eşyalar avla.",
-                    modifier = Modifier.height(300.dp)
-                )
-            }
-        } else {
-            // Ch6: Animasyonlu kart girişleri
-            items(items = inventoryItems, key = { marketItemKey(it) }) { item ->
-                var isVisible by remember { mutableStateOf(false) }
-                LaunchedEffect(Unit) { isVisible = true }
-                AnimatedVisibility(
-                    visible = isVisible,
-                    enter = fadeIn(tween(280)) + slideInVertically(
-                        animationSpec = tween(320, easing = EaseOutCubic),
-                        initialOffsetY = { it / 4 }
-                    )
-                ) {
-                    InventoryItemCard(
-                        item = item,
-                        sellPrice = viewModel.getSellPrice(item),
-                        onSellClick = { viewModel.startSellBargain(it) }
-                    )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().weight(1f),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            if (selectedTab == 0 || isFastSell) {
+                item {
+                    // ── Başlık ──────────────────────────────────────────────────────────
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text("Envanter", color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+                            Text("Satın aldığın fırsatlar.", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
+                        }
+                        Box(
+                            modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(SurfaceVariant).padding(horizontal = 12.dp, vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("📅", fontSize = 14.sp)
+                                Text("Gün ${playerState.currentDay}", color = TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // ── Portföy Özeti Kartı ──────────────────────────────────────────────
+                    if (inventoryItems.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Surface)
+                                .border(
+                                    1.dp,
+                                    if (roiPositive) MoneyGreen.copy(0.3f) else RED.copy(0.3f),
+                                    RoundedCornerShape(20.dp)
+                                )
+                                .padding(16.dp)
+                        ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                Text("Portföy Özeti", color = TextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    PortfolioStatBox("Yatırım", "₺${formatBalance(playerState.totalInvestment.toString())}", TextPrimary, Modifier.weight(1f))
+                                    PortfolioStatBox("Değer", "₺${formatBalance(playerState.portfolioValue.toString())}", MoneyGreen, Modifier.weight(1f))
+                                    val roiSign = if (roiPositive) "+" else ""
+                                    PortfolioStatBox("ROI", "$roiSign${"%.1f".format(roi)}%", if (roiPositive) MoneyGreen else RED, Modifier.weight(1f))
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+
+                    // ── Stat Kutuları ────────────────────────────────────────────────────
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        val maxCapacity = 5 + (playerState.shopLevel * 5)
+                        InventoryStatBox("Depo Kapasitesi", "${inventoryItems.size} / $maxCapacity", TextPrimary, Modifier.weight(1f))
+                        val totalProfit = playerState.portfolioValue - playerState.totalInvestment
+                        InventoryStatBox(
+                            "Kâr/Zarar",
+                            "${if (totalProfit >= 0) "+" else ""}₺${formatBalance(totalProfit.toString())}",
+                            if (totalProfit >= 0) MoneyGreen else RED,
+                            Modifier.weight(2f)
+                        )
+                    }
                 }
+
+                if (inventoryItems.isEmpty()) {
+                    item {
+                        EmptyStateIndicator(
+                            iconRes = R.drawable.envanter,
+                            title = "Envanterin Tam Takır!",
+                            description = "Hemen Market'e git ve kelepir eşyalar avla.",
+                            modifier = Modifier.height(300.dp)
+                        )
+                    }
+                } else {
+                    items(items = inventoryItems, key = { marketItemKey(it) }) { item ->
+                        var isVisible by remember { mutableStateOf(false) }
+                        LaunchedEffect(Unit) { isVisible = true }
+                        AnimatedVisibility(
+                            visible = isVisible,
+                            enter = fadeIn(tween(280)) + slideInVertically(
+                                animationSpec = tween(320, easing = EaseOutCubic),
+                                initialOffsetY = { it / 4 }
+                            )
+                        ) {
+                            InventoryItemCard(
+                                item = item,
+                                isFastSell = isFastSell,
+                                onActionClick = { 
+                                    if (isFastSell) {
+                                        marketViewModel.startSellBargain(it)
+                                    } else {
+                                        itemForListing = it
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            } else {
+                // Aktif İlanlar Sekmesi
+                if (activeListings.isEmpty()) {
+                    item {
+                        EmptyStateIndicator(
+                            iconRes = R.drawable.envanter,
+                            title = "Aktif İlanın Yok",
+                            description = "Depondaki eşyaları satmak için ilan ver.",
+                            modifier = Modifier.height(300.dp)
+                        )
+                    }
+                } else {
+                    items(items = activeListings, key = { it.id }) { listing ->
+                        ListingCard(
+                            listing = listing,
+                            onCancelClick = { listingViewModel.cancelListing(it) },
+                            onAcceptOffer = { l, amount -> 
+                                if (kotlin.random.Random.nextDouble() < 0.10) {
+                                    val offer = l.offers.find { it.offerAmount.toDoubleOrNull() == amount }
+                                    if (offer != null) {
+                                        lastMinuteBargainOffer = Triple(l, offer, amount)
+                                    } else {
+                                        listingViewModel.acceptOffer(l, amount)
+                                    }
+                                } else {
+                                    listingViewModel.acceptOffer(l, amount)
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (itemForListing != null) {
+        CreateListingDialog(
+            item = itemForListing!!,
+            onDismiss = { itemForListing = null },
+            onConfirm = { price ->
+                listingViewModel.addListing(itemForListing!!, price)
+                itemForListing = null
+                selectedTab = 1 // İlan verince ilanlar sekmesine geç
+            }
+        )
+    }
+
+    if (lastMinuteBargainOffer != null) {
+        val (l, offer, originalAmount) = lastMinuteBargainOffer!!
+        val discount = (originalAmount * 0.05).toLong()
+        val newAmount = originalAmount - discount
+        AlertDialog(
+            onDismissRequest = { lastMinuteBargainOffer = null },
+            title = { Text("Son Saniye Pazarlığı!", color = MoneyGreen, fontWeight = FontWeight.Bold) },
+            text = { Text("Müşteri arıyor:\n\n'Abi yola çıktım ama ₺$discount kırar mısın? Son fiyat ₺${newAmount} olsun.'", color = TextPrimary) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        listingViewModel.acceptOffer(l, newAmount)
+                        lastMinuteBargainOffer = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen)
+                ) { Text("Kabul Et") }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = {
+                    if (kotlin.random.Random.nextDouble() < 0.3) {
+                        listingViewModel.acceptOffer(l, originalAmount)
+                    } else {
+                        listingViewModel.removeOffer(l, offer.id)
+                    }
+                    lastMinuteBargainOffer = null
+                }) { Text("Kabul Etmiyorum", color = TextSecondary) }
+            },
+            containerColor = Color(0xFF1A1A1A)
+        )
+    }
+}
+
+// ... (Kalan yardımcı Composable'lar aşağıda) ...
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+    val estimatedValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
+    val purchasePrice = item.purchasePrice.ifEmpty { item.salesValue }.toDoubleOrNull() ?: 0.0
+    
+    var price by remember { mutableStateOf(estimatedValue) }
+    val tax = price * 0.05
+    val netProfit = price - purchasePrice - tax
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MarketplaceBackground)
+                .padding(16.dp)
+        ) {
+            // Header
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 16.dp)) {
+                IconButton(onClick = onDismiss) {
+                    Icon(androidx.compose.material.icons.Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
+                }
+                Text("Satışa Koy", color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(androidx.compose.material.icons.Icons.Default.HelpOutline, contentDescription = "Yardım", tint = MarketTextSecondary)
+            }
+
+            // Item Card
+            Box(
+                modifier = Modifier.fillMaxWidth().background(Card, RoundedCornerShape(16.dp))
+                    .border(1.dp, MarketBorderSoft, RoundedCornerShape(16.dp)).padding(16.dp)
+            ) {
+                Row {
+                    Box(modifier = Modifier.size(100.dp).background(CardSecondary, RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
+                        Image(painter = getPainterResourceByName(item.imageName), contentDescription = null, modifier = Modifier.fillMaxSize())
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column {
+                        Text(item.itemName, color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        val (badgeBg, badgeText) = when {
+                            item.condition.contains("Kusursuz") || item.condition.contains("Temiz") -> ConditionPerfectBg to ConditionPerfect
+                            item.condition.contains("Tamir") || item.condition.contains("Bantlı")   -> ConditionRepairBg to ConditionRepair
+                            else -> ConditionScratchBg to ConditionScratch
+                        }
+                        Box(modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
+                            Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text("Tahmini Piyasa Değeri", color = MarketTextSecondary, fontSize = 12.sp)
+                        Text("₺${formatBalance(estimatedValue.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Envanterdeki Adet", color = MarketTextSecondary, fontSize = 12.sp)
+                        Text("1", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Price Set Card
+            Box(
+                modifier = Modifier.fillMaxWidth().background(Card, RoundedCornerShape(16.dp))
+                    .border(1.dp, MarketBorderSoft, RoundedCornerShape(16.dp)).padding(16.dp)
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("FİYAT BELİRLE", color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Önerilen Fiyat", color = MarketTextSecondary, fontSize = 12.sp)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(androidx.compose.material.icons.Icons.Default.Info, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(14.dp))
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                        IconButton(onClick = { price -= 50 }, modifier = Modifier.size(40.dp).background(CardSecondary, RoundedCornerShape(20.dp))) {
+                            Text("-", color = TextPrimary, fontSize = 24.sp)
+                        }
+                        Text("₺${formatBalance(price.toString())}", color = MoneyGreen, fontSize = 32.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 24.dp))
+                        IconButton(onClick = { price += 50 }, modifier = Modifier.size(40.dp).background(CardSecondary, RoundedCornerShape(20.dp))) {
+                            Text("+", color = TextPrimary, fontSize = 24.sp)
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("₺${formatBalance((estimatedValue * 0.5).toString())}", color = MarketTextSecondary, fontSize = 10.sp)
+                        Text("₺${formatBalance((estimatedValue * 1.5).toString())}", color = MarketTextSecondary, fontSize = 10.sp)
+                    }
+                    Slider(
+                        value = price.toFloat(),
+                        onValueChange = { price = it.toDouble() },
+                        valueRange = (estimatedValue * 0.5).toFloat()..(estimatedValue * 1.5).toFloat(),
+                        colors = SliderDefaults.colors(thumbColor = Color.White, activeTrackColor = MoneyGreen, inactiveTrackColor = CardSecondary)
+                    )
+                    Text("₺${formatBalance(price.toString())}", color = MoneyGreen, fontSize = 10.sp)
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Profit Box
+            Box(
+                modifier = Modifier.fillMaxWidth().background(Card, RoundedCornerShape(16.dp))
+                    .border(1.dp, MoneyGreen.copy(0.3f), RoundedCornerShape(16.dp)).padding(16.dp)
+            ) {
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.size(48.dp).background(MoneyGreen.copy(0.2f), RoundedCornerShape(24.dp)), contentAlignment = Alignment.Center) {
+                            Text("₺", color = MoneyGreen, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text("Tahmini Net Kârın", color = MarketTextSecondary, fontSize = 14.sp)
+                            Text("₺${formatBalance(netProfit.toString())}", color = MoneyGreen, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(androidx.compose.material.icons.Icons.Default.TrendingUp, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(48.dp))
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Doğru fiyatla hızlıca sat ve daha çok kazan!", color = MarketTextSecondary, fontSize = 12.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider(color = MarketBorderSoft)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Row {
+                            Icon(androidx.compose.material.icons.Icons.Default.ShoppingCart, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Alış Fiyatı", color = MarketTextSecondary, fontSize = 14.sp)
+                        }
+                        Text("₺${formatBalance(purchasePrice.toString())}", color = MarketTextSecondary, fontSize = 14.sp)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Row {
+                            Icon(androidx.compose.material.icons.Icons.Default.Receipt, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Vergi (%5)", color = MarketTextSecondary, fontSize = 14.sp)
+                        }
+                        Text("-₺${formatBalance(tax.toString())}", color = MarketTextSecondary, fontSize = 14.sp)
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Row {
+                            Icon(androidx.compose.material.icons.Icons.Default.TrendingUp, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Tahmini Net Kâr", color = MoneyGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        }
+                        Text("₺${formatBalance(netProfit.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = { onConfirm(price.toLong().toString()) },
+                colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(androidx.compose.material.icons.Icons.Default.LocalOffer, contentDescription = null, tint = Color.White)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Satışa Koy", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                Icon(androidx.compose.material.icons.Icons.Default.VerifiedUser, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(14.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Ürün satışa konulduğunda envanterden düşer.", color = MarketTextSecondary, fontSize = 12.sp)
             }
         }
     }
 }
 
-// ─── Portföy Stat Kutusu ───────────────────────────────────────────────────────
+@Composable
+private fun ListingCard(
+    listing: Listing,
+    onCancelClick: (Listing) -> Unit,
+    onAcceptOffer: (Listing, Double) -> Unit
+) {
+    val estimatedValue = listing.item.estimatedValue.toDoubleOrNull() ?: 0.0
+    val listedPrice = listing.listedPrice.toDoubleOrNull() ?: 0.0
+    val diffPercent = ((listedPrice - estimatedValue) / estimatedValue) * 100
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(64.dp).clip(RoundedCornerShape(12.dp)).background(SurfaceVariant),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = getPainterResourceByName(listing.item.imageName),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
+                    Text(listing.item.itemName, color = TextPrimary, fontWeight = FontWeight.Bold)
+                    Text("İlan Fiyatı: ₺${formatBalance(listing.listedPrice)}", color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("Piyasa: ₺${formatBalance(estimatedValue.toString())} (${if (diffPercent > 0) "+" else ""}${"%.0f".format(diffPercent)}%)", color = TextSecondary, fontSize = 12.sp)
+                }
+            }
+
+            // Stats row (Views, Favorites)
+            Row(
+                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(SurfaceVariant).padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text("👀 ${listing.views} Kişi Baktı", color = TextSecondary, fontSize = 12.sp)
+                Text("❤️ ${listing.favorites} Favori", color = TextSecondary, fontSize = 12.sp)
+                Text("⏳ ${listing.listedDay}. Gün", color = TextSecondary, fontSize = 12.sp)
+            }
+
+            // Offers (MOCK FOR NOW, will be connected to NPC Engine)
+            if (listing.offers.isEmpty()) {
+                Text("Henüz teklif yok. Müşteri bekleniyor...", color = TextMuted, fontSize = 12.sp, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+            } else {
+                listing.offers.forEach { offer ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Color(0xFF2A2A2A)).padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(offer.npcName, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text("Teklifi: ₺${formatBalance(offer.offerAmount)}", color = MoneyGreen, fontSize = 13.sp)
+                        }
+                        Button(
+                            onClick = { onAcceptOffer(listing, offer.offerAmount.toDouble()) },
+                            colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                            modifier = Modifier.height(30.dp)
+                        ) {
+                            Text("Kabul Et", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+
+            Button(
+                onClick = { onCancelClick(listing) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                border = BorderStroke(1.dp, RED),
+                modifier = Modifier.fillMaxWidth().height(36.dp)
+            ) {
+                Text("İlanı Kaldır", color = RED, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+// ─── Yardımcı Composable'lar (Eskiden kalanlar) ───────────────────────────────────────────────────────
 
 @Composable
 private fun PortfolioStatBox(title: String, value: String, valueColor: Color, modifier: Modifier) {
@@ -159,8 +543,6 @@ private fun PortfolioStatBox(title: String, value: String, valueColor: Color, mo
         Text(value, color = valueColor, fontSize = 13.sp, fontWeight = FontWeight.ExtraBold, maxLines = 1, textAlign = TextAlign.Center)
     }
 }
-
-// ─── Envanter Stat Kutusu ──────────────────────────────────────────────────────
 
 @Composable
 private fun InventoryStatBox(title: String, value: String, valueColor: Color, modifier: Modifier = Modifier) {
@@ -174,10 +556,8 @@ private fun InventoryStatBox(title: String, value: String, valueColor: Color, mo
     }
 }
 
-// ─── Envanter Kartı ───────────────────────────────────────────────────────────
-
 @Composable
-private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: (MarketItem) -> Unit) {
+private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionClick: (MarketItem) -> Unit) {
     val (badgeBg, badgeText) = when {
         item.condition.contains("Kusursuz") || item.condition.contains("Temiz") -> ConditionPerfectBg to ConditionPerfect
         item.condition.contains("Tamir") || item.condition.contains("Bantlı")   -> ConditionRepairBg to ConditionRepair
@@ -187,9 +567,8 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
     val estimatedValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
     val profit = estimatedValue - purchasePrice
     val isProfit = profit >= 0
-    val wasScam = item.isScammer  // Ch6: Dolandırıcıdan alındı mı?
+    val wasScam = item.isScammer  
 
-    // Günlük değişim
     val dailyChange = item.dailyChangePercent
     val hasDailyChange = dailyChange != 0.0
     val isDailyPositive = dailyChange > 0
@@ -202,20 +581,17 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        // Günlük değişim şeridi
         if (hasDailyChange) {
             Box(
                 modifier = Modifier.fillMaxWidth().height(3.dp)
                     .background(if (isDailyPositive) MoneyGreen else RED)
             )
         }
-        // Ch6: Dolandırıcı kırmızı şerit
         if (wasScam && !hasDailyChange) {
             Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(0xFFFF4444)))
         }
 
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            // Görsel
             Box(
                 modifier = Modifier.size(92.dp).clip(RoundedCornerShape(16.dp)).background(SurfaceVariant),
                 contentAlignment = Alignment.Center
@@ -226,7 +602,6 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
-                // Günlük değişim overlay
                 if (hasDailyChange) {
                     Box(
                         modifier = Modifier
@@ -247,13 +622,11 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
                 }
             }
 
-            // Bilgiler
             Column(modifier = Modifier.weight(1f).padding(start = 14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Box(modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
                     Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
-                // Ch6: Dolandırıcı badge'i
                 if (wasScam) {
                     Box(
                         modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xFF3A1A00)).padding(horizontal = 8.dp, vertical = 2.dp)
@@ -263,7 +636,6 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
                 }
                 Text("Alış: ₺${formatBalance(purchasePrice.toString())}", color = TextSecondary, fontSize = 12.sp)
 
-                // Değer + kâr/zarar inline
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("₺${formatBalance(estimatedValue.toString())}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                     Text(
@@ -276,21 +648,16 @@ private fun InventoryItemCard(item: MarketItem, sellPrice: Double, onSellClick: 
                             .padding(horizontal = 5.dp, vertical = 1.dp)
                     )
                 }
-
-                if (item.purchaseDate.isNotEmpty()) {
-                    Text(item.purchaseDate, color = TextMuted, fontSize = 10.sp)
-                }
             }
 
-            // Butonlar
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(
-                    onClick = { onSellClick(item) },
+                    onClick = { onActionClick(item) },
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
                     shape = RoundedCornerShape(14.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     modifier = Modifier.height(36.dp)
-                ) { Text("Pazarlık Yap", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                ) { Text(if (isFastSell) "Pazarlık Yap" else "İlan Ver", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
 
                 Button(
                     onClick = { /* Tamir ekranında yapılıyor */ },

@@ -22,7 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,6 +46,12 @@ private val GREEN_DARK = Color(0xFF1A3A1A)
 fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainState) {
     var offerText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
+    
+    val haptic = LocalHapticFeedback.current
+    val isHapticEnabled by viewModel.isHapticEnabled.collectAsState()
+    val performHaptic = {
+        if (isHapticEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     // Ch6: Animasyonlu sabır barı
     val animatedPatience by animateFloatAsState(
@@ -96,7 +104,10 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                         Text("🤝 Anlaşma Sağlandı!", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         Text("Anlaşılan Fiyat: ₺${formatBalance(sellBargainState.agreedPrice.toString())}", color = Color.White, fontSize = 14.sp)
                         Button(
-                            onClick = { viewModel.sellAgreedItem() },
+                            onClick = { 
+                                performHaptic()
+                                viewModel.sellAgreedItem() 
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
@@ -113,7 +124,10 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                         Text("💥 Pazarlık Çöktü", color = RED, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         Text("Alıcı masadan kalktı. Artık bu kişiye satamazsınız.", color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center)
                         Button(
-                            onClick = { viewModel.closeSellBargain() },
+                            onClick = { 
+                                performHaptic()
+                                viewModel.closeSellBargain() 
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
@@ -127,7 +141,10 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
 
                     if (lastOffer != null) {
                         Button(
-                            onClick = { viewModel.sendSellOffer(lastOffer) },
+                            onClick = { 
+                                performHaptic()
+                                viewModel.sendSellOffer(lastOffer) 
+                            },
                             modifier = Modifier.fillMaxWidth().height(48.dp).padding(bottom = 8.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = GREEN_DARK),
                             shape = RoundedCornerShape(12.dp)
@@ -171,6 +188,7 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = {
+                            performHaptic()
                             val offer = offerText.toDoubleOrNull()
                             if (offer != null && offer > 0) {
                                 offerText = ""
@@ -217,7 +235,23 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(painterResource(id = R.drawable.person), contentDescription = null, tint = TextSecondary, modifier = Modifier.size(14.dp))
                         val personality = SellerPersonality.fromName(sellBargainState.buyerName)
-                        Text("${sellBargainState.buyerName} [${personality.title}]", color = TextSecondary, fontSize = 13.sp)
+                        
+                        val relScore = sellBargainState.npcRelationshipScore
+                        val relText = when {
+                            relScore >= 10 -> "Dost"
+                            relScore <= -10 -> "Kızgın"
+                            relScore > 0 -> "Tanıdık"
+                            else -> "Yabancı"
+                        }
+                        val relColor = when {
+                            relScore >= 10 -> MoneyGreen
+                            relScore <= -10 -> Color(0xFFFF6B6B)
+                            relScore > 0 -> PrimaryOrange
+                            else -> TextSecondary
+                        }
+
+                        Text("${sellBargainState.buyerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp)
+                        Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                     Text("₺${formatBalance(sellBargainState.baseSellPrice.toString())}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     Text("Değeri", color = TextSecondary, fontSize = 11.sp)

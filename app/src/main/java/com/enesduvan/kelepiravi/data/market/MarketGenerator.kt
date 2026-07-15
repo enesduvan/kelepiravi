@@ -160,7 +160,14 @@ object MarketGenerator {
 
         // Koleksiyon & Hobi
         ProductTemplate("Koleksiyon Oyuncağı",     "Koleksiyon",  "toy",             50,  3000),
-        ProductTemplate("Akustik Gitar",           "Koleksiyon",  "guitar",         500,  5000)
+        ProductTemplate("Akustik Gitar",           "Koleksiyon",  "guitar",         500,  5000),
+
+        // Absürt İlanlar (Nadir)
+        ProductTemplate("Boğaz Köprüsü (Hissedar)", "Emlak", "classic_watch_1", 5000000, 15000000),
+        ProductTemplate("NASA Bilgisayarı", "Elektronik", "laptop", 1000000, 5000000),
+        ProductTemplate("F-16 (Anahtarı Kayıp)", "Araç", "electric_scooter_1", 20000000, 50000000),
+        ProductTemplate("Satılık Kaynana", "Diğer", "blender_1", 10, 100),
+        ProductTemplate("Köy Kahvesi", "Emlak", "coffee_maker_1", 100000, 500000)
     )
 
     // ─── Kondisyon Havuzu (Ağırlıklı) ─────────────────────────────────────────
@@ -249,7 +256,23 @@ object MarketGenerator {
                 (rng.nextDouble() - 0.5)
             ).roundToInt()
         val trendMultiplier = marketTrends[product.category] ?: 1.0
-        val estimatedValue = maxOf(GameConstants.MARKET_MIN_ITEM_VALUE, ((baseValue + variance) * trendMultiplier).roundToInt())
+        
+        val extras = mutableListOf<String>()
+        var extraMultiplier = 1.0
+        
+        if (rng.nextDouble() < 0.20) {
+            extras.add("Faturalı & Garantili")
+            extraMultiplier += 0.10
+        }
+        if (rng.nextDouble() < 0.15 && product.category == "Elektronik") {
+            extras.add("Kutusu Açılmamış")
+            extraMultiplier += 0.15
+        } else if (rng.nextDouble() < 0.10 && product.category == "Elektronik") {
+            extras.add("Şarj Aleti Eksik")
+            extraMultiplier -= 0.05
+        }
+
+        val estimatedValue = maxOf(GameConstants.MARKET_MIN_ITEM_VALUE, ((baseValue + variance) * trendMultiplier * extraMultiplier).roundToInt())
 
         val salesRatio = GameConstants.MARKET_MIN_SALES_RATIO +
             rng.nextDouble() * GameConstants.MARKET_SALES_RATIO_RANGE
@@ -266,7 +289,8 @@ object MarketGenerator {
             salesValue = salesValue.toString(),
             estimatedValue = estimatedValue.toString(),
             imageName = imageName,
-            category = product.category
+            category = product.category,
+            extras = extras
         )
     }
 

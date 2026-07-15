@@ -5,11 +5,15 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +31,10 @@ import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
+import com.enesduvan.kelepiravi.ui.shared.bounceClick
 import com.enesduvan.kelepiravi.ui.theme.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun TamirEkrani(viewModel: MarketViewModel) {
@@ -37,44 +44,235 @@ fun TamirEkrani(viewModel: MarketViewModel) {
     val repairableItems = playerState.inventory.filter { it.condition != "Kusursuz Temiz" }
     val remainingRepairs = viewModel.getRemainingRepairs()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize().background(Background).padding(16.dp)
-        ) {
-            // Başlık
-            Text("Tamir Atölyesi", color = TextPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text("Eşyaları tamir ederek değerlerini artırabilirsiniz.", color = TextSecondary, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(12.dp))
+    var selectedItem by remember { mutableStateOf<MarketItem?>(null) }
+    var selectedOption by remember { mutableStateOf<String>("Cirak") } // "Cirak" veya "Usta"
+    var isRepairing by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
-            // Ch6: Günlük tamir hakkı sayacı
-            DailyRepairCounter(remaining = remainingRepairs, total = GameConstants.DAILY_REPAIR_LIMIT)
+    // Eğer başarılı tamir olduysa listeye dön
+    LaunchedEffect(repairResult) {
+        if (repairResult != null) {
+            isRepairing = false
+            selectedItem = null
+        }
+    }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            if (repairableItems.isEmpty()) {
-                EmptyStateIndicator(
-                    iconRes = R.drawable.tamir,
-                    title = "Tamirhanede İş Yok",
-                    description = "Envanterinde tamir edilecek eşya bulunmuyor."
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(items = repairableItems, key = { marketItemKey(it) }) { item ->
-                        RepairItemCard(
-                            item = item,
-                            viewModel = viewModel,
-                            currentBalance = playerState.balance,
-                            remainingRepairs = remainingRepairs
-                        )
+    Box(modifier = Modifier.fillMaxSize().background(MarketplaceBackground)) {
+        if (selectedItem == null) {
+            // LİSTE GÖRÜNÜMÜ
+            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                Text("Tamir Atölyesi", color = TextPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text("Eşyaları tamir ederek değerlerini artırabilirsiniz.", color = MarketTextSecondary, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                DailyRepairCounter(remaining = remainingRepairs, total = GameConstants.DAILY_REPAIR_LIMIT)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (repairableItems.isEmpty()) {
+                    EmptyStateIndicator(iconRes = R.drawable.tamir, title = "İş Yok", description = "Envanterde bozuk eşya yok.")
+                } else {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        items(items = repairableItems, key = { marketItemKey(it) }) { item ->
+                            val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Card)
+                                    .border(1.dp, MarketBorderSoft, RoundedCornerShape(12.dp))
+                                    .clickable { selectedItem = item }
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(modifier = Modifier.size(60.dp).background(CardSecondary, RoundedCornerShape(8.dp)), contentAlignment = Alignment.Center) {
+                                    Image(painter = getPainterResourceByName(item.imageName), contentDescription = null, modifier = Modifier.fillMaxSize())
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                                    Text("Durum: ${item.condition}", color = ConditionScratch, fontSize = 12.sp)
+                                    Text("Değer: ₺${formatBalance(currentVal.toString())}", color = MoneyGreen, fontSize = 12.sp)
+                                }
+                                Icon(androidx.compose.material.icons.Icons.Default.ArrowForwardIos, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
+                            }
+                        }
                     }
+                }
+            }
+        } else {
+            // DETAY GÖRÜNÜMÜ (MOCKUP 5a20)
+            val item = selectedItem!!
+            val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+            val cirakCost = viewModel.calculateRepairCost(item)
+            val ustaCost = cirakCost * 3.0
+            val selectedCost = if (selectedOption == "Cirak") cirakCost else ustaCost
+            val canAfford = (playerState.balance.toDoubleOrNull() ?: 0.0) >= selectedCost
+            val canRepair = remainingRepairs > 0 && canAfford && !isRepairing
+
+            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                // Header
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { selectedItem = null }) {
+                        Icon(androidx.compose.material.icons.Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
+                    }
+                    Text("Tamirhane", color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Ürün Kartı
+                Box(modifier = Modifier.fillMaxWidth().background(Card, RoundedCornerShape(16.dp)).border(1.dp, MarketBorderSoft, RoundedCornerShape(16.dp)).padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.size(80.dp).background(CardSecondary, RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
+                            Image(painter = getPainterResourceByName(item.imageName), contentDescription = null, modifier = Modifier.fillMaxSize())
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(item.itemName, color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            val (badgeBg, badgeText) = when {
+                                item.condition.contains("Tamir") || item.condition.contains("Bantlı")   -> ConditionRepairBg to ConditionRepair
+                                else -> ConditionScratchBg to ConditionScratch
+                            }
+                            Box(modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
+                                Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("₺${formatBalance(currentVal.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Seçenekler
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    // ÇIRAK
+                    Box(
+                        modifier = Modifier.weight(1f)
+                            .bounceClick { selectedOption = "Cirak" }
+                            .background(if(selectedOption == "Cirak") CardSecondary else Card, RoundedCornerShape(16.dp))
+                            .border(2.dp, if(selectedOption == "Cirak") PrimaryOrange else MarketBorderSoft, RoundedCornerShape(16.dp))
+                            .padding(12.dp)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                            Text("Çırak", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Ucuz ama riskli", color = MarketTextSecondary, fontSize = 10.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("₺${formatBalance(cirakCost.toString())}", color = PrimaryOrange, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Box(modifier = Modifier.fillMaxWidth().height(4.dp).background(Color(0xFFFF4444), RoundedCornerShape(2.dp)))
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text("Başarı: %65", color = Color(0xFFFF4444), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    // USTA
+                    Box(
+                        modifier = Modifier.weight(1f)
+                            .bounceClick { selectedOption = "Usta" }
+                            .background(if(selectedOption == "Usta") CardSecondary else Card, RoundedCornerShape(16.dp))
+                            .border(2.dp, if(selectedOption == "Usta") MoneyGreen else MarketBorderSoft, RoundedCornerShape(16.dp))
+                            .padding(12.dp)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                            Text("Usta", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Pahalı ama garantili", color = MarketTextSecondary, fontSize = 10.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("₺${formatBalance(ustaCost.toString())}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Box(modifier = Modifier.fillMaxWidth().height(4.dp).background(MoneyGreen, RoundedCornerShape(2.dp)))
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text("Başarı: %98", color = MoneyGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Satışa Son Etki Bilgisi
+                val expectedResult = if(selectedOption == "Cirak") "Temiz" else "Kusursuz Temiz"
+                val expectedGain = if(selectedOption == "Cirak") (currentVal * 1.3) else (currentVal * 1.8)
+                Box(
+                    modifier = Modifier.fillMaxWidth().background(Card, RoundedCornerShape(12.dp)).border(1.dp, MarketBorderSoft, RoundedCornerShape(12.dp)).padding(16.dp)
+                ) {
+                    Column {
+                        Text("Satışa Son Etki", color = MarketTextSecondary, fontSize = 12.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Beklenen Durum:", color = TextPrimary, fontSize = 14.sp)
+                            Text(expectedResult, color = if(selectedOption == "Usta") MoneyGreen else PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text("Tahmini Yeni Değer:", color = TextPrimary, fontSize = 14.sp)
+                            Text("₺${formatBalance(expectedGain.toString())}", color = MoneyGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                // Tamir Butonu
+                Button(
+                    onClick = {
+                        isRepairing = true
+                        coroutineScope.launch {
+                            delay(3000) // 3 saniye tornavida animasyonu beklemesi
+                            viewModel.repairItem(item)
+                        }
+                    },
+                    enabled = canRepair,
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange, disabledContainerColor = CardSecondary),
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    if (isRepairing) {
+                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text("Tamir Ediliyor...", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    } else {
+                        Icon(androidx.compose.material.icons.Icons.Default.Build, contentDescription = null, tint = Color.White)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Tamire Başla - ₺${formatBalance(selectedCost.toString())}", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+
+        // V4.0 Fullscreen Premium Loading Overlay
+        AnimatedVisibility(
+            visible = isRepairing,
+            enter = fadeIn(tween(300)),
+            exit = fadeOut(tween(300))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xCC000000)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(
+                        color = PrimaryOrange,
+                        modifier = Modifier.size(72.dp),
+                        strokeWidth = 6.dp
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        "Usta İş Başında...",
+                        color = Color.White,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "Lütfen bekleyin, eşya onarılıyor.",
+                        color = MarketTextSecondary,
+                        fontSize = 15.sp
+                    )
                 }
             }
         }
 
-        // Ch6: Tamir sonucu dialog
+        // Repair Result Dialog
         AnimatedVisibility(
             visible = repairResult != null,
             enter = fadeIn(tween(200)) + scaleIn(tween(300), initialScale = 0.8f),
@@ -214,76 +412,6 @@ fun RepairResultDialog(result: RepairResultState, onDismiss: () -> Unit) {
                         fontWeight = FontWeight.Bold
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun RepairItemCard(item: MarketItem, viewModel: MarketViewModel, currentBalance: String, remainingRepairs: Int) {
-    val cost = viewModel.calculateRepairCost(item)
-    val balanceDouble = currentBalance.toDoubleOrNull() ?: 0.0
-    val canAfford = balanceDouble >= cost
-    val canRepair = remainingRepairs > 0 && canAfford
-    
-    val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
-    val expectedGain = cost / GameConstants.REPAIR_COST_GAIN_RATE
-    val expectedVal = currentVal + expectedGain
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(Surface)
-            .border(1.dp, SurfaceVariant, RoundedCornerShape(12.dp))
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier.size(60.dp).clip(RoundedCornerShape(8.dp)).background(Color.White),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = getPainterResourceByName(item.imageName),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-        Spacer(modifier = Modifier.width(12.dp))
-        
-        Column(modifier = Modifier.weight(1f)) {
-            Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Text("Durum: ${item.condition}", color = Color(0xFFFFB74D), fontSize = 12.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                "Değer: ₺${formatBalance(currentVal.toString())} ➔ ₺${formatBalance(expectedVal.toString())}",
-                color = MoneyGreen,
-                fontSize = 12.sp
-            )
-        }
-        
-        Button(
-            onClick = { viewModel.repairItem(item) },
-            enabled = canRepair,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PrimaryOrange,
-                disabledContainerColor = SurfaceVariant
-            ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    "Tamir",
-                    color = if (canRepair) Color.Black else TextSecondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    "₺${formatBalance(cost.toString())}",
-                    color = if (canRepair) Color.Black else TextSecondary,
-                    fontSize = 11.sp
-                )
             }
         }
     }

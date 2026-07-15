@@ -18,5 +18,6 @@ data class MarketItem(
     // Ch6: Dolandırıcı sistemi — default false/null → geriye uyumlu
     val isScammer: Boolean = false,
     val scamType: String = "",        // ScamType.name veya boş string
-    val hiddenCondition: String = ""  // Gerçek kondisyon (alındıktan sonra ortaya çıkar)
+    val hiddenCondition: String = "", // Gerçek kondisyon (alındıktan sonra ortaya çıkar)
+    val extras: List<String> = emptyList() // Ch13: Fatura, Kutu vb. ek özellikler
 )

@@ -40,6 +40,12 @@ data class PlayerState(
     val itemsSold: Int = 0,
     val unlockedAchievements: String = "",
     val marketTrends: Map<String, Double> = emptyMap(),
+    val npcRelationships: Map<String, Int> = emptyMap(), // Ch11: NPC İlişki Skorları
+    val highestProfit: Double = 0.0, // Ch12: En yüksek kâr
+    val rareItemsFound: Int = 0, // Ch12: Bulunan nadir eşya
+    val totalRepairs: Int = 0,
+    val hasBoughtScam: Boolean = false,
+    val hasBoughtAbsurd: Boolean = false,
     val dailyRepairsUsed: Int = 0,   // Ch6
     val lastRepairDay: Int = 0,      // Ch6
     val dailyRevenue: Double = 0.0,  // Ch8: Vergi hesaplaması için günlük ciro
@@ -59,7 +65,8 @@ data class MarketUiState(
     val selectedCategory: String = "Tümü",
     val isDayAdvancing: Boolean = false,
     val isLootBoxSheetOpen: Boolean = false, // Ch9: Zamazon Kutu seçim ekranı
-    val purchasedLootBoxItems: List<MarketItem>? = null // Ch9: Kutudan çıkan eşyalar (reveal için)
+    val purchasedLootBoxItems: List<MarketItem>? = null, // Ch9: Kutudan çıkan eşyalar (reveal için)
+    val latestAchievement: com.enesduvan.kelepiravi.data.market.Achievement? = null
 )
 
 @Immutable
@@ -82,7 +89,9 @@ data class BargainState(
     val suggestedPrice: Double = 0.0,
     val lastSellerOffer: Double? = null,
     val lastPlayerOfferAmount: Double? = null,  // Ch6: Tekrar teklif tespiti için
-    val isScamPromptActive: Boolean = false // Ch6: Dolandırıcı ödeme onayı
+    val isScamPromptActive: Boolean = false, // Ch6: Dolandırıcı ödeme onayı
+    val npcRelationshipScore: Int = 0, // Ch11: Mevcut ilişki puanı
+    val relationshipDelta: Int = 0 // Ch11: Bu pazarlık sonucu değişecek puan
 )
 
 @Immutable
@@ -107,7 +116,9 @@ data class SellBargainState(
     val agreedPrice: Double = 0.0,
     val baseSellPrice: Double = 0.0,
     val lastBuyerOffer: Double? = null,
-    val lastPlayerOfferAmount: Double? = null  // Ch6: Tekrar teklif tespiti için
+    val lastPlayerOfferAmount: Double? = null,  // Ch6: Tekrar teklif tespiti için
+    val npcRelationshipScore: Int = 0, // Ch11: Mevcut ilişki puanı
+    val relationshipDelta: Int = 0 // Ch11: Bu pazarlık sonucu değişecek puan
 )
 
 // Ch6: Tamir sonuç gösterimi
@@ -121,8 +132,13 @@ data class RepairResultState(
 // ─── ViewModel ───────────────────────────────────────────────────────────────
 
 class MarketViewModel(
-    private val repository: KelepiraviRepository
+    private val repository: KelepiraviRepository,
+    private val settingsManager: com.enesduvan.kelepiravi.data.local.SettingsManager,
+    private val soundManager: com.enesduvan.kelepiravi.data.local.SoundManager
 ) : ViewModel() {
+
+    val isHapticEnabled = settingsManager.isHapticEnabled
+    val isSoundEnabled = settingsManager.isSoundEnabled
 
     val playerState: StateFlow<PlayerState> = repository
         .getPlayerState()
@@ -145,6 +161,15 @@ class MarketViewModel(
                     if (entity?.marketTrends.isNullOrBlank()) emptyMap()
                     else kotlinx.serialization.json.Json.decodeFromString<Map<String, Double>>(entity!!.marketTrends)
                 }.getOrDefault(emptyMap()),
+                npcRelationships = runCatching {
+                    if (entity?.npcRelationships.isNullOrBlank()) emptyMap()
+                    else kotlinx.serialization.json.Json.decodeFromString<Map<String, Int>>(entity!!.npcRelationships)
+                }.getOrDefault(emptyMap()),
+                highestProfit = entity?.highestProfit ?: 0.0,
+                rareItemsFound = entity?.rareItemsFound ?: 0,
+                totalRepairs = entity?.totalRepairs ?: 0,
+                hasBoughtScam = entity?.hasBoughtScam ?: false,
+                hasBoughtAbsurd = entity?.hasBoughtAbsurd ?: false,
                 dailyRepairsUsed = entity?.dailyRepairsUsed ?: 0,
                 lastRepairDay = entity?.lastRepairDay ?: 0,
                 dailyRevenue = entity?.dailyRevenue ?: 0.0,
@@ -188,9 +213,69 @@ class MarketViewModel(
     private val _repairResult = MutableStateFlow<RepairResultState?>(null)
     val repairResult: StateFlow<RepairResultState?> = _repairResult.asStateFlow()
 
+    /** V3.0: Flash Fırsat Bildirimi */
+    private val _flashNotification = MutableStateFlow<String?>(null)
+    val flashNotification: StateFlow<String?> = _flashNotification.asStateFlow()
+
     init {
         viewModelScope.launch { repository.initializePlayerIfNeeded() }
         refreshMarket()
+
+        // V5.0 Başarım Bildirim Motoru
+        viewModelScope.launch {
+            var previousUnlockedIds = emptyList<String>()
+            playerState.collect { state ->
+                val currentIds = state.unlockedAchievements.split(",").filter { it.isNotEmpty() }
+                if (previousUnlockedIds.isNotEmpty() && currentIds.size > previousUnlockedIds.size) {
+                    val newId = currentIds.last()
+                    val newAchievement = com.enesduvan.kelepiravi.data.market.AchievementManager.ALL_ACHIEVEMENTS.find { it.id == newId }
+                    if (newAchievement != null) {
+                        _uiState.value = _uiState.value.copy(latestAchievement = newAchievement)
+                        launch {
+                            kotlinx.coroutines.delay(5000)
+                            _uiState.value = _uiState.value.copy(latestAchievement = null)
+                        }
+                    }
+                }
+                previousUnlockedIds = currentIds
+            }
+        }
+        
+        // V3.0 Flash Fırsatlar Ticker
+        viewModelScope.launch {
+            while (true) {
+                kotlinx.coroutines.delay(15000) // Her 15 saniyede bir tetiklenir
+                if (kotlin.random.Random.nextDouble() < 0.20) { // %20 ihtimalle fırsat düşer
+                    val currentTrends = _playerStateForGenerator()?.marketTrends ?: emptyMap()
+                    val generatedItem = com.enesduvan.kelepiravi.data.market.MarketGenerator.generateItems(1, currentTrends).first()
+                    
+                    val flashItem = generatedItem.copy(
+                        itemName = "🔥 FLASH: ${generatedItem.itemName}",
+                        salesValue = (generatedItem.estimatedValue.toDoubleOrNull() ?: 1.0 * 0.4).toLong().toString() // Çok kelepir
+                    )
+                    
+                    _uiState.value = _uiState.value.copy(
+                        marketItems = listOf(flashItem) + _uiState.value.marketItems
+                    )
+                    
+                    _flashNotification.value = "Az önce ₺${flashItem.salesValue} değerinde ${generatedItem.itemName} ilanı düştü!"
+                    
+                    kotlinx.coroutines.delay(4000)
+                    _flashNotification.value = null
+                    
+                    // Flash deal'in başkası tarafından alınma ihtimali (otomatik kaybolma)
+                    launch {
+                        kotlinx.coroutines.delay(kotlin.random.Random.nextLong(3000, 8000))
+                        val currentItems = _uiState.value.marketItems
+                        if (currentItems.contains(flashItem)) {
+                            _uiState.value = _uiState.value.copy(
+                                marketItems = currentItems.filter { it != flashItem }
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun refreshMarket() {
@@ -226,6 +311,20 @@ class MarketViewModel(
     }
 
     fun purchaseItem(item: MarketItem) {
+        // V3.0: Flash fırsatın başkası tarafından alınmış olma ihtimali
+        if (item.itemName.startsWith("🔥 FLASH") && kotlin.random.Random.nextDouble() < 0.4) {
+            _flashNotification.value = "Maalesef, ürün başka bir kullanıcı tarafından alındı!"
+            _uiState.value = _uiState.value.copy(
+                marketItems = _uiState.value.marketItems.filterNot { it == item },
+                selectedItem = null
+            )
+            viewModelScope.launch {
+                kotlinx.coroutines.delay(3000)
+                _flashNotification.value = null
+            }
+            return
+        }
+
         viewModelScope.launch {
             val success = repository.purchaseItem(item)
             if (success) {
@@ -426,27 +525,47 @@ class MarketViewModel(
     }
 
     // ─── Pazarlık (Bargain) Mantığı ───────────────────────────────────────────
-    fun startBargain(item: MarketItem) = negotiationEngine.startBargain(item)
+    fun startBargain(item: MarketItem) {
+        negotiationEngine.startBargain(item, playerState.value.npcRelationships)
+    }
     fun closeBargain() = negotiationEngine.closeBargain()
-    fun sendOffer(offerAmount: Double) = negotiationEngine.sendOffer(offerAmount)
+    fun sendOffer(offerAmount: Double) {
+        soundManager.playClickSound()
+        negotiationEngine.sendOffer(offerAmount)
+    }
     fun sendMoneyToScammer() = negotiationEngine.sendMoneyToScammer()
     fun cancelScamDeal() = negotiationEngine.cancelScamDeal()
-    fun buyAgreedItem() = negotiationEngine.buyAgreedItem()
+    fun buyAgreedItem() {
+        soundManager.playCoinSound()
+        negotiationEngine.buyAgreedItem()
+    }
 
     // 🤝 Satış Pazarlık (Sell Bargain) Mantığı 🤝
-    fun startSellBargain(item: MarketItem) = negotiationEngine.startSellBargain(item)
+    fun startSellBargain(item: MarketItem) {
+        negotiationEngine.startSellBargain(item, playerState.value.npcRelationships)
+    }
     fun closeSellBargain() = negotiationEngine.closeSellBargain()
-    fun sendSellOffer(offerAmount: Double) = negotiationEngine.sendSellOffer(offerAmount)
-    fun sellAgreedItem() = negotiationEngine.sellAgreedItem()
+    fun sendSellOffer(offerAmount: Double) {
+        soundManager.playClickSound()
+        negotiationEngine.sendSellOffer(offerAmount)
+    }
+    fun sellAgreedItem() {
+        soundManager.playCoinSound()
+        negotiationEngine.sellAgreedItem()
+    }
 }
 
 // ─── Factory ─────────────────────────────────────────────────────────────────
 
-class MarketViewModelFactory(private val repository: KelepiraviRepository) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
+class MarketViewModelFactory(
+    private val repository: KelepiraviRepository,
+    private val settingsManager: com.enesduvan.kelepiravi.data.local.SettingsManager,
+    private val soundManager: com.enesduvan.kelepiravi.data.local.SoundManager
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MarketViewModel::class.java)) {
-            return MarketViewModel(repository) as T
+            @Suppress("UNCHECKED_CAST")
+            return MarketViewModel(repository, settingsManager, soundManager) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }

@@ -22,7 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -57,6 +59,12 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
         label = "patience"
     )
 
+    val haptic = LocalHapticFeedback.current
+    val isHapticEnabled by viewModel.isHapticEnabled.collectAsState()
+    val performHaptic = {
+        if (isHapticEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Background,
@@ -89,7 +97,10 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     Text("Satıcı ödemeyi önden istiyor. Ne yapacaksın?", color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Button(
-                            onClick = { viewModel.cancelScamDeal() },
+                            onClick = { 
+                                performHaptic()
+                                viewModel.cancelScamDeal() 
+                            },
                             modifier = Modifier.weight(1f).height(48.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
                             shape = RoundedCornerShape(12.dp)
@@ -97,7 +108,10 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                             Text("Vazgeç", color = TextPrimary, fontWeight = FontWeight.Bold)
                         }
                         Button(
-                            onClick = { viewModel.sendMoneyToScammer() },
+                            onClick = { 
+                                performHaptic()
+                                viewModel.sendMoneyToScammer() 
+                            },
                             modifier = Modifier.weight(1f).height(48.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B6B)),
                             shape = RoundedCornerShape(12.dp)
@@ -122,7 +136,10 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     ) {
                         Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
                         Button(
-                            onClick = { viewModel.buyAgreedItem() },
+                            onClick = { 
+                                performHaptic()
+                                viewModel.buyAgreedItem() 
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
                             shape = RoundedCornerShape(12.dp)
                         ) {
@@ -143,7 +160,10 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                     Text("Satıcı masadan kalktı.", color = Color(0xFFFF6B6B), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
-                        onClick = { viewModel.closeBargain() },
+                        onClick = { 
+                            performHaptic()
+                            viewModel.closeBargain() 
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -197,7 +217,10 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
 
                     if (bargainState.lastSellerOffer != null && !bargainState.isDealClosed && !bargainState.isFailed) {
                         Button(
-                            onClick = { viewModel.sendOffer(bargainState.lastSellerOffer) },
+                            onClick = { 
+                                performHaptic()
+                                viewModel.sendOffer(bargainState.lastSellerOffer) 
+                            },
                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen)
@@ -208,6 +231,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
 
                     Button(
                         onClick = {
+                            performHaptic()
                             val offer = offerText.toDoubleOrNull() ?: 0.0
                             if (offer > 0) viewModel.sendOffer(offer)
                         },
@@ -257,7 +281,23 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                                 )
                             } catch (e: Exception) { SellerPersonality.fromName(bargainState.item.sellerName) }
                         } else SellerPersonality.fromName(bargainState.item.sellerName)
-                        Text("${bargainState.item.sellerName} [${personality.title}]", color = TextSecondary, fontSize = 13.sp)
+                        
+                        val relScore = bargainState.npcRelationshipScore
+                        val relText = when {
+                            relScore >= 10 -> "Dost"
+                            relScore <= -10 -> "Kızgın"
+                            relScore > 0 -> "Tanıdık"
+                            else -> "Yabancı"
+                        }
+                        val relColor = when {
+                            relScore >= 10 -> MoneyGreen
+                            relScore <= -10 -> Color(0xFFFF6B6B)
+                            relScore > 0 -> PrimaryOrange
+                            else -> TextSecondary
+                        }
+                        
+                        Text("${bargainState.item.sellerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp)
+                        Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                     Text("₺${formatBalance(bargainState.item.salesValue)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     Text("İlan Fiyatı", color = TextSecondary, fontSize = 11.sp)

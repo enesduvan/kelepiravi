@@ -59,10 +59,12 @@ class KelepiraviRepository(
             ?: emptyList()
 
         val newAchievements = AchievementManager.checkAchievements(
+            balance = player.balance.toDoubleOrNull().orZero(),
             itemsBought = player.itemsBought,
             itemsSold = player.itemsSold,
-            currentDay = player.currentDay,
-            totalRepairs = 0,
+            totalRepairs = player.totalRepairs,
+            boughtScam = player.hasBoughtScam,
+            boughtAbsurd = player.hasBoughtAbsurd,
             unlockedIds = unlockedList
         )
 
@@ -197,7 +199,8 @@ class KelepiraviRepository(
                         balance = (currentBalance - cost).toString(),
                         inventory = newInventory,
                         dailyRepairsUsed = repairsUsedToday + 1,
-                        lastRepairDay = player.currentDay
+                        lastRepairDay = player.currentDay,
+                        totalRepairs = player.totalRepairs + 1
                     )
                 )
             )
@@ -264,12 +267,22 @@ class KelepiraviRepository(
                 )
             }
 
+            val isRare = enrichedItem.category == "Antika" || (enrichedItem.estimatedValue.toDoubleOrNull() ?: 0.0) >= 50000.0
+            val newRareCount = if (isRare) player.rareItemsFound + 1 else player.rareItemsFound
+
+            val isAbsurd = enrichedItem.itemName.contains("NASA", ignoreCase = true) || enrichedItem.itemName.contains("F-16", ignoreCase = true)
+            val newBoughtScam = player.hasBoughtScam || item.isScammer
+            val newBoughtAbsurd = player.hasBoughtAbsurd || isAbsurd
+
             val basePlayer = processXpGain(player, GameConstants.BUY_XP)
             val finalPlayer = processAchievements(
                 basePlayer.copy(
                     balance = (currentBalance - itemPrice).toString(),
                     inventory = basePlayer.inventory + enrichedItem,
-                    itemsBought = basePlayer.itemsBought + 1
+                    itemsBought = basePlayer.itemsBought + 1,
+                    rareItemsFound = newRareCount,
+                    hasBoughtScam = newBoughtScam,
+                    hasBoughtAbsurd = newBoughtAbsurd
                 )
             )
             dao.updateInventory(finalPlayer)
@@ -292,9 +305,16 @@ class KelepiraviRepository(
             val generatedItems = LootBoxGenerator.openBox(type)
             val newBalance = currentBalance - type.price
 
-            val finalPlayer = player.copy(
-                balance = newBalance.toString(),
-                inventory = player.inventory + generatedItems
+            val isAbsurdBox = generatedItems.any { it.itemName.contains("NASA", true) || it.itemName.contains("F-16", true) }
+            val newBoughtAbsurd = player.hasBoughtAbsurd || isAbsurdBox
+
+            val finalPlayer = processAchievements(
+                player.copy(
+                    balance = newBalance.toString(),
+                    inventory = player.inventory + generatedItems,
+                    itemsBought = player.itemsBought + generatedItems.size,
+                    hasBoughtAbsurd = newBoughtAbsurd
+                )
             )
             dao.updateInventory(finalPlayer)
             generatedItems
@@ -316,6 +336,7 @@ class KelepiraviRepository(
             val currentBalance = player.balance.toDoubleOrNull().orZero()
 
             val profit = sellPrice - purchasePrice
+            val newHighestProfit = if (profit > player.highestProfit) profit else player.highestProfit
             val xpGain = GameConstants.SELL_BASE_XP +
                 (profit / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
             val basePlayer = processXpGain(player, xpGain)
@@ -325,13 +346,115 @@ class KelepiraviRepository(
                     inventory = basePlayer.inventory - itemInInventory,
                     itemsSold = basePlayer.itemsSold + 1,
                     totalProfit = basePlayer.totalProfit + profit,
-                    dailyRevenue = basePlayer.dailyRevenue + sellPrice // Ch8: Günlük ciroya ekle
+                    dailyRevenue = basePlayer.dailyRevenue + sellPrice, // Ch8: Günlük ciroya ekle
+                    highestProfit = newHighestProfit
                 )
             )
 
             dao.updateInventory(finalPlayer)
             true
         }
+        }
+    }
+
+    suspend fun addListing(item: MarketItem, price: String): Boolean {
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val itemInInventory = player.inventory.find { it.isSameInventoryItem(item) }
+                    ?: return@withTransaction false
+                
+                val newListing = com.enesduvan.kelepiravi.data.model.Listing(
+                    item = itemInInventory,
+                    listedPrice = price,
+                    listedDay = player.currentDay
+                )
+                
+                val finalPlayer = player.copy(
+                    inventory = player.inventory - itemInInventory,
+                    activeListings = player.activeListings + newListing
+                )
+                dao.updateInventory(finalPlayer)
+                true
+            }
+        }
+    }
+
+    suspend fun removeListing(listing: com.enesduvan.kelepiravi.data.model.Listing): Boolean {
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val listingExists = player.activeListings.any { it.id == listing.id }
+                if (!listingExists) return@withTransaction false
+                
+                val finalPlayer = player.copy(
+                    activeListings = player.activeListings.filter { it.id != listing.id },
+                    inventory = player.inventory + listing.item
+                )
+                dao.updateInventory(finalPlayer)
+                true
+            }
+        }
+    }
+
+    suspend fun updateActiveListings(newListings: List<com.enesduvan.kelepiravi.data.model.Listing>) {
+        mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val finalPlayer = player.copy(activeListings = newListings)
+                dao.updateInventory(finalPlayer)
+            }
+        }
+    }
+
+    suspend fun updateListing(updatedListing: com.enesduvan.kelepiravi.data.model.Listing): Boolean {
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val index = player.activeListings.indexOfFirst { it.id == updatedListing.id }
+                if (index == -1) return@withTransaction false
+                
+                val newListings = player.activeListings.toMutableList()
+                newListings[index] = updatedListing
+                
+                dao.updateInventory(player.copy(activeListings = newListings))
+                true
+            }
+        }
+    }
+
+    suspend fun sellListing(listing: com.enesduvan.kelepiravi.data.model.Listing, agreedPrice: Double): Boolean {
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val listingExists = player.activeListings.any { it.id == listing.id }
+                if (!listingExists) return@withTransaction false
+                
+                val purchasePrice = listing.item.purchasePrice
+                    .ifEmpty { listing.item.salesValue }
+                    .toDoubleOrNull()
+                    .orZero()
+                val currentBalance = player.balance.toDoubleOrNull().orZero()
+
+                val profit = agreedPrice - purchasePrice
+                val newHighestProfit = if (profit > player.highestProfit) profit else player.highestProfit
+                val xpGain = GameConstants.SELL_BASE_XP +
+                    (profit / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
+                val basePlayer = processXpGain(player, xpGain)
+                val finalPlayer = processAchievements(
+                    basePlayer.copy(
+                        balance = (currentBalance + agreedPrice).toString(),
+                        activeListings = player.activeListings.filter { it.id != listing.id },
+                        itemsSold = basePlayer.itemsSold + 1,
+                        totalProfit = basePlayer.totalProfit + profit,
+                        dailyRevenue = basePlayer.dailyRevenue + agreedPrice, // Ch8: Günlük ciroya ekle
+                        highestProfit = newHighestProfit
+                    )
+                )
+
+                dao.updateInventory(finalPlayer)
+                true
+            }
         }
     }
 
@@ -366,10 +489,13 @@ class KelepiraviRepository(
             val newBalance = currentBalance + GameConstants.DAILY_LOGIN_BONUS - totalDeduction
 
             val basePlayer = processXpGain(player, GameConstants.DAILY_LOGIN_XP)
+            val updatedListings = com.enesduvan.kelepiravi.data.listing.ListingEngine.processDay(player.activeListings)
+            
             val finalPlayer = processAchievements(
                 basePlayer.copy(
                     currentDay = player.currentDay + 1,
                     inventory = updatedInventory,
+                    activeListings = updatedListings,
                     balance = newBalance.toString(),
                     marketTrends = Json.encodeToString(newTrends),
                     // Günlük tamir sayacı sıfırlanır (yeni gün = yeni hak)
@@ -507,6 +633,29 @@ class KelepiraviRepository(
             )
             true
         }
+        }
+    }
+
+    suspend fun updateNpcRelationship(npcName: String, delta: Int) {
+        if (delta == 0) return
+        mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val currentRels = runCatching {
+                    if (player.npcRelationships.isBlank()) mutableMapOf<String, Int>()
+                    else kotlinx.serialization.json.Json.decodeFromString<MutableMap<String, Int>>(player.npcRelationships)
+                }.getOrDefault(mutableMapOf())
+
+                val currentScore = currentRels[npcName] ?: 0
+                // Minimum ve maksimum sınır koyabiliriz, şimdilik serbest
+                currentRels[npcName] = currentScore + delta
+
+                dao.updateInventory(
+                    player.copy(
+                        npcRelationships = kotlinx.serialization.json.Json.encodeToString(currentRels)
+                    )
+                )
+            }
         }
     }
 

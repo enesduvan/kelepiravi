@@ -1,80 +1,56 @@
 package com.enesduvan.kelepiravi.data.market
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.graphics.vector.ImageVector
+
 data class Achievement(
     val id: String,
     val title: String,
     val description: String,
-    val iconRes: Int, // Can be used later, for now we can use R.drawable.para or similar
+    val iconRes: ImageVector,
     val rewardXp: Int,
-    val rewardMoney: Double
+    val rewardMoney: Double,
+    val isHidden: Boolean = false
 )
 
 object AchievementManager {
     val ALL_ACHIEVEMENTS = listOf(
-        Achievement(
-            id = "first_blood",
-            title = "İlk Ticaret",
-            description = "İlk eşyanı satın aldın. Hoş geldin!",
-            iconRes = 0,
-            rewardXp = 50,
-            rewardMoney = 100.0
-        ),
-        Achievement(
-            id = "first_sale",
-            title = "İlk Kazanç",
-            description = "İlk eşyanı sattın. Para akışı başladı!",
-            iconRes = 0,
-            rewardXp = 50,
-            rewardMoney = 150.0
-        ),
-        Achievement(
-            id = "ten_items_sold",
-            title = "İşler Tıkırında",
-            description = "Toplam 10 eşya sattın.",
-            iconRes = 0,
-            rewardXp = 200,
-            rewardMoney = 500.0
-        ),
-        Achievement(
-            id = "first_repair",
-            title = "Tamirci Çırağı",
-            description = "İlk eşyanı tamir ettin. Değer kattın!",
-            iconRes = 0,
-            rewardXp = 100,
-            rewardMoney = 200.0
-        ),
-        Achievement(
-            id = "one_week",
-            title = "Bir Haftalık Emek",
-            description = "Oyunda 7. güne ulaştın.",
-            iconRes = 0,
-            rewardXp = 300,
-            rewardMoney = 1000.0
-        )
+        Achievement("first_blood", "Siftah Benden", "İlk eşyanı satın aldın. Ticarete hoş geldin!", Icons.Default.ShoppingCart, 50, 100.0),
+        Achievement("first_sale", "Ticaretin Kanunu", "İlk eşyanı sattın. Para akışı başladı!", Icons.Default.AttachMoney, 50, 150.0),
+        Achievement("ten_items_sold", "İşler Tıkırında", "Toplam 10 eşya sattın.", Icons.Default.TrendingUp, 200, 500.0),
+        Achievement("first_repair", "Tamirci Çırağı", "İlk eşyanı tamir ettin. Değer kattın!", Icons.Default.Build, 100, 200.0),
+        Achievement("repair_master", "Usta Eller", "Toplam 5 eşya tamir ettin.", Icons.Default.Handyman, 300, 1000.0),
+        Achievement("millionaire", "Milyoner!", "Bakiye 1.000.000₺'ye ulaştı.", Icons.Default.WorkspacePremium, 1000, 0.0),
+        Achievement("scammed", "Soğuk Su İç", "Kazıklanarak sahte bir ürün satın aldın.", Icons.Default.Warning, 50, 50.0, isHidden = true),
+        Achievement("alien_tech", "Absürt Koleksiyoncu", "NASA Bilgisayarı veya F-16 satın aldın.", Icons.Default.RocketLaunch, 500, 5000.0, isHidden = true)
     )
 
     fun checkAchievements(
+        balance: Double,
         itemsBought: Int,
         itemsSold: Int,
-        currentDay: Int,
-        totalRepairs: Int, // if we track this later
+        totalRepairs: Int,
+        boughtScam: Boolean,
+        boughtAbsurd: Boolean,
         unlockedIds: List<String>
     ): List<Achievement> {
         val newlyUnlocked = mutableListOf<Achievement>()
 
-        if (itemsBought >= 1 && !unlockedIds.contains("first_blood")) {
-            newlyUnlocked.add(ALL_ACHIEVEMENTS.first { it.id == "first_blood" })
+        fun unlock(id: String) {
+            if (!unlockedIds.contains(id)) {
+                newlyUnlocked.add(ALL_ACHIEVEMENTS.first { it.id == id })
+            }
         }
-        if (itemsSold >= 1 && !unlockedIds.contains("first_sale")) {
-            newlyUnlocked.add(ALL_ACHIEVEMENTS.first { it.id == "first_sale" })
-        }
-        if (itemsSold >= 10 && !unlockedIds.contains("ten_items_sold")) {
-            newlyUnlocked.add(ALL_ACHIEVEMENTS.first { it.id == "ten_items_sold" })
-        }
-        if (currentDay >= 7 && !unlockedIds.contains("one_week")) {
-            newlyUnlocked.add(ALL_ACHIEVEMENTS.first { it.id == "one_week" })
-        }
-        // "first_repair" handled when a repair happens
+
+        if (itemsBought >= 1) unlock("first_blood")
+        if (itemsSold >= 1) unlock("first_sale")
+        if (itemsSold >= 10) unlock("ten_items_sold")
+        if (totalRepairs >= 1) unlock("first_repair")
+        if (totalRepairs >= 5) unlock("repair_master")
+        if (balance >= 1000000.0) unlock("millionaire")
+        if (boughtScam) unlock("scammed")
+        if (boughtAbsurd) unlock("alien_tech")
 
         return newlyUnlocked
     }

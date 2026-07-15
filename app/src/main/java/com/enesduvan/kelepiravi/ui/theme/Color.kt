@@ -1,5 +1,6 @@
 package com.enesduvan.kelepiravi.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 // ==========================================
@@ -14,6 +15,10 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val Background = Color(0xFF0E1116) // Ana arka plan
+
+val BackgroundGradient = Brush.verticalGradient(
+    colors = listOf(Color(0xFF1B2230), Color(0xFF0A0D12))
+)
 val Surface = Color(0xFF171C23) // Kart zemini
 val SurfaceVariant = Color(0xFF202733) // Hover / secondary yüzey
 

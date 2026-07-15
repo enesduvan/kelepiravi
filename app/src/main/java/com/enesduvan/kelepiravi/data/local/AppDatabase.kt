@@ -9,6 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.enesduvan.kelepiravi.data.local.dao.KelepiraviDao
 import com.enesduvan.kelepiravi.data.local.entity.UserInventoryEntity
+import com.enesduvan.kelepiravi.data.model.ListingConverter
 import com.enesduvan.kelepiravi.data.model.MarketItemConverter
 import java.io.File
 
@@ -87,8 +88,47 @@ private val MIGRATION_8_9 = object : Migration(8, 9) {
     }
 }
 
-@Database(entities = [UserInventoryEntity::class], version = 9, exportSchema = false)
-@TypeConverters(MarketItemConverter::class)
+/**
+ * Migration 9 → 10: activeListings eklendi. (İlan Sistemi)
+ */
+private val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN activeListings TEXT NOT NULL DEFAULT '[]'")
+    }
+}
+
+/**
+ * Migration 10 → 11: npcRelationships eklendi. (NPC İlişki/Hafıza Sistemi)
+ */
+private val MIGRATION_10_11 = object : Migration(10, 11) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN npcRelationships TEXT NOT NULL DEFAULT '{}'")
+    }
+}
+
+/**
+ * Migration 11 → 12: highestProfit ve rareItemsFound eklendi. (Gelişmiş İstatistikler)
+ */
+private val MIGRATION_11_12 = object : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN highestProfit REAL NOT NULL DEFAULT 0.0")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN rareItemsFound INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
+/**
+ * Migration 12 → 13: V5.0 Başarımlar (totalRepairs, hasBoughtScam, hasBoughtAbsurd)
+ */
+private val MIGRATION_12_13 = object : Migration(12, 13) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN totalRepairs INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN hasBoughtScam INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE UserInventory ADD COLUMN hasBoughtAbsurd INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
+@Database(entities = [UserInventoryEntity::class], version = 13, exportSchema = false)
+@TypeConverters(MarketItemConverter::class, ListingConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun kelepiraviDao(): KelepiraviDao
 }
@@ -111,7 +151,7 @@ object AppDatabaseProvider {
                 AppDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13)
                 .addCallback(DatabaseBackupCallback(appContext))
                 .build()
                 .also { instance = it }

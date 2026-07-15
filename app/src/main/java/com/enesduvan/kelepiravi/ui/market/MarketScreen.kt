@@ -29,6 +29,7 @@ import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
+import com.enesduvan.kelepiravi.ui.shared.bounceClick
 import com.enesduvan.kelepiravi.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +41,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
     val scamReveal by viewModel.scamReveal.collectAsState()
     val interactiveEvent by viewModel.interactiveEvent.collectAsState()
     val eventResult by viewModel.eventResult.collectAsState()
+    val flashNotification by viewModel.flashNotification.collectAsState()
 
     val balanceText = remember(playerState.balance) { formatBalance(playerState.balance) }
     val visibleItems by remember(uiState.marketItems, uiState.selectedCategory) {
@@ -88,6 +90,31 @@ fun MarketScreen(viewModel: MarketViewModel) {
                                 CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.Black, strokeWidth = 2.dp)
                             } else {
                                 Text("Yeni Gün (${playerState.currentDay})", color = Color.Black, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = flashNotification != null,
+                        enter = expandVertically(animationSpec = tween(400, easing = EaseOutBack)) + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        flashNotification?.let { msg ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 8.dp)
+                                    .background(if (msg.contains("Maalesef")) Color(0xFFFF4444) else PrimaryOrange, RoundedCornerShape(12.dp))
+                                    .padding(14.dp)
+                            ) {
+                                Text(
+                                    text = msg,
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 14.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                             }
                         }
                     }
@@ -382,7 +409,7 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
-            .clickable { onClick(item) },
+            .bounceClick { onClick(item) },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
