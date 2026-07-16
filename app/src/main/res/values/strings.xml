@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">kelepiravi</string>
+    <string name="app_name">Kelepir Avı</string>
     <string name="title_activity_home_screen">HomeScreen</string>
     <string name="title_activity_market_bottom_sheet">MarketBottomSheet</string>
 </resources>

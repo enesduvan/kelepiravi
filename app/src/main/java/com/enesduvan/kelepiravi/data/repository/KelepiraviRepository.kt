@@ -131,7 +131,7 @@ class KelepiraviRepository(
      * Ch6: Tamir işlemi — günlük limit kontrolü ve %10 başarısızlık riski.
      * @return RepairResult — başarı/başarısızlık/limit durumu
      */
-    suspend fun repairItem(item: MarketItem): RepairResult {
+    suspend fun repairItem(item: MarketItem, isUsta: Boolean = false): RepairResult {
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
@@ -144,16 +144,17 @@ class KelepiraviRepository(
             }
 
             val costReduction = (player.mechanicLevel - 1) * 0.10 // Level başı %10 indirim (Level 1: %0, Level 5: %40)
-            val baseCost = calculateRepairCost(item)
+            val baseCost = calculateRepairCost(item, isUsta)
             val cost = baseCost * (1.0 - costReduction.coerceAtMost(0.50)) // Maksimum %50 indirim
 
             val currentBalance = player.balance.toDoubleOrNull().orZero()
             if (currentBalance < cost) return@withTransaction RepairResult.NotEnoughMoney
 
-            // Temel başarısızlık riski %40
-            // Her usta seviyesi riski %10 (0.10) azaltır
-            val failureReduction = (player.mechanicLevel - 1) * 0.10
-            val currentFailureChance = (GameConstants.REPAIR_FAILURE_CHANCE - failureReduction).coerceAtLeast(0.0)
+            // Temel başarısızlık riski Çırak için %35, Usta için %2 (seviye bağımsız)
+            // Usta seçilirse başarısızlık riski her halükarda çok düşüktür.
+            val failureReduction = (player.mechanicLevel - 1) * 0.08
+            val baseFailure = if (isUsta) 0.02 else GameConstants.REPAIR_FAILURE_CHANCE
+            val currentFailureChance = if (isUsta) baseFailure else (baseFailure - failureReduction).coerceAtLeast(0.0)
             val isFailure = kotlin.random.Random.nextDouble() < currentFailureChance
 
             if (isFailure) {
@@ -219,28 +220,29 @@ class KelepiraviRepository(
         }
     }
 
-    fun calculateRepairCost(item: MarketItem): Double {
+    fun calculateRepairCost(item: MarketItem, isUsta: Boolean = false): Double {
         val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition) ?: GameConstants.PERFECT_CONDITION_MULTIPLIER
         if (currentMultiplier >= GameConstants.PERFECT_CONDITION_MULTIPLIER) return 0.0
         val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
         val baseVal = if (currentMultiplier > 0) currentVal / currentMultiplier else currentVal
         val gain = baseVal - currentVal
         
-        // Eşyanın temel değerine göre tamir masrafı (Pahalı eşyalar daha riskli)
+        // Eşyanın temel değerine göre tamir masrafı
         var rarityMultiplier = when {
-            baseVal >= 20000 -> 0.85
-            baseVal >= 8000 -> 0.70
-            baseVal >= 2000 -> 0.60
-            else -> 0.50
+            baseVal >= 20000 -> 0.45
+            baseVal >= 8000 -> 0.35
+            baseVal >= 2000 -> 0.30
+            else -> 0.25
         }
 
-        // Kategoriye özel çarpanlar (Ev ve araba tamirleri orantısal olarak çok daha masraflıdır)
+        // Kategoriye özel çarpanlar
         when (item.category.lowercase()) {
-            "otomotiv", "vehicles", "araba" -> rarityMultiplier = 0.92
-            "emlak", "realestate", "ev" -> rarityMultiplier = 0.97
+            "otomotiv", "vehicles", "araba" -> rarityMultiplier = 0.50
+            "emlak", "realestate", "ev" -> rarityMultiplier = 0.55
         }
         
-        return gain * rarityMultiplier
+        val cost = gain * rarityMultiplier
+        return if (isUsta) cost * 1.8 else cost
     }
 
     suspend fun purchaseItem(item: MarketItem): Boolean {
@@ -347,10 +349,12 @@ class KelepiraviRepository(
             val xpGain = GameConstants.SELL_BASE_XP +
                 (profit / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
             val basePlayer = processXpGain(player, xpGain)
+            val updatedListings = basePlayer.activeListings.filterNot { it.item.isSameInventoryItem(itemInInventory) }
             val finalPlayer = processAchievements(
                 basePlayer.copy(
                     balance = (currentBalance + sellPrice).toString(),
                     inventory = basePlayer.inventory - itemInInventory,
+                    activeListings = updatedListings,
                     itemsSold = basePlayer.itemsSold + 1,
                     totalProfit = basePlayer.totalProfit + profit,
                     dailyRevenue = basePlayer.dailyRevenue + sellPrice, // Ch8: Günlük ciroya ekle
@@ -386,6 +390,24 @@ class KelepiraviRepository(
             }
         }
     }
+
+    suspend fun updateListingPrice(listing: com.enesduvan.kelepiravi.data.model.Listing, newPrice: String): Boolean {
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val index = player.activeListings.indexOfFirst { it.id == listing.id }
+                if (index == -1) return@withTransaction false
+                
+                val updatedListings = player.activeListings.toMutableList()
+                updatedListings[index] = updatedListings[index].copy(listedPrice = newPrice)
+                
+                val finalPlayer = player.copy(activeListings = updatedListings)
+                dao.updateInventory(finalPlayer)
+                true
+            }
+        }
+    }
+
 
     suspend fun removeListing(listing: com.enesduvan.kelepiravi.data.model.Listing): Boolean {
         return mutex.withLock {
@@ -451,6 +473,7 @@ class KelepiraviRepository(
                 val finalPlayer = processAchievements(
                     basePlayer.copy(
                         balance = (currentBalance + agreedPrice).toString(),
+                        inventory = basePlayer.inventory.filterNot { it.isSameInventoryItem(listing.item) },
                         activeListings = player.activeListings.filter { it.id != listing.id },
                         itemsSold = basePlayer.itemsSold + 1,
                         totalProfit = basePlayer.totalProfit + profit,
@@ -495,6 +518,23 @@ class KelepiraviRepository(
             val totalDeduction = rent + tax
             val newBalance = currentBalance + GameConstants.DAILY_LOGIN_BONUS - totalDeduction
 
+            val currentModifiers = runCatching {
+                if (player.activeModifiers.isBlank()) mutableMapOf<String, Int>()
+                else Json.decodeFromString<MutableMap<String, Int>>(player.activeModifiers)
+            }.getOrDefault(mutableMapOf())
+            
+            // Decrement and remove expired modifiers
+            val it = currentModifiers.entries.iterator()
+            while (it.hasNext()) {
+                val entry = it.next()
+                if (entry.value <= 1) {
+                    it.remove()
+                } else {
+                    entry.setValue(entry.value - 1)
+                }
+            }
+            val newModifiersStr = Json.encodeToString(currentModifiers)
+
             val basePlayer = processXpGain(player, GameConstants.DAILY_LOGIN_XP)
             val updatedListings = com.enesduvan.kelepiravi.data.listing.ListingEngine.processDay(player.activeListings)
             
@@ -508,7 +548,8 @@ class KelepiraviRepository(
                     // Günlük tamir sayacı sıfırlanır (yeni gün = yeni hak)
                     dailyRepairsUsed = 0,
                     // Günlük ciro sıfırlanır
-                    dailyRevenue = 0.0
+                    dailyRevenue = 0.0,
+                    activeModifiers = newModifiersStr
                 )
             )
 
@@ -570,10 +611,29 @@ class KelepiraviRepository(
                 
                 if (currentBalance < 0) currentBalance = 0.0
                 
-                // Apply Flags
+                // Apply Flags and Modifiers
                 val currentFlags = player.eventFlags.split(",").filter { it.isNotEmpty() }.toMutableSet()
-                currentFlags.addAll(choice.flags)
+                val currentModifiers = runCatching {
+                    if (player.activeModifiers.isBlank()) mutableMapOf<String, Int>()
+                    else Json.decodeFromString<MutableMap<String, Int>>(player.activeModifiers)
+                }.getOrDefault(mutableMapOf())
+
+                for (flag in choice.flags) {
+                    if (flag.startsWith("MODIFIER:")) {
+                        val parts = flag.split(":")
+                        if (parts.size >= 3) {
+                            val modifierName = parts[1]
+                            val duration = parts[2].toIntOrNull() ?: 0
+                            if (duration > 0) {
+                                currentModifiers[modifierName] = duration
+                            }
+                        }
+                    } else {
+                        currentFlags.add(flag)
+                    }
+                }
                 val newFlagsStr = currentFlags.joinToString(",")
+                val newModifiersStr = Json.encodeToString(currentModifiers)
                 
                 // Update player
                 val xpGain = newXp - player.xp
@@ -581,7 +641,8 @@ class KelepiraviRepository(
                 val updatedPlayer = basePlayer.copy(
                     balance = currentBalance.toString(),
                     inventory = newInventory,
-                    eventFlags = newFlagsStr
+                    eventFlags = newFlagsStr,
+                    activeModifiers = newModifiersStr
                 )
                 
                 dao.updateInventory(updatedPlayer)

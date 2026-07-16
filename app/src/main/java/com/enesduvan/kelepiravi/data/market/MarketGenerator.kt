@@ -28,6 +28,15 @@ object MarketGenerator {
     }
 
     private val IMAGE_POOLS = mapOf(
+        "bez_canta" to ImagePool(clean = listOf("bez_canta"), damaged = listOf("bez_canta")),
+        "bogaz_koprusu" to ImagePool(clean = listOf("bogaz_koprusu"), damaged = listOf("bogaz_koprusu")),
+        "f_16" to ImagePool(clean = listOf("f_16"), damaged = listOf("f_16")),
+        "kamera_resim" to ImagePool(clean = listOf("kamera_resim"), damaged = listOf("kamera_resim")),
+        "koy_kahvesi" to ImagePool(clean = listOf("koy_kahvesi"), damaged = listOf("koy_kahvesi")),
+        "mini_firin" to ImagePool(clean = listOf("mini_firin"), damaged = listOf("mini_firin")),
+        "nasa_bilgisayari" to ImagePool(clean = listOf("nasa_bilgisayari"), damaged = listOf("nasa_bilgisayari")),
+        "oyun_kulakligi" to ImagePool(clean = listOf("oyun_kulakligi"), damaged = listOf("oyun_kulakligi")),
+        "satilik_kaynana" to ImagePool(clean = listOf("satilik_kaynana"), damaged = listOf("satilik_kaynana")),
         "rubber_duck" to ImagePool(
             clean = listOf("rubber_duck_1", "rubber_duck_2", "rubber_duck_3", "rubber_duck_4", "rubber_duck_5", "rubber_duck_6", "rubber_duck_7"),
             damaged = listOf("rubber_duck_1", "rubber_duck_2", "rubber_duck_3", "rubber_duck_4", "rubber_duck_5", "rubber_duck_6", "rubber_duck_7")
@@ -409,7 +418,11 @@ object MarketGenerator {
         ProductTemplate("T-Rex Kafatası Replikası", "Toys", "trex_skull", 2100, 4500),
         ProductTemplate("Polo Tişört", "Clothing", "polo_shirt", 140, 300),
         ProductTemplate("Deri Ceket (Katlanmış)", "Clothing", "leather_jacket_folded", 1750, 3750),
-        ProductTemplate("Gümüş Metal Saat", "Accessories", "silver_watch", 1400, 3000)
+        ProductTemplate("Gümüş Metal Saat", "Accessories", "silver_watch", 1400, 3000),
+        ProductTemplate("Bez Çanta", "Clothing", "bez_canta", 35, 75),
+        ProductTemplate("Mini Fırın", "Home_appliances", "mini_firin", 1050, 2250),
+        ProductTemplate("Kamera", "Electronics", "kamera_resim", 5950, 12750),
+        ProductTemplate("Oyun Kulaklığı", "Electronics", "oyun_kulakligi", 1750, 3750)
     )
 
     val ABSURD_PRODUCTS = listOf(
@@ -511,9 +524,12 @@ object MarketGenerator {
 
     fun generateItems(
         count: Int = GameConstants.MARKET_BATCH_SIZE,
-        marketTrends: Map<String, Double> = emptyMap()
-    ): List<MarketItem> =
-        (1..count).map { generateOne(marketTrends) }
+        marketTrends: Map<String, Double> = emptyMap(),
+        activeModifiers: Map<String, Int> = emptyMap()
+    ): List<MarketItem> {
+        if (activeModifiers.containsKey("NO_SALES")) return emptyList()
+        return (1..count).map { generateOne(marketTrends) }
+    }
 
     private fun generateOne(marketTrends: Map<String, Double>): MarketItem {
         val rng = Random.Default

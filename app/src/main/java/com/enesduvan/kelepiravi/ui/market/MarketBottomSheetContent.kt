@@ -141,8 +141,8 @@ fun MarketBottomSheetContent(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(id = R.drawable.ic_trending), contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Tahmini değer: ", color = MarketTextSecondary, fontSize = 12.sp)
-                    Text(text = "${item.estimatedValue}₺", color = EstimatedValue, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Sıfır/Kusursuz Değeri: ", color = MarketTextSecondary, fontSize = 12.sp)
+                    Text(text = "${com.enesduvan.kelepiravi.ui.shared.formatBalance(item.estimatedValue)}₺", color = EstimatedValue, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Box(

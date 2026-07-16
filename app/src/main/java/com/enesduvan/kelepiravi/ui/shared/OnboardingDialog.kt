@@ -35,46 +35,57 @@ fun OnboardingDialog(onComplete: () -> Unit) {
                 modifier = Modifier.fillMaxWidth().padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val title = when(step) {
+                    1 -> "Hoşgeldin Kelepir Avcısı!"
+                    2 -> "Değer Mekaniği ve Tamir"
+                    else -> "Ticaretin Altın Kuralları"
+                }
+
                 Text(
-                    text = if (step == 1) "Hoşgeldin Kelepir Avcısı!" else "Ticaretin Kuralları",
+                    text = title,
                     color = PrimaryOrange,
-                    fontSize = 22.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (step == 1) {
-                    Text(
-                        text = "Amacın çok basit:\n\nDüşük fiyattan alıp, yüksek fiyata satarak dünyanın en zengin antikacısı olmak!",
-                        color = TextPrimary,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 24.sp
-                    )
-                } else {
-                    Text(
-                        text = "1. Müşteriler sabırsızdır, çok fazla teklif yaparsan masadan kalkarlar.\n\n2. Hasarlı eşyaları ucuza alıp tamir ederek dev kârlar elde edebilirsin.\n\n3. Her eşya sana XP ve seviye kazandırır. Haydi başla!",
-                        color = TextPrimary,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Start,
-                        lineHeight = 24.sp
-                    )
+                val content = when(step) {
+                    1 -> "Amacın çok basit:\n\nDüşük fiyattan alıp, yüksek fiyata satarak dünyanın en zengin tüccarı olmak!\n\nMarketten fırsatları yakala, envanterine ekle ve kârla sat."
+                    2 -> "Her eşyanın iki değeri vardır:\n\n1. Kusursuz Değeri: Eşyanın sıfır/hasarsız halinin piyasa değeridir.\n2. Güncel Değeri: Eşyanın hasar durumuna göre düşmüş gerçek fiyatıdır.\n\nTaktik: Hasarlı malları ucuz fiyattan alıp tamirhaneye götürürsen, eşyanın güncel değeri kusursuz değerine fırlar ve devasa kâr edersin!"
+                    else -> "• Pazarlık: Müşteriler sabırsızdır. Çok yüksek fiyat istersen masadan kalkarlar.\n\n• Etkinlikler (Events): Bazen zabıta veya hırsız gelebilir. Verdiğin kararlar itibarını etkiler.\n\n• İtibar: İtibarın yüksekse müşteriler seninle pazarlıkta daha esnek olurlar."
                 }
 
+                Text(
+                    text = content,
+                    color = TextPrimary,
+                    fontSize = 15.sp,
+                    textAlign = if (step == 1) TextAlign.Center else TextAlign.Start,
+                    lineHeight = 22.sp
+                )
+
                 Spacer(modifier = Modifier.height(24.dp))
+                
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    repeat(3) { i ->
+                        Box(modifier = Modifier.size(8.dp).background(if (step == i + 1) PrimaryOrange else CardSecondary, RoundedCornerShape(4.dp)))
+                        if (i < 2) Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
                     onClick = {
-                        if (step == 1) step = 2 else onComplete()
+                        if (step < 3) step++ else onComplete()
                     },
                     modifier = Modifier.fillMaxWidth().height(48.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = if (step == 1) "Devam Et" else "Oynamaya Başla!",
+                        text = if (step < 3) "Devam Et" else "Oynamaya Başla!",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp

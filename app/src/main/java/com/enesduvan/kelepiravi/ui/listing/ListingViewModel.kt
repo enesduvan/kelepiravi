@@ -71,6 +71,12 @@ class ListingViewModel(
         }
     }
 
+    fun updateListingPrice(listing: Listing, newPrice: String) {
+        viewModelScope.launch {
+            listingUseCase.updateListingPrice(listing, newPrice)
+        }
+    }
+
     fun acceptOffer(listing: Listing, offerAmount: Double) {
         viewModelScope.launch {
             listingUseCase.acceptOffer(listing, offerAmount)

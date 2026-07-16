@@ -102,12 +102,21 @@ fun TamirEkrani(viewModel: MarketViewModel) {
         } else {
             // DETAY GÖRÜNÜMÜ (MOCKUP 5a20)
             val item = selectedItem!!
-            val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
-            val cirakCost = viewModel.calculateRepairCost(item)
-            val ustaCost = cirakCost * 3.0
+            val baseVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+            val currentMultiplier = com.enesduvan.kelepiravi.data.market.MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
+            val currentVal = baseVal * currentMultiplier
+            val cirakCost = viewModel.calculateRepairCost(item, false)
+            val ustaCost = viewModel.calculateRepairCost(item, true)
             val selectedCost = if (selectedOption == "Cirak") cirakCost else ustaCost
             val canAfford = (playerState.balance.toDoubleOrNull() ?: 0.0) >= selectedCost
             val canRepair = remainingRepairs > 0 && canAfford && !isRepairing
+            
+            val mechanicLevel = playerState.mechanicLevel
+            val failureReduction = (mechanicLevel - 1) * 0.08
+            val cirakFailure = (0.40 - failureReduction).coerceAtLeast(0.0)
+            val cirakSuccess = ((1.0 - cirakFailure) * 100).toInt()
+            val ustaSuccess = 98
+
 
             // Dinamik Metinler
             val (cirakTitle, cirakSub, ustaTitle, ustaSub) = when (item.category.lowercase()) {
@@ -146,7 +155,8 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                                 Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text("₺${formatBalance(currentVal.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Güncel Hasarlı Değeri: ₺${formatBalance(currentVal.toString())}", color = MarketTextSecondary, fontSize = 12.sp)
+                            Text("Sıfır Değeri: ₺${formatBalance(baseVal.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -170,7 +180,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Box(modifier = Modifier.fillMaxWidth().height(4.dp).background(Color(0xFFFF4444), RoundedCornerShape(2.dp)))
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text("Başarı: %65", color = Color(0xFFFF4444), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text("Başarı: %$cirakSuccess", color = Color(0xFFFF4444), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                     // USTA
@@ -189,7 +199,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Box(modifier = Modifier.fillMaxWidth().height(4.dp).background(MoneyGreen, RoundedCornerShape(2.dp)))
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text("Başarı: %98", color = MoneyGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text("Başarı: %$ustaSuccess", color = MoneyGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -207,7 +217,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                     else -> "Kusursuz Temiz"
                 }
                 val expectedResult = if(selectedOption == "Cirak") expectedResultCirak else expectedResultUsta
-                val expectedGain = if(selectedOption == "Cirak") (currentVal * 1.3) else (currentVal * 1.8)
+                val expectedGain = baseVal
                 Box(
                     modifier = Modifier.fillMaxWidth().background(Card, RoundedCornerShape(12.dp)).border(1.dp, MarketBorderSoft, RoundedCornerShape(12.dp)).padding(16.dp)
                 ) {
@@ -234,7 +244,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                         isRepairing = true
                         coroutineScope.launch {
                             delay(3000) // 3 saniye tornavida animasyonu beklemesi
-                            viewModel.repairItem(item)
+                            viewModel.repairItem(item, selectedOption == "Usta")
                         }
                     },
                     enabled = canRepair,

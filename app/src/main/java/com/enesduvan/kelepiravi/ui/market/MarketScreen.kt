@@ -73,7 +73,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
                                 val roiColor = if (roi >= 0) MoneyGreen else Color(0xFFFF6B6B)
                                 val roiSign = if (roi >= 0) "+" else ""
                                 Text(
-                                    "Portföy ROI: ${roiSign}${String.format(java.util.Locale.US, "%.2f", roi)}%",
+                                    "Portföy Kâr: ${roiSign}${String.format(java.util.Locale.US, "%.2f", roi)}%",
                                     color = roiColor,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold

@@ -113,7 +113,7 @@ fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingV
                                     PortfolioStatBox("Yatırım", "₺${formatBalance(playerState.totalInvestment.toString())}", TextPrimary, Modifier.weight(1f))
                                     PortfolioStatBox("Değer", "₺${formatBalance(playerState.portfolioValue.toString())}", MoneyGreen, Modifier.weight(1f))
                                     val roiSign = if (roiPositive) "+" else ""
-                                    PortfolioStatBox("ROI", "$roiSign${"%.1f".format(roi)}%", if (roiPositive) MoneyGreen else RED, Modifier.weight(1f))
+                                    PortfolioStatBox("Kâr", "$roiSign${"%.1f".format(roi)}%", if (roiPositive) MoneyGreen else RED, Modifier.weight(1f))
                                 }
                             }
                         }
@@ -188,10 +188,13 @@ fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingV
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
-    val estimatedValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
+    val baseValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
+    val currentMultiplier = com.enesduvan.kelepiravi.data.market.MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
+    val estimatedValue = baseValue * currentMultiplier
     val purchasePrice = item.purchasePrice.ifEmpty { item.salesValue }.toDoubleOrNull() ?: 0.0
     
-    var price by remember { mutableStateOf(estimatedValue) }
+    var priceStr by remember { mutableStateOf(estimatedValue.toLong().toString()) }
+    val price = priceStr.toDoubleOrNull() ?: 0.0
     val tax = price * 0.05
     val netProfit = price - purchasePrice - tax
 
@@ -244,7 +247,9 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                             Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text("Tahmini Piyasa Değeri", color = MarketTextSecondary, fontSize = 12.sp)
+                        Text("Sıfır/Kusursuz Değeri: ₺${formatBalance(baseValue.toString())}", color = MarketTextSecondary, fontSize = 11.sp)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Güncel Hasarlı Değeri", color = MarketTextSecondary, fontSize = 12.sp)
                         Text("₺${formatBalance(estimatedValue.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text("Envanterdeki Adet", color = MarketTextSecondary, fontSize = 12.sp)
@@ -269,11 +274,37 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                        IconButton(onClick = { price -= 50 }, modifier = Modifier.size(40.dp).background(CardSecondary, RoundedCornerShape(20.dp))) {
+                        IconButton(onClick = { priceStr = ((price - 50).coerceAtLeast(0.0)).toLong().toString() }, modifier = Modifier.size(40.dp).background(CardSecondary, RoundedCornerShape(20.dp))) {
                             Text("-", color = TextPrimary, fontSize = 24.sp)
                         }
-                        Text("₺${formatBalance(price.toString())}", color = MoneyGreen, fontSize = 32.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 24.dp))
-                        IconButton(onClick = { price += 50 }, modifier = Modifier.size(40.dp).background(CardSecondary, RoundedCornerShape(20.dp))) {
+                        
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            androidx.compose.foundation.text.BasicTextField(
+                                value = priceStr,
+                                onValueChange = { newValue ->
+                                    if (newValue.all { it.isDigit() } && newValue.length <= 12) {
+                                        priceStr = newValue
+                                    }
+                                },
+                                textStyle = androidx.compose.ui.text.TextStyle(
+                                    color = MoneyGreen,
+                                    fontSize = if (priceStr.length > 7) 24.sp else 32.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                ),
+                                singleLine = true,
+                                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                                decorationBox = { innerTextField ->
+                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                                        Text("₺", color = MoneyGreen, fontSize = if (priceStr.length > 7) 24.sp else 32.sp, fontWeight = FontWeight.Bold)
+                                        innerTextField()
+                                    }
+                                },
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+                        }
+                        
+                        IconButton(onClick = { priceStr = (price + 50).toLong().toString() }, modifier = Modifier.size(40.dp).background(CardSecondary, RoundedCornerShape(20.dp))) {
                             Text("+", color = TextPrimary, fontSize = 24.sp)
                         }
                     }
@@ -284,11 +315,28 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     }
                     Slider(
                         value = price.toFloat(),
-                        onValueChange = { price = it.toDouble() },
-                        valueRange = (estimatedValue * 0.5).toFloat()..(estimatedValue * 1.5).toFloat(),
+                        onValueChange = { priceStr = it.toLong().toString() },
+                        valueRange = (estimatedValue * 0.1).toFloat().coerceAtLeast(0f)..(estimatedValue * 3.0).toFloat(),
                         colors = SliderDefaults.colors(thumbColor = Color.White, activeTrackColor = MoneyGreen, inactiveTrackColor = CardSecondary)
                     )
-                    Text("₺${formatBalance(price.toString())}", color = MoneyGreen, fontSize = 10.sp)
+                    
+                    val sellProbability = when {
+                        price <= estimatedValue * 0.5 -> "🔥 Çok Yüksek"
+                        price <= estimatedValue * 0.8 -> "✅ Yüksek"
+                        price <= estimatedValue * 1.1 -> "🟡 Normal"
+                        price <= estimatedValue * 1.5 -> "🟠 Düşük"
+                        else -> "🔴 Çok Düşük"
+                    }
+                    val probColor = when {
+                        price <= estimatedValue * 0.8 -> MoneyGreen
+                        price <= estimatedValue * 1.1 -> PrimaryOrange
+                        else -> RED
+                    }
+                    
+                    Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                        Text("Satılma Olasılığı: ", color = MarketTextSecondary, fontSize = 12.sp)
+                        Text(sellProbability, color = probColor, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -405,7 +453,9 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
         else -> ConditionScratchBg to ConditionScratch
     }
     val purchasePrice = item.purchasePrice.ifEmpty { item.salesValue }.toDoubleOrNull() ?: 0.0
-    val estimatedValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
+    val baseValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
+    val currentMultiplier = com.enesduvan.kelepiravi.data.market.MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
+    val estimatedValue = baseValue * currentMultiplier
     val profit = estimatedValue - purchasePrice
     val isProfit = profit >= 0
     val wasScam = item.isScammer  
@@ -476,9 +526,10 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
                     }
                 }
                 Text("Alış: ₺${formatBalance(purchasePrice.toString())}", color = TextSecondary, fontSize = 12.sp)
+                Text("Kusursuz: ₺${formatBalance(baseValue.toString())}", color = MarketTextSecondary, fontSize = 11.sp)
 
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text("₺${formatBalance(estimatedValue.toString())}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Text("Güncel: ₺${formatBalance(estimatedValue.toString())}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                     Text(
                         "${if (isProfit) "+" else ""}${formatBalance(profit.toString())}₺",
                         color = if (isProfit) MoneyGreen else RED,

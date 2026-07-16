@@ -22,6 +22,11 @@ class ListingUseCase(
         return repository.removeListing(listing)
     }
 
+    suspend fun updateListingPrice(listing: Listing, newPrice: String): Boolean {
+        if (newPrice.isBlank()) return false
+        return repository.updateListingPrice(listing, newPrice)
+    }
+
     suspend fun acceptOffer(listing: Listing, offerAmount: Double): Boolean {
         return repository.sellListing(listing, offerAmount)
     }

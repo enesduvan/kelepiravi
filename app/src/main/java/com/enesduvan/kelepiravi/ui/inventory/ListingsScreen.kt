@@ -26,11 +26,16 @@ import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 
 @Composable
 fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel) {
     val activeListings by listingViewModel.activeListings.collectAsState()
     var lastMinuteBargainOffer by remember { mutableStateOf<Triple<Listing, com.enesduvan.kelepiravi.data.model.Offer, Double>?>(null) }
+    var editingListing by remember { mutableStateOf<Listing?>(null) }
 
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
         LazyColumn(
@@ -71,11 +76,40 @@ fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingVi
                         },
                         onBargainClick = { l, offer ->
                             marketViewModel.startSellBargainWithOffer(l.item, offer.npcName, offer.offerAmount.toDouble())
-                        }
+                        },
+                        onEditClick = { editingListing = it }
                     )
                 }
             }
         }
+    }
+
+    if (editingListing != null) {
+        var newPriceStr by remember { mutableStateOf(editingListing!!.listedPrice) }
+        AlertDialog(
+            onDismissRequest = { editingListing = null },
+            title = { Text("İlanı Düzenle", color = TextPrimary) },
+            text = {
+                OutlinedTextField(
+                    value = newPriceStr,
+                    onValueChange = { if (it.all { char -> char.isDigit() }) newPriceStr = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = OutlinedTextFieldDefaults.colors(focusedTextColor = TextPrimary, unfocusedTextColor = TextPrimary)
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+                    if (newPriceStr.isNotBlank()) {
+                        listingViewModel.updateListingPrice(editingListing!!, newPriceStr)
+                        editingListing = null
+                    }
+                }) { Text("Güncelle") }
+            },
+            dismissButton = {
+                TextButton(onClick = { editingListing = null }) { Text("İptal", color = TextSecondary) }
+            },
+            containerColor = Surface
+        )
     }
 
     if (lastMinuteBargainOffer != null) {
@@ -112,7 +146,8 @@ fun ListingCard(
     listing: Listing,
     onCancelClick: (Listing) -> Unit,
     onAcceptOffer: (Listing, Double) -> Unit,
-    onBargainClick: (Listing, com.enesduvan.kelepiravi.data.model.Offer) -> Unit
+    onBargainClick: (Listing, com.enesduvan.kelepiravi.data.model.Offer) -> Unit,
+    onEditClick: (Listing) -> Unit
 ) {
     val estimatedValue = listing.item.estimatedValue.toDoubleOrNull() ?: 0.0
     val listedPrice = listing.listedPrice.toDoubleOrNull() ?: 0.0
@@ -142,6 +177,9 @@ fun ListingCard(
                     Text("İlan Fiyatı: ₺${formatBalance(listing.listedPrice)}", color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     Text("Piyasa: ₺${formatBalance(estimatedValue.toString())} (${if (diffPercent > 0) "+" else ""}${"%.0f".format(diffPercent)}%)", color = TextSecondary, fontSize = 12.sp)
                 }
+                IconButton(onClick = { onEditClick(listing) }) {
+                    Icon(Icons.Default.Edit, contentDescription = "Düzenle", tint = TextSecondary)
+                }
             }
 
             Row(
@@ -151,6 +189,49 @@ fun ListingCard(
                 Text("👀 ${listing.views} Kişi Baktı", color = TextSecondary, fontSize = 12.sp)
                 Text("❤️ ${listing.favorites} Favori", color = TextSecondary, fontSize = 12.sp)
                 Text("⏳ ${listing.listedDay}. Gün", color = TextSecondary, fontSize = 12.sp)
+            }
+            
+            val comments = remember(listing.id, listing.listedPrice, listing.views) {
+                val commentsList = when {
+                    diffPercent > 50 -> listOf(
+                        "Bu fiyata asla alınmaz!", "Serbest piyasa dedikleri bu mu?", "Kazık!", "Müzeye koysaydın.",
+                        "Kardeşim sıfırı daha ucuz bunun.", "Altın kaplama galiba?", "Sen bunu satmak istemiyorsun herhalde.",
+                        "Gözüm kanadı fiyata bakınca.", "Bu parayla dükkanı alırım ben."
+                    )
+                    diffPercent > 20 -> listOf(
+                        "Biraz pahalı geldi.", "Fiyatı şişirmiş.", "İndirim yaparsan düşünürüm.", "Pazarlık payı var mı?",
+                        "Öğrenciye bir şeyler yapmaz mısın?", "Nakit versem kaça bırakırsın?", "Bence bu para etmez."
+                    )
+                    diffPercent < -40 -> listOf(
+                        "Sudan ucuz!", "Kesin defoludur bu.", "Hemen çök, bedava!", "Şaka gibi fiyat.",
+                        "Çalıntı falan değil dimi?", "Adam kafayı yemiş zararına satıyor.", "Bu fırsat kaçmaz, çökelim."
+                    )
+                    diffPercent < -15 -> listOf(
+                        "Fiyatı fena değil.", "Güzel fırsat.", "Uygun yazmışsın.", "Al-sat için ideal.",
+                        "Temiz mal, fiyatı da iyi.", "Favoriye attım, yarın alırım.", "Hemen alınır bu."
+                    )
+                    else -> listOf(
+                        "Piyasa fiyatı.", "Normal.", "Makul, düşünülebilir.", "Temiz ürün, ederinde.",
+                        "Ortalama fiyat yazmışsın.", "Ne öldürmüş ne diriltmiş, tam ayarında."
+                    )
+                }
+                
+                // Yorum sayısı görüntülenme ile yavaş yavaş artsın (Her 15 görüntülenmede 1 yorum, max 5)
+                val numComments = (listing.views / 15).coerceIn(1, 5)
+                val random = kotlin.random.Random(listing.id.hashCode() + listing.listedPrice.hashCode())
+                
+                // Aynı yorumun tekrar etmesini önlemek için shuffle ve take kullanalım
+                commentsList.shuffled(random).take(numComments)
+            }
+            
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                comments.forEach { comment ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Color(0xFF1E1E1E)).border(1.dp, Color(0xFF333333), RoundedCornerShape(8.dp)).padding(10.dp)
+                    ) {
+                        Text("💬 \"$comment\"", color = TextMuted, fontSize = 12.sp, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic)
+                    }
+                }
             }
 
             if (listing.offers.isEmpty()) {

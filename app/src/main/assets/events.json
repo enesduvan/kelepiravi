@@ -1604,5 +1604,774 @@
         "flags": []
       }
     ]
+  },
+  {
+    "id": "EV_CINGENE_ABLA",
+    "title": "Falcı Abla",
+    "description": "Kapıdan esmer bir abla girdi. 'Aman cancağızım senin yıldızın düşmüş, ver 100 lira da sana bir fal bakayım, kısmetin açılsın' diyor.",
+    "npc": "Falcı Güllü",
+    "weight": 100,
+    "cooldown": 8,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "100"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Bak bakalım abla, ne var falda? (-100 TL)",
+        "outcomeText": "Yıldızın sönük, önümüzdeki 3 gün kara bulutlar geziyor, kimse sana mal satmayacak!",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "200"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "100"
+          }
+        ],
+        "flags": [
+          "MODIFIER:NO_SALES:3"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Yok abla kalsın, inanmam öyle şeylere.",
+        "rewards": [],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_YESILCAM_JON",
+    "title": "Fakir Ama Gururlu Genç",
+    "description": "Dükkana favorileri uzun, yakası bağrına kadar açık bir adam girdi. Elinde eski bir pırlanta kolye var. 'Nayır! Nolamaz! Nalan beni paraya değişti... Al şu kolyeyi kardeşim, artık aşka inancım kalmadı!' diyerek hıçkırıyor.",
+    "npc": "Romantik Jön",
+    "weight": 80,
+    "cooldown": 15,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "800"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Üzülme abi, o seni hak etmedi zaten. (Kolyeyi 800 TL'ye al)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Gözyaşı Kolyesi"
+          },
+          {
+            "type": "XP",
+            "value": "300"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "800"
+          }
+        ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Kendine gel! Sen fakir ama gururlu bir gençsin, atma o kolyeyi! (Teselli Et)",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "500"
+          }
+        ],
+        "penalties": [],
+        "flags": [
+          "HONEST_MERCHANT"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EV_DERIN_TICARET",
+    "title": "Derin Ticaret",
+    "description": "Siyah takım elbiseli, sert bakışlı Polat adında biri dükkana geldi. Önüne ağır, kilitli bir çelik kasa koyup gözlerinin içine baktı: 'Sonunu düşünen zengin olamaz kardeş... İçinde ne olduğunu sormadan 5000 liraya alıyor musun, almıyor musun?'",
+    "npc": "Polat",
+    "weight": 70,
+    "cooldown": 25,
+    "conditions": [
+      {
+        "type": "MIN_DAY",
+        "value": "10"
+      },
+      {
+        "type": "MIN_MONEY",
+        "value": "5000"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Racon kesmiyoruz, ticaret yapıyoruz. Ver kasayı! (-5000 TL)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Gizemli Çelik Kasa"
+          },
+          {
+            "type": "XP",
+            "value": "1000"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "5000"
+          }
+        ],
+        "flags": [
+          "BOUGHT_POLAT_KASA"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Bizim sonumuz belli abi, boyumuzu aşar bu işler.",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "150"
+          }
+        ],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TEMEL_FIKRASI",
+    "title": "Temel'in Antika Saati",
+    "description": "Dükkandan içeri kasketli, çok neşeli ve kıpır kıpır biri girdi. 'Uşağum, elimde ceddumdan kalma çok antika bir saat var! Yalnız ufak bir huyu vardur, günde sadece iki defa doğruyu cösterir!' diyerek basıyor kahkahayı ve bu bozuk saati sana 200 liraya satmak istiyor.",
+    "npc": "Temel",
+    "weight": 85,
+    "cooldown": 12,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "200"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "İlahi Temel abi... Sırf beni güldürdüğün için alıyorum. (-200 TL)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Bozuk Duvar Saati"
+          },
+          {
+            "type": "XP",
+            "value": "250"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "200"
+          }
+        ],
+        "flags": [
+          "MET_TEMEL"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Ula Temel abi, bozuk saati ben ne yapayım? Yürü git işine!",
+        "rewards": [],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TEMEL_BAYKUS",
+    "title": "Düşünen Papağan",
+    "description": "Temel elinde bir kafesle içeri girer. Kafesin içinde koca gözlü bir baykuş vardır. 'Uşağum sana harika bir papağan getirdum! Daha konuşmayi sökemedi ama sabahlara kadar derin derin düşünüyi! 400 liraya senin olsun.'",
+    "npc": "Temel",
+    "weight": 80,
+    "cooldown": 15,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "400"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Abi bu bildiğin baykuş! Ama sabah sabah iyi güldürdün, alıyorum. (-400 TL)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Kafeste Baykuş"
+          },
+          {
+            "type": "XP",
+            "value": "300"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "400"
+          }
+        ],
+        "flags": [
+          "BOUGHT_OWL"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Git işine Temel abi, dükkanı kuşçuya çevirdin!",
+        "rewards": [],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TEMEL_RADYO",
+    "title": "İçindeki Adamları Ölen Radyo",
+    "description": "Temel yepyeni duran bir el radyosunu tezgaha koyar. 'Uşağum bu radyo çok eyiydi ama geçen gün içindeki adamlar öldi, artuk hiç ses vermeyiler. Cenaze masrafı çiksun, 100 liraya senin olsun.' (Radyonun sadece pili bitmiş)",
+    "npc": "Temel",
+    "weight": 90,
+    "cooldown": 10,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "100"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Pili bitmiş bunun abi... Neyse ver bakalım. (Ucuza Sağlam Radyo Alırsın)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Sağlam El Radyosu"
+          },
+          {
+            "type": "XP",
+            "value": "500"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "100"
+          }
+        ],
+        "flags": [
+          "SMART_MERCHANT"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Abi adamlar öldüyse ben ne yapayım bu radyoyu! Allah rahmet eylesin.",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "100"
+          }
+        ],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TEMEL_PUZZLE",
+    "title": "Rekortmen Temel",
+    "description": "Temel gururla tamamlanmış, çerçevelenmiş bir yapboz (puzzle) getirir. 'Uşağum kutunun üstünde 3-5 yaş yaziyidi, ben sadece 1 haftada bitirdum! Bu deha eserini 300 liraya sana satarum!'",
+    "npc": "Temel",
+    "weight": 70,
+    "cooldown": 20,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "300"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Helal olsun abi büyük başarı! Alalım bari, duvara asarım. (-300 TL)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Çerçeveli Yapboz"
+          },
+          {
+            "type": "XP",
+            "value": "200"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "300"
+          }
+        ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Abi o yaş uyarısı senin için değildi ki... İstemez kalsın.",
+        "rewards": [],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TEMEL_TERMOS",
+    "title": "Akıllı Termos",
+    "description": "Temel dükkana elinde yepyeni, çelik bir termosla girer. 'Uşağum bu alet çok akıllidur! İçine sıcak çay koyayrum sıcak tutayi, soğuk su koyayrum soğuk tutayi! 500 liraya bırakurum.' Oyuncu sorar: 'Eee sorun ne abi?' Temel dertli dertli: 'Sorun şudur da, içine koyduğumun sıcak mi soğuk mi oldiğini nerden anliyi, aklum delirecek!'",
+    "npc": "Temel",
+    "weight": 80,
+    "cooldown": 12,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "500"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Abi sen yorma kafanı, ver ben anlarım onun dilinden. (-500 TL)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Çelik Termos"
+          },
+          {
+            "type": "XP",
+            "value": "300"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "500"
+          }
+        ],
+        "flags": [
+          "BOUGHT_THERMOS"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Temel abi git Allah aşkına, sabahtan beri siftahım yok zaten.",
+        "rewards": [],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TEMEL_AYNA",
+    "title": "Kayıp İkiz Kardeş",
+    "description": "Temel elinde eski, tozlu ve ahşap işlemeli bir boy aynasıyla dükkana dalar. 'Uşağum, geçen gün bu aynayi çatı katında buldum. İçine bi baktum, benim kayıp ikiz kardeşim bana bakayi! Adam da benum cibi beş parasız durayi, al şunu 250 liraya da ona bi yemek ismarlayayim.'",
+    "npc": "Temel",
+    "weight": 90,
+    "cooldown": 15,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "250"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Abi o sensin... Neyse ver aynayı, antika duruyor. (-250 TL)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Ahşap Boy Aynası"
+          },
+          {
+            "type": "XP",
+            "value": "400"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "250"
+          }
+        ],
+        "flags": []
+      },
+      {
+        "id": "C2",
+        "text": "Abi ikizine söyle dükkanımın önünü kapatmasın, hadi eyvallah!",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "100"
+          }
+        ],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_TEMEL_EL_FENERI",
+    "title": "Güneş Enerjili Fener",
+    "description": "Temel elinde kaliteli bir kamp feneriyle gelir. 'Uşağum bu fener bir harika! Güneşte şarj olayi, pırıl pırıl yanayi! Ama karanlukta şarji bitmesun diye hiç açmiyarum. 150 liraya vereyim sana.'",
+    "npc": "Temel",
+    "weight": 85,
+    "cooldown": 10,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "150"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Karanlıkta açmadığın feneri ben ne yapayım? Ama fener kaliteliymiş... (-150 TL)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Kamp Feneri"
+          },
+          {
+            "type": "XP",
+            "value": "250"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "150"
+          }
+        ],
+        "flags": [
+          "SMART_MERCHANT"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Sen onu gündüzleri yakmaya devam et abi, bana yaramaz.",
+        "rewards": [],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_HIKMET_DAYI_BRESIM",
+    "title": "Büyük Resmi Gören Adam",
+    "description": "Dükkana saçları hafif dağınık, nefes nefese kalmış Hikmet Dayı girdi. Elindeki katlanmış gazeteyi tezgaha vurarak: 'Uyan evlat uyan! Uyutuyorlar bizi! Sen burada ikinci el eşya satıyorum sanıyorsun ama baronlar, küresel sermaye ve tapınakçılar şu an senin bu dükkan üzerinden dünyayı yönetiyor! Her şeyi çözdüm... Sen ne diyorsun bu işe?'",
+    "npc": "Hikmet Dayı",
+    "weight": 85,
+    "cooldown": 15,
+    "conditions": [
+      {
+        "type": "MIN_DAY",
+        "value": "6"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Haklısın dayı! Hatta geçen hurdacıdan aldığım eski televizyonun içinde mikroçip buldum, kesin bizi izliyorlar! (Teoriyi Ateşle)",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "400"
+          }
+        ],
+        "penalties": [],
+        "flags": [
+          "CONSPIRACY_MASTER"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Hikmet Dayı sen yine sabahlara kadar komplo teorisi videoları izlemişsin, git evine uyu Allah aşkına. (Gerçekçi Ol)",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "100"
+          }
+        ],
+        "penalties": [],
+        "flags": []
+      },
+      {
+        "id": "C3",
+        "text": "Aman dayı sesini alçalt... Dün kapıya siyah paltolu adamlar geldi, peşimizde olabilirler. (Trolle)",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "250"
+          }
+        ],
+        "penalties": [],
+        "flags": [
+          "TROLL_MERCHANT"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EV_HIKMET_DAYI_FOLYO",
+    "title": "Alüminyum Folyo Şapka",
+    "description": "Hikmet Dayı nefes nefese dükkana daldı. 'Evlat! O bahsettiğin televizyondaki mikroçipi araştırdım. Zihin kontrolü yapıyorlar! 5G dalgalarını kesmek için acil kafama şapka yapmam lazım, dükkanda alüminyum folyo var mı? Dünyanın kaderi buna bağlı!'",
+    "npc": "Hikmet Dayı",
+    "weight": 100,
+    "cooldown": 10,
+    "conditions": [
+      {
+        "type": "HAS_FLAG",
+        "value": "CONSPIRACY_MASTER"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Al dayı şu folyoyu, hatta bana da bir tane yap, güvende olalım. (-50 TL)",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "500"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "50"
+          }
+        ],
+        "flags": [
+          "TINFOIL_HAT_GANG"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Dayı bende folyo yok, bakkal amcaya sor istersen.",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "100"
+          }
+        ],
+        "penalties": [],
+        "flags": []
+      }
+    ]
+  },
+  {
+    "id": "EV_HIKMET_DAYI_MINIBUS",
+    "title": "Siyah Minibüs",
+    "description": "Kafasında alüminyum folyodan bir şapkayla Hikmet Dayı dükkana sürünerek girdi. 'Psst! Evlat sessiz ol... Karşı kaldırıma siyah camlı bir minibüs çekti. Bizi izliyorlar. Elinde eski tip, tuşlu bataryası çıkan bir telefon var mı? Dinlenemeyen tek hat o! Hemen baronların yerini tespit etmeliyim!'",
+    "npc": "Ajan Hikmet (Folyolu)",
+    "weight": 120,
+    "cooldown": 15,
+    "conditions": [
+      {
+        "type": "HAS_FLAG",
+        "value": "TINFOIL_HAT_GANG"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Al dayı, şu yılan oyunu olan efsane telefon. Hattı kırılamaz bunun! (Eski Telefonu Ver)",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "800"
+          }
+        ],
+        "penalties": [],
+        "flags": [
+          "SAVED_THE_WORLD_WITH_HIKMET"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Dayı müşterileri korkutuyorsun folyolu folyolu, lütfen dışarı çık.",
+        "rewards": [],
+        "penalties": [
+          {
+            "type": "XP",
+            "value": "50"
+          }
+        ],
+        "flags": [
+          "HIKMET_KALBI_KIRIK"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EV_HIKMET_DAYI_HAKLIYMIS",
+    "title": "Gerçekleşen Kehanet",
+    "description": "Dükkanın kapısında siyah renkli, plakasız bir jip durdu. İçeri simsiyah takım elbiseli, telsiz kulaklıklı iki iri kıyım adam girdi. Etrafa soğuk bir bakış atıp: 'Dün buraya kafasında folyoyla giren şahsın o eski telefondan gönderdiği veriler canımızı sıktı. O adamın haklı olduğunu kimse bilmemeli.' deyip masaya içi para dolu, kalın bir zarf bıraktılar.",
+    "npc": "Siyah Giyen Adamlar",
+    "weight": 150,
+    "cooldown": 50,
+    "conditions": [
+      {
+        "type": "HAS_FLAG",
+        "value": "SAVED_THE_WORLD_WITH_HIKMET"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Zarfı hemen cebine at. 'Hikmet mi? Tanımıyorum bile. Ben sadece esnafım abicim.' (Sırrı Sakla)",
+        "rewards": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "10000"
+          },
+          {
+            "type": "XP",
+            "value": "1000"
+          }
+        ],
+        "penalties": [],
+        "flags": [
+          "SOLD_OUT_HIKMET",
+          "RICH_COWARD"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Zarfı elinin tersiyle it. 'Bizde satılık dava yok!' (Adamlar sinirlenip vitrini kırar)",
+        "rewards": [
+          {
+            "type": "XP",
+            "value": "3000"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "2000"
+          }
+        ],
+        "flags": [
+          "HIKMETIN_YOLDASI"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EV_HIKMET_DAYI_FINAL",
+    "title": "Kapanmayan Dosya",
+    "description": "Sabah dükkanı açtığında kapının altından atılmış bir zarf buluyorsun. İçinde alüminyum folyoya sarılı çok nadir bir altın sikke ve bir not var: 'Beni bulamadılar evlat, yeraltına indim. Sayende büyük resmi tüm dünyaya göstereceğim. Pili bitmeyen telsizini hep açık tut. - H.D.' Hikmet Dayı efsanesi devam ediyor!",
+    "npc": "Gizemli Zarf",
+    "weight": 200,
+    "cooldown": 999,
+    "conditions": [
+      {
+        "type": "HAS_FLAG",
+        "value": "HIKMETIN_YOLDASI"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Vay be Dayım... Yolun açık olsun! (Altın Sikkeyi Al)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Folyolu Altın Sikke"
+          },
+          {
+            "type": "XP",
+            "value": "2000"
+          }
+        ],
+        "penalties": [],
+        "flags": [
+          "HIKMET_LEGEND_LIVES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "EV_GIZEMLI_HARITA_1",
+    "title": "Aydın'ın Telaşı",
+    "description": "Dükkana nefes nefese Aydın girdi. Sürekli arkasına bakıyor. 'Kardeşim başım çok büyük belada! Köydeki eski evde dedemin sandığından bu tuhaf parşömen haritayı buldum. Dünden beri peşimde siyah cipli adamlar var. Şunu 1000 liraya al da ben ilk otobüsle şehirden çıkayım!'",
+    "npc": "Telaşlı Aydın",
+    "weight": 80,
+    "cooldown": 20,
+    "conditions": [
+      {
+        "type": "MIN_MONEY",
+        "value": "1000"
+      },
+      {
+        "type": "MIN_DAY",
+        "value": "12"
+      }
+    ],
+    "choices": [
+      {
+        "id": "C1",
+        "text": "Sen canını sıkma kardeşim, ver haritayı hemen git buralardan! (-1000 TL)",
+        "rewards": [
+          {
+            "type": "ITEM",
+            "value": "Eski Parşömen Harita"
+          },
+          {
+            "type": "XP",
+            "value": "500"
+          }
+        ],
+        "penalties": [
+          {
+            "type": "MONEY_EXACT",
+            "value": "1000"
+          }
+        ],
+        "flags": [
+          "BOUGHT_SECRET_MAP"
+        ]
+      },
+      {
+        "id": "C2",
+        "text": "Aydın kardeşim kusura bakma, dükkanı tehlikeye atamam. Almam bunu.",
+        "rewards": [],
+        "penalties": [
+          {
+            "type": "XP",
+            "value": "50"
+          }
+        ],
+        "flags": [
+          "REJECTED_AYDIN"
+        ]
+      }
+    ]
   }
 ]

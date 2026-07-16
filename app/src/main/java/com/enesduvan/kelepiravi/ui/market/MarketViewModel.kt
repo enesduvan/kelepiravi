@@ -54,7 +54,8 @@ data class PlayerState(
     // Türetilmiş ekonomi değerleri
     val portfolioValue: Double = 0.0,
     val totalInvestment: Double = 0.0,
-    val portfolioROI: Double = 0.0
+    val portfolioROI: Double = 0.0,
+    val activeModifiers: Map<String, Int> = emptyMap() // Ch14: Sürekli Event Etkileri
 )
 
 @Stable
@@ -175,7 +176,11 @@ class MarketViewModel(
                 dailyRevenue = entity?.dailyRevenue ?: 0.0,
                 portfolioValue = EconomyEngine.calculatePortfolioValue(inventory),
                 totalInvestment = EconomyEngine.calculateTotalInvestment(inventory),
-                portfolioROI = EconomyEngine.calculatePortfolioROI(inventory)
+                portfolioROI = EconomyEngine.calculatePortfolioROI(inventory),
+                activeModifiers = runCatching {
+                    if (entity?.activeModifiers.isNullOrBlank()) emptyMap()
+                    else kotlinx.serialization.json.Json.decodeFromString<Map<String, Int>>(entity!!.activeModifiers)
+                }.getOrDefault(emptyMap())
             )
         }
         .stateIn(
@@ -247,30 +252,34 @@ class MarketViewModel(
                 kotlinx.coroutines.delay(15000) // Her 15 saniyede bir tetiklenir
                 if (kotlin.random.Random.nextDouble() < 0.20) { // %20 ihtimalle fırsat düşer
                     val currentTrends = _playerStateForGenerator()?.marketTrends ?: emptyMap()
-                    val generatedItem = com.enesduvan.kelepiravi.data.market.MarketGenerator.generateItems(1, currentTrends).first()
+                    val currentModifiers = _playerStateForGenerator()?.activeModifiers ?: emptyMap()
+                    val generatedItems = com.enesduvan.kelepiravi.data.market.MarketGenerator.generateItems(1, currentTrends, currentModifiers)
                     
-                    val flashItem = generatedItem.copy(
-                        itemName = "🔥 FLASH: ${generatedItem.itemName}",
-                        salesValue = (generatedItem.estimatedValue.toDoubleOrNull() ?: 1.0 * 0.4).toLong().toString() // Çok kelepir
-                    )
+                    if (generatedItems.isNotEmpty()) {
+                        val generatedItem = generatedItems.first()
+                        val flashItem = generatedItem.copy(
+                            itemName = "🔥 FLASH: ${generatedItem.itemName}",
+                            salesValue = (generatedItem.estimatedValue.toDoubleOrNull() ?: 1.0 * 0.4).toLong().toString() // Çok kelepir
+                        )
                     
-                    _uiState.value = _uiState.value.copy(
-                        marketItems = listOf(flashItem) + _uiState.value.marketItems
-                    )
-                    
-                    _flashNotification.value = "Az önce ₺${flashItem.salesValue} değerinde ${generatedItem.itemName} ilanı düştü!"
-                    
-                    kotlinx.coroutines.delay(4000)
-                    _flashNotification.value = null
-                    
-                    // Flash deal'in başkası tarafından alınma ihtimali (otomatik kaybolma)
-                    launch {
-                        kotlinx.coroutines.delay(kotlin.random.Random.nextLong(3000, 8000))
-                        val currentItems = _uiState.value.marketItems
-                        if (currentItems.contains(flashItem)) {
-                            _uiState.value = _uiState.value.copy(
-                                marketItems = currentItems.filter { it != flashItem }
-                            )
+                        _uiState.value = _uiState.value.copy(
+                            marketItems = listOf(flashItem) + _uiState.value.marketItems
+                        )
+                        
+                        _flashNotification.value = "Az önce ₺${flashItem.salesValue} değerinde ${generatedItem.itemName} ilanı düştü!"
+                        
+                        kotlinx.coroutines.delay(4000)
+                        _flashNotification.value = null
+                        
+                        // Flash deal'in başkası tarafından alınma ihtimali (otomatik kaybolma)
+                        launch {
+                            kotlinx.coroutines.delay(kotlin.random.Random.nextLong(3000, 8000))
+                            val currentItems = _uiState.value.marketItems
+                            if (currentItems.contains(flashItem)) {
+                                _uiState.value = _uiState.value.copy(
+                                    marketItems = currentItems.filter { it != flashItem }
+                                )
+                            }
                         }
                     }
                 }
@@ -280,8 +289,9 @@ class MarketViewModel(
 
     fun refreshMarket() {
         val currentTrends = _playerStateForGenerator()?.marketTrends ?: emptyMap()
+        val currentModifiers = _playerStateForGenerator()?.activeModifiers ?: emptyMap()
         _uiState.value = _uiState.value.copy(
-            marketItems = MarketGenerator.generateItems(GameConstants.MARKET_BATCH_SIZE, currentTrends),
+            marketItems = MarketGenerator.generateItems(GameConstants.MARKET_BATCH_SIZE, currentTrends, currentModifiers),
             isRefreshing = false,
             selectedCategory = "Tümü"
         )
@@ -289,8 +299,9 @@ class MarketViewModel(
 
     fun loadMoreItems() {
         val currentTrends = _playerStateForGenerator()?.marketTrends ?: emptyMap()
+        val currentModifiers = _playerStateForGenerator()?.activeModifiers ?: emptyMap()
         val currentItems = _uiState.value.marketItems
-        val newItems = MarketGenerator.generateItems(GameConstants.MARKET_BATCH_SIZE, currentTrends)
+        val newItems = MarketGenerator.generateItems(GameConstants.MARKET_BATCH_SIZE, currentTrends, currentModifiers)
         _uiState.value = _uiState.value.copy(
             marketItems = currentItems + newItems
         )
@@ -414,13 +425,13 @@ class MarketViewModel(
         else (GameConstants.DAILY_REPAIR_LIMIT - state.dailyRepairsUsed).coerceAtLeast(0)
     }
 
-    fun calculateRepairCost(item: MarketItem): Double {
-        return repository.calculateRepairCost(item)
+    fun calculateRepairCost(item: MarketItem, isUsta: Boolean = false): Double {
+        return repository.calculateRepairCost(item, isUsta)
     }
 
-    fun repairItem(item: MarketItem) {
+    fun repairItem(item: MarketItem, isUsta: Boolean = false) {
         viewModelScope.launch {
-            when (val result = repository.repairItem(item)) {
+            when (val result = repository.repairItem(item, isUsta)) {
                 is RepairResult.Success -> {
                     _repairResult.value = RepairResultState(
                         isSuccess = true,
