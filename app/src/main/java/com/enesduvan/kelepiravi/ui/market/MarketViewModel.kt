@@ -485,8 +485,13 @@ class MarketViewModel(
             
             // Sonuçları kullanıcıya göster
             val resultText = buildString {
+                if (choice.outcomeText != null) {
+                    append(choice.outcomeText)
+                    append("\n\n")
+                }
+                
                 if (choice.rewards.isEmpty() && choice.penalties.isEmpty()) {
-                    append("Hiçbir şey olmadı.")
+                    if (choice.outcomeText == null) append("Hiçbir şey olmadı.")
                 } else {
                     if (choice.rewards.isNotEmpty()) {
                         append("KAZANIMLAR:\n")
@@ -503,7 +508,8 @@ class MarketViewModel(
                         }
                     }
                     if (choice.penalties.isNotEmpty()) {
-                        append("\nKAYIPLAR:\n")
+                        if (choice.rewards.isNotEmpty()) append("\n")
+                        append("KAYIPLAR:\n")
                         choice.penalties.forEach { p -> 
                             val valText = if (p.type == "MONEY_EXACT" || p.type == "MONEY_PERCENT") "₺${p.value}" else p.value
                             append("- ${p.type.replace("ITEM", "Eşya").replace("XP", "Tecrübe").replace("MONEY_EXACT", "Nakit")} $valText\n") 

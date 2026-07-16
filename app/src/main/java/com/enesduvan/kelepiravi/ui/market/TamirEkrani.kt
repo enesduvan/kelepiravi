@@ -109,6 +109,13 @@ fun TamirEkrani(viewModel: MarketViewModel) {
             val canAfford = (playerState.balance.toDoubleOrNull() ?: 0.0) >= selectedCost
             val canRepair = remainingRepairs > 0 && canAfford && !isRepairing
 
+            // Dinamik Metinler
+            val (cirakTitle, cirakSub, ustaTitle, ustaSub) = when (item.category.lowercase()) {
+                "emlak", "realestate", "ev" -> listOf("Ufak Tadilat", "Boya Badana", "Müteahhit", "Kapsamlı Restorasyon")
+                "otomotiv", "vehicles", "araba" -> listOf("Sanayi Ustası", "Lokal Boya", "Yetkili Servis", "Orijinal Parça")
+                else -> listOf("Çırak", "Ucuz ama riskli", "Usta", "Pahalı ama garantili")
+            }
+
             Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                 // Header
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -130,7 +137,9 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                             Text(item.itemName, color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(4.dp))
                             val (badgeBg, badgeText) = when {
-                                item.condition.contains("Tamir") || item.condition.contains("Bantlı")   -> ConditionRepairBg to ConditionRepair
+                                item.condition.contains("Tamir") || item.condition.contains("Bantlı") || 
+                                item.condition.contains("Arızalı") || item.condition.contains("Masraflı") || 
+                                item.condition.contains("Yıkık") || item.condition.contains("Pert") -> ConditionRepairBg to ConditionRepair
                                 else -> ConditionScratchBg to ConditionScratch
                             }
                             Box(modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
@@ -154,8 +163,8 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                             .padding(12.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                            Text("Çırak", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text("Ucuz ama riskli", color = MarketTextSecondary, fontSize = 10.sp)
+                            Text(cirakTitle, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text(cirakSub, color = MarketTextSecondary, fontSize = 10.sp)
                             Spacer(modifier = Modifier.height(8.dp))
                             Text("₺${formatBalance(cirakCost.toString())}", color = PrimaryOrange, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(8.dp))
@@ -173,8 +182,8 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                             .padding(12.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                            Text("Usta", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text("Pahalı ama garantili", color = MarketTextSecondary, fontSize = 10.sp)
+                            Text(ustaTitle, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text(ustaSub, color = MarketTextSecondary, fontSize = 10.sp)
                             Spacer(modifier = Modifier.height(8.dp))
                             Text("₺${formatBalance(ustaCost.toString())}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(8.dp))
@@ -187,7 +196,17 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Satışa Son Etki Bilgisi
-                val expectedResult = if(selectedOption == "Cirak") "Temiz" else "Kusursuz Temiz"
+                val expectedResultCirak = when(item.category.lowercase()) {
+                    "emlak", "realestate", "ev" -> "Masrafsız Temiz"
+                    "otomotiv", "vehicles", "araba" -> "Lokal Boyalı"
+                    else -> "Temiz"
+                }
+                val expectedResultUsta = when(item.category.lowercase()) {
+                    "emlak", "realestate", "ev" -> "Sıfır / Ultra Lüks"
+                    "otomotiv", "vehicles", "araba" -> "Hatasız Boyasız"
+                    else -> "Kusursuz Temiz"
+                }
+                val expectedResult = if(selectedOption == "Cirak") expectedResultCirak else expectedResultUsta
                 val expectedGain = if(selectedOption == "Cirak") (currentVal * 1.3) else (currentVal * 1.8)
                 Box(
                     modifier = Modifier.fillMaxWidth().background(Card, RoundedCornerShape(12.dp)).border(1.dp, MarketBorderSoft, RoundedCornerShape(12.dp)).padding(16.dp)

@@ -28,6 +28,7 @@ data class EventCondition(
 data class EventChoice(
     val id: String,
     val text: String,
+    val outcomeText: String? = null,
     val rewards: List<EventReward> = emptyList(),
     val penalties: List<EventPenalty> = emptyList(),
     val flags: List<String> = emptyList(),

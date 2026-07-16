@@ -427,7 +427,7 @@ object MarketGenerator {
 
     private data class Condition(val label: String, val valueMultiplier: Double)
 
-    private val CONDITIONS = buildList {
+    private val CONDITIONS_GENERAL = buildList {
         repeat(20) { add(Condition("Kusursuz Temiz",         1.00)) }
         repeat(30) { add(Condition("Hafif Çizik",            0.82)) }
         repeat(25) { add(Condition("Orta Hasar",             0.65)) }
@@ -435,15 +435,46 @@ object MarketGenerator {
         repeat(10) { add(Condition("Bantlı / Tamir Gerekli", 0.25)) }
     }
 
-    // Dolandırıcıların sahte olarak gösterdiği kondisyon (her zaman "Kusursuz")
-    private val SCAMMER_DISPLAYED_CONDITIONS = listOf("Kusursuz Temiz")
+    private val CONDITIONS_OTOMOTIV = buildList {
+        repeat(20) { add(Condition("Hatasız Boyasız",        1.00)) }
+        repeat(30) { add(Condition("Lokal Boyalı",           0.85)) }
+        repeat(25) { add(Condition("Çizik / Kaporta Hasarlı",0.70)) }
+        repeat(15) { add(Condition("Motor Arızalı",          0.50)) }
+        repeat(10) { add(Condition("Ağır Hasarlı / Pert",    0.30)) }
+    }
+
+    private val CONDITIONS_EMLAK = buildList {
+        repeat(20) { add(Condition("Sıfır / Ultra Lüks",     1.00)) }
+        repeat(30) { add(Condition("Masrafsız Temiz",        0.90)) }
+        repeat(25) { add(Condition("Ufak Tadilatlık",        0.75)) }
+        repeat(15) { add(Condition("Masraflı / Rutubetli",   0.55)) }
+        repeat(10) { add(Condition("Yıkık / Harabe",         0.35)) }
+    }
+
+    private fun getConditionList(category: String): List<Condition> {
+        return when (category.lowercase()) {
+            "otomotiv", "vehicles", "araba" -> CONDITIONS_OTOMOTIV
+            "emlak", "realestate", "ev" -> CONDITIONS_EMLAK
+            else -> CONDITIONS_GENERAL
+        }
+    }
+
+    private fun getScammerDisplayedCondition(category: String): String {
+        return getConditionList(category).first().label // En iyi kondisyonu gösterir
+    }
 
     // Dolandırıcıdan alındıktan sonra ortaya çıkacak gerçek kondisyon havuzu
-    private val SCAMMER_HIDDEN_CONDITIONS = buildList {
-        repeat(3)  { add(Condition("Orta Hasar",             0.65)) }
-        repeat(5)  { add(Condition("Kırık / Arızalı",        0.40)) }
-        repeat(2)  { add(Condition("Bantlı / Tamir Gerekli", 0.25)) }
+    private fun getScammerHiddenConditionList(category: String): List<Condition> {
+        val conditions = getConditionList(category)
+        return buildList {
+            repeat(3)  { add(conditions[2]) } // Orta halli kötü
+            repeat(5)  { add(conditions[3]) } // Kötü
+            repeat(2)  { add(conditions[4]) } // En kötü
+        }
     }
+
+    // Tüm kondisyonların birleşimi (Multiplier aramak için)
+    private val ALL_CONDITIONS = (CONDITIONS_GENERAL + CONDITIONS_OTOMOTIV + CONDITIONS_EMLAK).distinctBy { it.label }
 
     // ─── Satıcı Havuzu ────────────────────────────────────────────────────────
 
@@ -474,7 +505,7 @@ object MarketGenerator {
     // ─── Üretim Motoru ────────────────────────────────────────────────────────
 
     fun getConditionMultiplier(name: String): Double {
-        return CONDITIONS.find { it.label == name }?.valueMultiplier
+        return ALL_CONDITIONS.find { it.label == name }?.valueMultiplier
             ?: GameConstants.PERFECT_CONDITION_MULTIPLIER
     }
 
@@ -502,7 +533,9 @@ object MarketGenerator {
         product: ProductTemplate,
         marketTrends: Map<String, Double>
     ): MarketItem {
-        val condition = CONDITIONS.random(rng)
+        // Eşya kondisyonu (Kategoriye göre)
+        val conditionList = getConditionList(product.category)
+        val condition = conditionList.random(rng)
         val baseValue = rng.nextInt(product.baseMinValue, product.baseMaxValue)
         val variance = (
             baseValue *
@@ -556,11 +589,11 @@ object MarketGenerator {
         // Dolandırıcı tipi seç
         val scamType = ScamType.entries.random(rng)
 
-        // Gerçek kondisyon (gizli)
-        val hiddenCondition = SCAMMER_HIDDEN_CONDITIONS.random(rng)
-
-        // Gösterilen kondisyon: her zaman "Kusursuz Temiz"
-        val displayedCondition = SCAMMER_DISPLAYED_CONDITIONS.random(rng)
+        // Dolandırıcılar eşyayı en iyi kondisyonda (Kusursuz/Sıfır/Hatasız) gibi gösterir ama arkasında en kötülerinden biri çıkar
+        val hiddenCondition = getScammerHiddenConditionList(product.category).random(rng)
+        
+        // Sahte "temiz" kondisyon
+        val displayedCondition = getScammerDisplayedCondition(product.category)
 
         // Gerçek değer: hiddenCondition multiplier ile
         val baseValue = rng.nextInt(product.baseMinValue, product.baseMaxValue)

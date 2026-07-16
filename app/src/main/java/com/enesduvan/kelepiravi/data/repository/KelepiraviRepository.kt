@@ -220,19 +220,26 @@ class KelepiraviRepository(
     }
 
     fun calculateRepairCost(item: MarketItem): Double {
-        val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
+        val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition) ?: GameConstants.PERFECT_CONDITION_MULTIPLIER
         if (currentMultiplier >= GameConstants.PERFECT_CONDITION_MULTIPLIER) return 0.0
         val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
         val baseVal = if (currentMultiplier > 0) currentVal / currentMultiplier else currentVal
         val gain = baseVal - currentVal
         
-        // Ch8: Eşyanın temel değerine göre tamir masrafı (Pahalı eşyalar daha riskli)
-        val rarityMultiplier = when {
+        // Eşyanın temel değerine göre tamir masrafı (Pahalı eşyalar daha riskli)
+        var rarityMultiplier = when {
             baseVal >= 20000 -> 0.85
             baseVal >= 8000 -> 0.70
             baseVal >= 2000 -> 0.60
             else -> 0.50
         }
+
+        // Kategoriye özel çarpanlar (Ev ve araba tamirleri orantısal olarak çok daha masraflıdır)
+        when (item.category.lowercase()) {
+            "otomotiv", "vehicles", "araba" -> rarityMultiplier = 0.92
+            "emlak", "realestate", "ev" -> rarityMultiplier = 0.97
+        }
+        
         return gain * rarityMultiplier
     }
 
