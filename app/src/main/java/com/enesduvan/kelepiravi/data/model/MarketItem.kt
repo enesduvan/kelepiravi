@@ -19,5 +19,8 @@ data class MarketItem(
     val isScammer: Boolean = false,
     val scamType: String = "",        // ScamType.name veya boş string
     val hiddenCondition: String = "", // Gerçek kondisyon (alındıktan sonra ortaya çıkar)
-    val extras: List<String> = emptyList() // Ch13: Fatura, Kutu vb. ek özellikler
+    val extras: List<String> = emptyList(), // Ch13: Fatura, Kutu vb. ek özellikler
+    
+    // V6.0: Açıklama metni ve dolandırıcılık
+    val description: String = ""
 )

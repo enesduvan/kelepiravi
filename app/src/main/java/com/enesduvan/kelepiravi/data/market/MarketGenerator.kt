@@ -507,7 +507,7 @@ object MarketGenerator {
     )
 
     // Dolandırıcı isimleri — masum görünümlü
-    private val SCAMMER_SELLERS = listOf(
+    val SCAMMER_SELLERS = listOf(
         "Güvenilir Halit", "Dürüst Semih", "Temiz Adam Kürşat",
         "Açık Kalpli Nuri", "Şeffaf Satıcı Vedat", "Doğru Sözlü Cengiz",
         "Namuslu Hakan", "Helal Süt Emmiş Tarcan", "Nezaketli Faruk"
@@ -585,6 +585,20 @@ object MarketGenerator {
         val pool = IMAGE_POOLS[product.imageKey]
         val imageName = pool?.pickFor(condition.label) ?: "smartphone_clean_1"
 
+        // Normal açıklama üret
+        val normalDescriptions = listOf(
+            "İhtiyaçtan satılık, pazarlık payı vardır.",
+            "Çok az kullanıldı, sıfır ayarında.",
+            "Acil nakit ihtiyacından dolayı bu fiyata.",
+            "Yeni modelini aldığım için satıyorum.",
+            "Tertemiz ürün, gelip görebilirsiniz."
+        )
+        val description = if (extras.isNotEmpty()) {
+            normalDescriptions.random(rng) + " " + extras.joinToString(", ") + " mevcut."
+        } else {
+            normalDescriptions.random(rng)
+        }
+
         return MarketItem(
             condition = condition.label,
             sellerName = SELLERS.random(rng),
@@ -593,7 +607,8 @@ object MarketGenerator {
             estimatedValue = estimatedValue.toString(),
             imageName = imageName,
             category = product.category,
-            extras = extras
+            extras = extras,
+            description = description
         )
     }
 
@@ -646,6 +661,15 @@ object MarketGenerator {
         // Dolandırıcı isim havuzundan seç
         val sellerName = SCAMMER_SELLERS.random(rng)
 
+        // Dolandırıcı açıklaması
+        val description = when (scamType) {
+            ScamType.KUTU_SATISI -> "Sıfır gibi, jelatinleri bile üstünde. Sadece kutusu satılıktır, cihaz fiyata dahil değildir. İade kabul etmiyorum."
+            ScamType.BATARYA -> "Pil sağlığı %100! (Yeni değiştirdim yan sanayi ama olsun)"
+            ScamType.KOZMETIK -> "Çizik dahi yok, tertemiz cihaz."
+            ScamType.EKSIK_BILGI -> "Sadece ufak bir sorunu var, o da kullanıma engel değil."
+            else -> "Acil satılık, ilk gelen alır! Kaçırmayın!"
+        }
+
         return MarketItem(
             condition = displayedCondition,
             sellerName = sellerName,
@@ -656,7 +680,27 @@ object MarketGenerator {
             category = product.category,
             isScammer = true,
             scamType = scamType.name,
-            hiddenCondition = hiddenCondition.label
+            hiddenCondition = hiddenCondition.label,
+            description = description
         )
+    }
+
+    // V6.0: Satıcı Profili için özel ilan üretici
+    fun generateItemForSeller(rng: kotlin.random.Random, sellerName: String): MarketItem {
+        val product = PRODUCT_TEMPLATES.random(rng)
+        val isScammer = SCAMMER_SELLERS.contains(sellerName)
+        
+        // Eğer satıcı dolandırıcıysa hep dolandırıcı ilanları üretsin, değilse normal ilan
+        val item = if (isScammer) {
+            generateScammerItem(rng, product, emptyMap()).copy(sellerName = sellerName)
+        } else {
+            generateItem(rng, product, emptyMap()).copy(sellerName = sellerName)
+        }
+        
+        // Fiyatlarda ufak varyasyonlar yap ki hepsi aynı olmasın
+        val vary = rng.nextDouble(0.9, 1.1)
+        val newSalesValue = (item.salesValue.toDouble() * vary).roundToInt().toString()
+        
+        return item.copy(salesValue = newSalesValue)
     }
 }

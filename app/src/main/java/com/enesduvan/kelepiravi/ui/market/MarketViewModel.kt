@@ -51,6 +51,10 @@ data class PlayerState(
     val dailyRevenue: Double = 0.0,  // Ch8: Vergi hesaplaması için günlük ciro
     val shopLevel: Int = 1,          // Ch10: Dükkan kapasitesi
     val mechanicLevel: Int = 1,      // Ch10: Usta becerisi
+    // V6.0: Yeni İstatistikler
+    val successfulBargains: Int = 0,
+    val totalBargains: Int = 0,
+    val soldCategories: Map<String, Int> = emptyMap(),
     // Türetilmiş ekonomi değerleri
     val portfolioValue: Double = 0.0,
     val totalInvestment: Double = 0.0,
@@ -64,6 +68,7 @@ data class MarketUiState(
     val isRefreshing: Boolean = false,
     val selectedItem: MarketItem? = null,
     val selectedCategory: String = "Tümü",
+    val searchQuery: String = "", // V6.0 Arama
     val isDayAdvancing: Boolean = false,
     val isLootBoxSheetOpen: Boolean = false, // Ch9: Zamazon Kutu seçim ekranı
     val purchasedLootBoxItems: List<MarketItem>? = null, // Ch9: Kutudan çıkan eşyalar (reveal için)
@@ -130,6 +135,17 @@ data class RepairResultState(
     val itemName: String = ""
 )
 
+// V6: Satıcı Profili State
+@Stable
+data class SellerProfileState(
+    val sellerName: String,
+    val sellerTitle: String,
+    val rating: Double,
+    val joinYear: Int,
+    val totalSales: Int,
+    val otherItems: List<MarketItem>
+)
+
 // ─── ViewModel ───────────────────────────────────────────────────────────────
 
 class MarketViewModel(
@@ -174,6 +190,12 @@ class MarketViewModel(
                 dailyRepairsUsed = entity?.dailyRepairsUsed ?: 0,
                 lastRepairDay = entity?.lastRepairDay ?: 0,
                 dailyRevenue = entity?.dailyRevenue ?: 0.0,
+                successfulBargains = entity?.successfulBargains ?: 0,
+                totalBargains = entity?.totalBargains ?: 0,
+                soldCategories = runCatching {
+                    if (entity?.soldCategories.isNullOrBlank()) emptyMap()
+                    else kotlinx.serialization.json.Json.decodeFromString<Map<String, Int>>(entity!!.soldCategories)
+                }.getOrDefault(emptyMap()),
                 portfolioValue = EconomyEngine.calculatePortfolioValue(inventory),
                 totalInvestment = EconomyEngine.calculateTotalInvestment(inventory),
                 portfolioROI = EconomyEngine.calculatePortfolioROI(inventory),
@@ -221,6 +243,30 @@ class MarketViewModel(
     /** V3.0: Flash Fırsat Bildirimi */
     private val _flashNotification = MutableStateFlow<String?>(null)
     val flashNotification: StateFlow<String?> = _flashNotification.asStateFlow()
+
+    /** V6.0: Satıcı Profili */
+    private val _sellerProfile = MutableStateFlow<SellerProfileState?>(null)
+    val sellerProfile: StateFlow<SellerProfileState?> = _sellerProfile.asStateFlow()
+
+    fun openSellerProfile(sellerName: String, sellerTitle: String) {
+        val rng = kotlin.random.Random(sellerName.hashCode())
+        val isScammer = SCAMMER_SELLERS.contains(sellerName)
+        
+        val rating = if (isScammer) rng.nextDouble(1.0, 3.5) else rng.nextDouble(3.8, 5.0)
+        val joinYear = rng.nextInt(2015, 2024)
+        val totalSales = rng.nextInt(1, 500)
+        
+        // Rastgele 2-3 ilan daha oluştur
+        val otherItems = List(rng.nextInt(2, 4)) {
+            MarketGenerator.generateItemForSeller(rng, sellerName)
+        }
+        
+        _sellerProfile.value = SellerProfileState(sellerName, sellerTitle, rating, joinYear, totalSales, otherItems)
+    }
+
+    fun closeSellerProfile() {
+        _sellerProfile.value = null
+    }
 
     init {
         viewModelScope.launch { repository.initializePlayerIfNeeded() }
@@ -537,8 +583,18 @@ class MarketViewModel(
     }
 
     fun filteredMarketItems(uiState: MarketUiState): List<MarketItem> {
-        return if (uiState.selectedCategory == "Tümü") uiState.marketItems
-        else uiState.marketItems.filter { it.category == uiState.selectedCategory }
+        var items = uiState.marketItems
+        if (uiState.selectedCategory != "Tümü") {
+            items = items.filter { it.category == uiState.selectedCategory }
+        }
+        if (uiState.searchQuery.isNotBlank()) {
+            items = items.filter { it.itemName.contains(uiState.searchQuery, ignoreCase = true) }
+        }
+        return items
+    }
+    
+    fun updateSearchQuery(query: String) {
+        _uiState.value = _uiState.value.copy(searchQuery = query)
     }
 
     // ─── Pazarlık (Bargain) Mantığı ───────────────────────────────────────────

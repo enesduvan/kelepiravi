@@ -63,4 +63,7 @@ dependencies {
 
     // Compose ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }

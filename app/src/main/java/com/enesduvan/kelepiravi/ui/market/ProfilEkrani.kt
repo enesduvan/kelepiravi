@@ -50,6 +50,13 @@ fun ProfilEkrani(viewModel: MarketViewModel, listingViewModel: ListingViewModel)
     val itemsBought = playerState.itemsBought
     val itemsSold = playerState.itemsSold
     
+    // V6.0: Yeni İstatistikler
+    val highestProfit = playerState.highestProfit
+    val successRate = if (playerState.totalBargains > 0) {
+        (playerState.successfulBargains.toFloat() / playerState.totalBargains.toFloat() * 100).toInt()
+    } else 0
+    val bestCategory = playerState.soldCategories.maxByOrNull { it.value }?.key ?: "Yok"
+    
     val requiredXp = level * (level + 1) * GameConstants.XP_LEVEL_FACTOR
     val currentLevelBaseXp = (level - 1) * level * GameConstants.XP_LEVEL_FACTOR
     val targetProgress = (xp - currentLevelBaseXp).toFloat() / (requiredXp - currentLevelBaseXp).coerceAtLeast(1).toFloat()
@@ -194,16 +201,6 @@ fun ProfilEkrani(viewModel: MarketViewModel, listingViewModel: ListingViewModel)
             Spacer(modifier = Modifier.height(12.dp))
             
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                // Toplam Satış
-                StatBox(
-                    modifier = Modifier.weight(1f),
-                    icon = Icons.Default.ShoppingCart,
-                    iconTint = Color(0xFF64B5F6),
-                    title = "Toplam Satış",
-                    value = "$itemsSold",
-                    subValue = "Ürün",
-                    chartColor = Color(0xFF64B5F6)
-                )
                 // Toplam Kâr
                 StatBox(
                     modifier = Modifier.weight(1f),
@@ -214,6 +211,39 @@ fun ProfilEkrani(viewModel: MarketViewModel, listingViewModel: ListingViewModel)
                     subValue = "Net Kâr",
                     chartColor = MoneyGreen
                 )
+                // En Büyük Kâr
+                StatBox(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Default.Star,
+                    iconTint = Color(0xFFFFD700),
+                    title = "En Büyük Kâr",
+                    value = "₺${formatBalance(highestProfit.toString())}",
+                    subValue = "Tek Satışta",
+                    chartColor = Color(0xFFFFD700)
+                )
+                // Başarı Oranı
+                StatBox(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Default.ThumbUp,
+                    iconTint = Color(0xFF4DB6AC),
+                    title = "Pazarlık",
+                    value = "%$successRate",
+                    subValue = "Başarı Oranı",
+                    chartColor = Color(0xFF4DB6AC)
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                // Toplam Satış
+                StatBox(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Default.ShoppingCart,
+                    iconTint = Color(0xFF64B5F6),
+                    title = "Toplam Satış",
+                    value = "$itemsSold",
+                    subValue = "Ürün",
+                    chartColor = Color(0xFF64B5F6)
+                )
                 // Alınan Ürün
                 StatBox(
                     modifier = Modifier.weight(1f),
@@ -223,6 +253,16 @@ fun ProfilEkrani(viewModel: MarketViewModel, listingViewModel: ListingViewModel)
                     value = "$itemsBought",
                     subValue = "Adet",
                     chartColor = Color(0xFFAB47BC)
+                )
+                // En Çok Satan Kategori
+                StatBox(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Default.Category,
+                    iconTint = Color(0xFFFFA726),
+                    title = "Favori",
+                    value = bestCategory.take(8) + if(bestCategory.length > 8) ".." else "",
+                    subValue = "Kategori",
+                    chartColor = Color(0xFFFFA726)
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))

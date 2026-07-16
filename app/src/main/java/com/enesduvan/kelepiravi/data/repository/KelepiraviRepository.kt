@@ -291,12 +291,27 @@ class KelepiraviRepository(
                     itemsBought = basePlayer.itemsBought + 1,
                     rareItemsFound = newRareCount,
                     hasBoughtScam = newBoughtScam,
-                    hasBoughtAbsurd = newBoughtAbsurd
+                    hasBoughtAbsurd = newBoughtAbsurd,
+                    successfulBargains = basePlayer.successfulBargains + 1,
+                    totalBargains = basePlayer.totalBargains + 1
                 )
             )
             dao.updateInventory(finalPlayer)
             true
         }
+        }
+    }
+
+    suspend fun recordFailedBargain() {
+        mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                dao.updateInventory(
+                    player.copy(
+                        totalBargains = player.totalBargains + 1
+                    )
+                )
+            }
         }
     }
 
@@ -350,6 +365,9 @@ class KelepiraviRepository(
                 (profit / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
             val basePlayer = processXpGain(player, xpGain)
             val updatedListings = basePlayer.activeListings.filterNot { it.item.isSameInventoryItem(itemInInventory) }
+            val newSoldCategories = basePlayer.soldCategories.toMutableMap()
+            newSoldCategories[itemInInventory.category] = (newSoldCategories[itemInInventory.category] ?: 0) + 1
+
             val finalPlayer = processAchievements(
                 basePlayer.copy(
                     balance = (currentBalance + sellPrice).toString(),
@@ -358,7 +376,10 @@ class KelepiraviRepository(
                     itemsSold = basePlayer.itemsSold + 1,
                     totalProfit = basePlayer.totalProfit + profit,
                     dailyRevenue = basePlayer.dailyRevenue + sellPrice, // Ch8: Günlük ciroya ekle
-                    highestProfit = newHighestProfit
+                    highestProfit = newHighestProfit,
+                    successfulBargains = basePlayer.successfulBargains + 1,
+                    totalBargains = basePlayer.totalBargains + 1,
+                    soldCategories = kotlinx.serialization.json.Json.encodeToString(newSoldCategories)
                 )
             )
 
@@ -470,6 +491,9 @@ class KelepiraviRepository(
                 val xpGain = GameConstants.SELL_BASE_XP +
                     (profit / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
                 val basePlayer = processXpGain(player, xpGain)
+                val newSoldCategories = basePlayer.soldCategories.toMutableMap()
+                newSoldCategories[listing.item.category] = (newSoldCategories[listing.item.category] ?: 0) + 1
+
                 val finalPlayer = processAchievements(
                     basePlayer.copy(
                         balance = (currentBalance + agreedPrice).toString(),
@@ -478,7 +502,10 @@ class KelepiraviRepository(
                         itemsSold = basePlayer.itemsSold + 1,
                         totalProfit = basePlayer.totalProfit + profit,
                         dailyRevenue = basePlayer.dailyRevenue + agreedPrice, // Ch8: Günlük ciroya ekle
-                        highestProfit = newHighestProfit
+                        highestProfit = newHighestProfit,
+                        successfulBargains = basePlayer.successfulBargains + 1,
+                        totalBargains = basePlayer.totalBargains + 1,
+                        soldCategories = kotlinx.serialization.json.Json.encodeToString(newSoldCategories)
                     )
                 )
 

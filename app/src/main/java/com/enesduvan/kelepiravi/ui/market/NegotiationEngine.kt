@@ -207,6 +207,10 @@ class NegotiationEngine(
             lastPlayerOfferAmount = offerAmount,
             relationshipDelta = relationshipDelta
         )
+
+        if (isFailed) {
+            scope.launch { repository.recordFailedBargain() }
+        }
     }
 
     fun sendMoneyToScammer() {
@@ -243,6 +247,7 @@ class NegotiationEngine(
             isFailed = true,
             messages = updatedMessages
         )
+        scope.launch { repository.recordFailedBargain() }
     }
 
     fun buyAgreedItem() {
@@ -436,6 +441,10 @@ class NegotiationEngine(
             lastPlayerOfferAmount = offerAmount,
             relationshipDelta = relationshipDelta
         )
+
+        if (isFailed) {
+            scope.launch { repository.recordFailedBargain() }
+        }
     }
 
     fun sellAgreedItem() {

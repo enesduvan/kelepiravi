@@ -31,8 +31,13 @@ enum class ScamType(
     ),
     SAHTE_KELEPIR(
         label = "Sahte Kelepir",
-        warningText = "Kelepir gibi görünmüştü...",
-        revealText = "Piyasa fiyatından %30 pahalı! Satıcı seni ahmak yerine koymuş. 📦"
+        warningText = "Fiyat çok iyiydi, kaçırmak istemedim...",
+        revealText = "Ürün aslında çok daha değersiz çıktı. Piyasayı iyi araştırmak lazımdı. 📉"
+    ),
+    KUTU_SATISI(
+        label = "Kutu Satıcısı",
+        warningText = "Fiyatı çok uygundu...",
+        revealText = "Açıklamada 'sadece kutusu satılık' yazıyormuş! Okumadan aldığın için boş kutuya para verdin! 📦😂"
     )
 }
 

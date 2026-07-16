@@ -127,6 +127,35 @@ fun MarketScreen(viewModel: MarketViewModel) {
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
                     )
 
+                    // V6.0: Arama Çubuğu
+                    OutlinedTextField(
+                        value = uiState.searchQuery,
+                        onValueChange = { viewModel.updateSearchQuery(it) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 4.dp),
+                        placeholder = { Text("Ne arıyorsunuz?", color = TextSecondary) },
+                        leadingIcon = { Icon(androidx.compose.material.icons.Icons.Default.Search, contentDescription = "Ara", tint = TextSecondary) },
+                        trailingIcon = {
+                            if (uiState.searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                                    Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Temizle", tint = TextSecondary)
+                                }
+                            }
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = PrimaryOrange,
+                            unfocusedBorderColor = SurfaceVariant,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary,
+                            cursorColor = PrimaryOrange,
+                            focusedContainerColor = Surface,
+                            unfocusedContainerColor = Surface
+                        ),
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+
                     val categoriesList = remember {
                         listOf("Tümü", "Elektronik", "Ev Aletleri", "Giyim", "Spor", "Koleksiyon")
                     }
@@ -241,7 +270,6 @@ fun MarketScreen(viewModel: MarketViewModel) {
             )
         }
 
-        // Ch6: Dolandırıcı reveal dialog
         AnimatedVisibility(
             visible = scamReveal != null,
             enter = fadeIn(tween(250)) + scaleIn(tween(350), initialScale = 0.8f),
@@ -249,6 +277,25 @@ fun MarketScreen(viewModel: MarketViewModel) {
         ) {
             scamReveal?.let { item ->
                 ScamRevealDialog(item = item, onDismiss = { viewModel.dismissScamReveal() })
+            }
+        }
+
+        // V6.0: Satıcı Profili Dialogu
+        val sellerProfile by viewModel.sellerProfile.collectAsState()
+        AnimatedVisibility(
+            visible = sellerProfile != null,
+            enter = fadeIn(tween(250)) + scaleIn(tween(350), initialScale = 0.8f),
+            exit = fadeOut(tween(200)) + scaleOut(tween(200))
+        ) {
+            sellerProfile?.let { profile ->
+                SellerProfileDialog(
+                    profile = profile, 
+                    onDismiss = { viewModel.closeSellerProfile() },
+                    onItemClick = { item -> 
+                        viewModel.closeSellerProfile()
+                        viewModel.startBargain(item)
+                    }
+                )
             }
         }
     }

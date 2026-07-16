@@ -78,7 +78,8 @@ fun MarketBottomSheetContent(
     inventorySize: Int,
     shopLevel: Int,
     onClose: () -> Unit,
-    onPurchase: () -> Unit
+    onPurchase: () -> Unit,
+    onSellerClick: () -> Unit = {}
 ) {
     val guncelBakiyeStr = formatBalance(playerBalance)
 
@@ -132,10 +133,13 @@ fun MarketBottomSheetContent(
 
                 Spacer(modifier = Modifier.height(2.dp))
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(painter = painterResource(id = R.drawable.ic_person), contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { onSellerClick() }.padding(vertical = 4.dp, horizontal = 2.dp)
+                ) {
+                    Icon(painter = painterResource(id = R.drawable.ic_person), contentDescription = null, tint = PrimaryOrange, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Satıcı: ${item.sellerName}", color = MarketTextSecondary, fontSize = 12.sp)
+                    Text(text = "Satıcı: ${item.sellerName} (Görüntüle)", color = PrimaryOrange, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -166,6 +170,18 @@ fun MarketBottomSheetContent(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(text = "Bu ürün piyasaya göre yaklaşık %20 ucuz görünüyor!", color = MarketTextSecondary, fontSize = 11.sp, lineHeight = 16.sp)
                     }
+                }
+
+                if (item.description.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Açıklama:", color = MarketTextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "\"${item.description}\"",
+                        color = MarketTextSecondary,
+                        fontSize = 13.sp,
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        lineHeight = 18.sp
+                    )
                 }
             }
         }

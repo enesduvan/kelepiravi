@@ -32,5 +32,8 @@ data class UserInventoryEntity(
     val totalRepairs: Int = 0, // v13 - Toplam Tamir Sayısı
     val hasBoughtScam: Boolean = false, // v13 - Dolandırılma Durumu
     val hasBoughtAbsurd: Boolean = false, // v13 - Absürt eşya (NASA vb.) alım durumu
-    val activeModifiers: String = "{}" // v14 - Aktif Modifierlar (JSON Map: String -> Int)
+    val activeModifiers: String = "{}", // v14 - Aktif Modifierlar (JSON Map: String -> Int)
+    val successfulBargains: Int = 0, // v15
+    val totalBargains: Int = 0, // v15
+    val soldCategories: String = "{}" // v15 - En çok satılan kategori (JSON Map)
 )
