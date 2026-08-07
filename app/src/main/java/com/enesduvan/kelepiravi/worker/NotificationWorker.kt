@@ -39,7 +39,7 @@ class NotificationWorker(
     }
 
     private fun showNotification(title: String, message: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION.SDK_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 return
             }
@@ -48,7 +48,7 @@ class NotificationWorker(
         val channelId = "kelepiravi_channel"
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION.SDK_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
                 "Kelepir Avı Bildirimleri",

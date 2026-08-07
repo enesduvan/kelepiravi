@@ -123,7 +123,8 @@ kayit_klasoru = os.path.join(os.getcwd(), "Duvance_Gorselleri")
 os.makedirs(kayit_klasoru, exist_ok=True)
 
 # Edge tarayıcı profil yolu
-user_data_dir = os.path.join(os.environ["LOCALAPPDATA"], "Microsoft", "Edge", "User Data")
+#user_data_dir = os.path.join(os.environ["LOCALAPPDATA"], "Microsoft", "Edge", "User Data")
+user_data_dir = os.path.join(os.getcwd(), "PlaywrightEdgeProfile")
 
 # Promptları hafızada oluştur (75 item x 10 condition = 750 set)
 envanter_listesi = {}
@@ -143,79 +144,123 @@ with sync_playwright() as p:
     )
     
     page = browser.pages[0] if browser.pages else browser.new_page()
+    page.set_default_timeout(60000)
     
     sayac = 1
     for dosya_adi, prompt in envanter_listesi.items():
         print(f"\n⚙️ [{sayac}/{len(envanter_listesi)}] Üretiliyor: {dosya_adi}")
         sayac += 1
         
-        # Kaldığımız yerden devam etme kontrolü (1. varyasyon varsa atla)
-        if os.path.exists(os.path.join(kayit_klasoru, f"{dosya_adi}_varyasyon1.jpg")):
-            print(f"⏩ Zaten mevcut, atlanıyor: {dosya_adi}")
+        # Kaldığımız yerden devam etme kontrolü (4 varyasyon da varsa atla)
+        tamamlandi = True
+        for i in range(1, 5):
+            if not os.path.exists(os.path.join(kayit_klasoru, f"{dosya_adi}_varyasyon{i}.jpg")):
+                tamamlandi = False
+                break
+                
+        if tamamlandi:
+            print(f"⏩ Zaten 4 varyasyonuyla mevcut, atlanıyor: {dosya_adi}")
             continue
 
-        page.goto("https://www.bing.com/images/create", wait_until="networkidle")
-        
-        try:
-            # Promptu gir
-            textarea = page.wait_for_selector("textarea.b_searchbox", timeout=10000)
-            textarea.fill("")
-            textarea.fill(prompt)
-            
-            # Oluştura bas
-            create_button = page.wait_for_selector("#create_btn_c", timeout=10000)
-            create_button.click()
-            
-            print("⏳ Arka planda üretim başladı. 35 saniye bekleniyor...")
-            time.sleep(35)
-            
-            print("🔄 F5 Atılıyor... (Önbellekteki görselleri ekrana çekme)")
-            page.reload(wait_until="domcontentloaded") 
-            
-            print("🔍 Ekranda üretilen varyasyonlar aranıyor...")
-            # İlk OIG imzalı resmin yüklenmesini bekle
-            page.wait_for_selector("img[src*='OIG']", timeout=30000)
-            
-            # TRİCK: Diğer 3 resmin de yüklenmesi için bota 3 saniye mola (Fren) ver
-            time.sleep(3)
-            
-            # Ekrana düşen tüm resim elementlerini yakala
-            gorsel_elementleri = page.query_selector_all("img[src*='OIG']")
-            
-            # Sadece 4 adet benzersiz ve tam çözünürlüklü linki filtrele
-            benzersiz_urller = []
-            for gorsel in gorsel_elementleri:
-                gorsel_url = gorsel.get_attribute("src")
-                if "?" in gorsel_url:
-                    gorsel_url = gorsel_url.split("?")[0]
+        basarili = False
+        deneme = 0
+        while not basarili and deneme < 3:
+            deneme += 1
+            try:
+                print(f"🌐 Bing Image Creator'a gidiliyor (Deneme {deneme})...")
+                page.goto("https://www.bing.com/images/create/ai-image-generator", wait_until="domcontentloaded")
                 
-                if gorsel_url not in benzersiz_urller:
-                    benzersiz_urller.append(gorsel_url)
+                # Promptu gir
+                print("⏳ Prompt kutusu aranıyor...")
+                page.wait_for_timeout(2000) # JS'nin tam oturması için kısa bir es (SPA problemi için)
                 
-                if len(benzersiz_urller) == 4:
-                    break
+                textarea = page.locator("textarea:visible").first
+                textarea.wait_for(state="visible", timeout=30000)
+                textarea.click()
+                page.wait_for_timeout(500)
+                textarea.fill(prompt)
+                
+                # Bing'in (React/Angular) girdiğimizi algılaması için kısa mola
+                page.wait_for_timeout(1000)
+                
+                # Eğer hala boş görünüyorsa, harf harf yazmayı (klavye simülasyonu) dene
+                if len(textarea.input_value()) < 5:
+                    print("⚠️ Kutu tam dolmadı, manuel simülasyonla harf harf yazılıyor...")
+                    textarea.click()
+                    textarea.press_sequentially(prompt, delay=10)
+                    page.wait_for_timeout(1000)
 
-            # Bulunan 4 linki sırayla indir
-            for index, gorsel_url in enumerate(benzersiz_urller):
-                image_page = browser.new_page()
-                response = image_page.goto(gorsel_url)
+                # Oluştura bas
+                print("⏳ Oluştur butonuna basılıyor...")
+                btn_create = page.get_by_role("button", name="Create")
+                btn_olustur = page.get_by_role("button", name="Oluştur")
                 
-                varyasyon_adi = f"{dosya_adi}_varyasyon{index + 1}.jpg"
-                dosya_yolu = os.path.join(kayit_klasoru, varyasyon_adi)
+                if btn_create.is_visible():
+                    btn_create.click()
+                elif btn_olustur.is_visible():
+                    btn_olustur.click()
+                else:
+                    # En kötü ihtimalle içinde Create/Oluştur geçen herhangi bir butonu bul
+                    btn = page.locator("button").filter(has_text="Create").first
+                    if not btn.is_visible():
+                        btn = page.locator("button").filter(has_text="Oluştur").first
+                    btn.click()
                 
-                with open(dosya_yolu, "wb") as f:
-                     f.write(response.body())
+                print("⏳ Arka planda üretim başladı. Görsellerin hazırlanması bekleniyor...")
                 
-                image_page.close()
-                print(f"  └─ İndirildi: {varyasyon_adi}")
+                yeni_urller = []
+                # Eşyaya özgü çok spesifik bir kelime öbeği (Böylece eski resimlerle asla karışmaz)
+                anahtar_kelime = item_desc.split(",")[0].lower().strip()
                 
-            print(f"✅ BAŞARILI: {dosya_adi} için {len(benzersiz_urller)} varyasyon kaydedildi!")
-            
-        except Exception as e:
-            print(f"❌ HATA: {dosya_adi} işlenemedi. Atlanıyor... ({e})")
+                # Maksimum 90 saniye boyunca sayfadaki taze resimleri taramaya devam et
+                for _ in range(45):
+                    gorseller = page.locator("img").all()
+                    yeni_urller = []
+                    for g in gorseller:
+                        src = g.get_attribute("src")
+                        alt_text = g.get_attribute("alt") or ""
+                        
+                        # Eğer resmin alt metni bizim promptumuzun anahtar kelimesini içeriyorsa bu kesinlikle YENİ resimdir!
+                        if src and anahtar_kelime in alt_text.lower():
+                            clean_url = src.split("?")[0]
+                            if clean_url.startswith("https://th.bing.com/th/id/") and clean_url not in yeni_urller:
+                                yeni_urller.append(clean_url)
+                    
+                    if len(yeni_urller) >= 4:
+                        break
+                        
+                    page.wait_for_timeout(2000)
+
+                if len(yeni_urller) == 0:
+                    raise Exception("Ekranda yeni üretilmiş görsel linki bulunamadı! (Engellenen kelime, ban veya zaman aşımı olabilir)")
+
+                # Sadece en yeni 4 linki indir
+                for index, gorsel_url in enumerate(yeni_urller[:4]):
+                    image_page = browser.new_page()
+                    response = image_page.goto(gorsel_url, timeout=30000)
+                    
+                    if response and response.status == 200:
+                        varyasyon_adi = f"{dosya_adi}_varyasyon{index + 1}.jpg"
+                        dosya_yolu = os.path.join(kayit_klasoru, varyasyon_adi)
+                        with open(dosya_yolu, "wb") as f:
+                             f.write(response.body())
+                        print(f"  └─ İndirildi: {varyasyon_adi}")
+                    
+                    image_page.close()
+                    
+                print(f"✅ BAŞARILI: {dosya_adi} için {min(4, len(yeni_urller))} varyasyon kaydedildi!")
+                basarili = True
+                
+            except Exception as e:
+                print(f"❌ HATA: {dosya_adi} işlenirken hata oluştu: {e}")
+                if deneme < 3:
+                    print("🔄 Sayfa yenilenip tekrar denenecek...")
+                    page.wait_for_timeout(3000)
+                else:
+                    print(f"⏭️ 3 denemede de başarısız olundu. Atlanıyor...")
             
         # Ban yememek için iki prompt arası kısa mola
-        time.sleep(5)
+        page.wait_for_timeout(5000)
         
     browser.close()
     print("\n🎉 OYUNUN TÜM 3000 ASSETİ (750x4 VARYASYONUYLA) BAŞARIYLA İNDİRİLDİ!")

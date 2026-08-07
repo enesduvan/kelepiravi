@@ -365,7 +365,12 @@ class KelepiraviRepository(
                 (profit / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
             val basePlayer = processXpGain(player, xpGain)
             val updatedListings = basePlayer.activeListings.filterNot { it.item.isSameInventoryItem(itemInInventory) }
-            val newSoldCategories = basePlayer.soldCategories.toMutableMap()
+            val newSoldCategories = try {
+                if (basePlayer.soldCategories.isBlank()) mutableMapOf<String, Int>()
+                else Json.decodeFromString<Map<String, Int>>(basePlayer.soldCategories).toMutableMap()
+            } catch (e: Exception) {
+                mutableMapOf<String, Int>()
+            }
             newSoldCategories[itemInInventory.category] = (newSoldCategories[itemInInventory.category] ?: 0) + 1
 
             val finalPlayer = processAchievements(
@@ -379,7 +384,7 @@ class KelepiraviRepository(
                     highestProfit = newHighestProfit,
                     successfulBargains = basePlayer.successfulBargains + 1,
                     totalBargains = basePlayer.totalBargains + 1,
-                    soldCategories = kotlinx.serialization.json.Json.encodeToString(newSoldCategories)
+                    soldCategories = Json.encodeToString<Map<String, Int>>(newSoldCategories)
                 )
             )
 
@@ -491,7 +496,12 @@ class KelepiraviRepository(
                 val xpGain = GameConstants.SELL_BASE_XP +
                     (profit / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
                 val basePlayer = processXpGain(player, xpGain)
-                val newSoldCategories = basePlayer.soldCategories.toMutableMap()
+                val newSoldCategories = try {
+                    if (basePlayer.soldCategories.isBlank()) mutableMapOf<String, Int>()
+                    else Json.decodeFromString<Map<String, Int>>(basePlayer.soldCategories).toMutableMap()
+                } catch (e: Exception) {
+                    mutableMapOf<String, Int>()
+                }
                 newSoldCategories[listing.item.category] = (newSoldCategories[listing.item.category] ?: 0) + 1
 
                 val finalPlayer = processAchievements(
@@ -505,7 +515,7 @@ class KelepiraviRepository(
                         highestProfit = newHighestProfit,
                         successfulBargains = basePlayer.successfulBargains + 1,
                         totalBargains = basePlayer.totalBargains + 1,
-                        soldCategories = kotlinx.serialization.json.Json.encodeToString(newSoldCategories)
+                        soldCategories = Json.encodeToString<Map<String, Int>>(newSoldCategories)
                     )
                 )
 

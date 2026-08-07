@@ -332,6 +332,14 @@ object MarketGenerator {
         "silver_watch" to ImagePool(
             clean = listOf("silvermetalwatch", "smashedmetalwatch"),
             damaged = listOf("silvermetalwatch", "smashedmetalwatch")
+        ),
+        "piknik_tupu" to ImagePool(
+            clean = listOf("piknik_tupu"),
+            damaged = listOf("piknik_tupu")
+        ),
+        "iphone" to ImagePool(
+            clean = listOf("iphone"),
+            damaged = listOf("iphone")
         )
     )
 
@@ -422,7 +430,31 @@ object MarketGenerator {
         ProductTemplate("Bez Çanta", "Clothing", "bez_canta", 35, 75),
         ProductTemplate("Mini Fırın", "Home_appliances", "mini_firin", 1050, 2250),
         ProductTemplate("Kamera", "Electronics", "kamera_resim", 5950, 12750),
-        ProductTemplate("Oyun Kulaklığı", "Electronics", "oyun_kulakligi", 1750, 3750)
+        ProductTemplate("Oyun Kulaklığı", "Electronics", "oyun_kulakligi", 1750, 3750),
+        ProductTemplate("Paslı Piknik Tüpü", "Home_appliances", "piknik_tupu", 50, 200),
+        ProductTemplate("Elma Telefon 15", "Electronics", "iphone", 45000, 75000),
+        ProductTemplate("Antika Köstekli Saat", "Accessories", "classic_watch", 2000, 5000),
+        ProductTemplate("Gaming Laptop", "Electronics", "gaming_laptop_new", 15000, 30000),
+        ProductTemplate("Oyun Konsolu", "Electronics", "game_console_new", 4000, 8000),
+        ProductTemplate("Tarihi Roma Sikkesi", "Hobby", "silver_watch", 5000, 15000),
+        ProductTemplate("Bereket Muskası", "Accessories", "bez_canta", 100, 500),
+        ProductTemplate("Bozuk Gramofon", "Home_appliances", "car_radio", 1000, 3000),
+        ProductTemplate("Oltu Taşı Tesbih", "Accessories", "silver_watch", 500, 1500),
+        ProductTemplate("Gözyaşı Pırlanta Yüzük", "Accessories", "silver_watch", 10000, 50000),
+        ProductTemplate("Gümüş İşlemeli Pusula", "Accessories", "silver_watch", 800, 2500),
+        ProductTemplate("10 Kilo Kaçak Çay", "Home_appliances", "bez_canta", 500, 1000),
+        ProductTemplate("Ahşap Tofaş Direksiyonu", "Spare_parts", "car_tire", 200, 800),
+        ProductTemplate("Gözyaşı Kolyesi", "Accessories", "silver_watch", 2000, 8000),
+        ProductTemplate("Gizemli Çelik Kasa", "Toys", "mystery_box", 5000, 20000),
+        ProductTemplate("Bozuk Duvar Saati", "Home_appliances", "smashed_watch", 100, 300),
+        ProductTemplate("Kafeste Baykuş", "Hobby", "mystery_box", 500, 2000),
+        ProductTemplate("Sağlam El Radyosu", "Electronics", "car_radio", 300, 800),
+        ProductTemplate("Çerçeveli Yapboz", "Toys", "jigsaw_puzzle", 100, 400),
+        ProductTemplate("Çelik Termos", "Sports", "ufo_lamp", 200, 600),
+        ProductTemplate("Ahşap Boy Aynası", "Home_appliances", "folding_table", 400, 1000),
+        ProductTemplate("Kamp Feneri", "Sports", "ufo_lamp", 150, 500),
+        ProductTemplate("Folyolu Altın Sikke", "Hobby", "silver_watch", 50, 200),
+        ProductTemplate("Eski Parşömen Harita", "Toys", "treasure_map", 1000, 4000)
     )
 
     val ABSURD_PRODUCTS = listOf(
@@ -687,14 +719,14 @@ object MarketGenerator {
 
     // V6.0: Satıcı Profili için özel ilan üretici
     fun generateItemForSeller(rng: kotlin.random.Random, sellerName: String): MarketItem {
-        val product = PRODUCT_TEMPLATES.random(rng)
+        val product = PRODUCTS.random(rng)
         val isScammer = SCAMMER_SELLERS.contains(sellerName)
         
         // Eğer satıcı dolandırıcıysa hep dolandırıcı ilanları üretsin, değilse normal ilan
         val item = if (isScammer) {
             generateScammerItem(rng, product, emptyMap()).copy(sellerName = sellerName)
         } else {
-            generateItem(rng, product, emptyMap()).copy(sellerName = sellerName)
+            generateNormalItem(rng, product, emptyMap()).copy(sellerName = sellerName)
         }
         
         // Fiyatlarda ufak varyasyonlar yap ki hepsi aynı olmasın

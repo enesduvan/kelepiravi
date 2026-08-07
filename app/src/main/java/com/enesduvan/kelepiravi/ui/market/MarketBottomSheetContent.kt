@@ -58,6 +58,7 @@ import com.enesduvan.kelepiravi.ui.theme.ImageFrame
 import com.enesduvan.kelepiravi.ui.theme.MarketBorderSoft
 import com.enesduvan.kelepiravi.ui.theme.MarketTextPrimary
 import com.enesduvan.kelepiravi.ui.theme.MarketTextSecondary
+import com.enesduvan.kelepiravi.ui.theme.PrimaryOrange
 import com.enesduvan.kelepiravi.ui.theme.PriceText
 import com.enesduvan.kelepiravi.ui.theme.TipBg
 import com.enesduvan.kelepiravi.ui.theme.TipBorder

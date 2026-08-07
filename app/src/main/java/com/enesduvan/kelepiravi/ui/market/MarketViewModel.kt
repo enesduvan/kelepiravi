@@ -250,7 +250,7 @@ class MarketViewModel(
 
     fun openSellerProfile(sellerName: String, sellerTitle: String) {
         val rng = kotlin.random.Random(sellerName.hashCode())
-        val isScammer = SCAMMER_SELLERS.contains(sellerName)
+        val isScammer = MarketGenerator.SCAMMER_SELLERS.contains(sellerName)
         
         val rating = if (isScammer) rng.nextDouble(1.0, 3.5) else rng.nextDouble(3.8, 5.0)
         val joinYear = rng.nextInt(2015, 2024)
