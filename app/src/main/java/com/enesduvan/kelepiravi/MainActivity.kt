@@ -9,11 +9,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.enesduvan.kelepiravi.data.local.AppDatabaseProvider
 import com.enesduvan.kelepiravi.data.local.SettingsManager
 import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
-import com.enesduvan.kelepiravi.ui.listing.ListingUseCase
-import com.enesduvan.kelepiravi.ui.listing.ListingViewModel
-import com.enesduvan.kelepiravi.ui.listing.ListingViewModelFactory
-import com.enesduvan.kelepiravi.ui.market.MarketViewModel
-import com.enesduvan.kelepiravi.ui.market.MarketViewModelFactory
+import com.enesduvan.kelepiravi.viewmodel.listing.ListingUseCase
+import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
+import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModelFactory
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModelFactory
 import com.enesduvan.kelepiravi.ui.shared.AppRoot
 import com.enesduvan.kelepiravi.ui.theme.KelepiraviTheme
 import androidx.work.PeriodicWorkRequestBuilder

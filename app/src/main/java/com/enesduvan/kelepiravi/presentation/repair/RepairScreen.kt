@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.presentation.repair
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -10,23 +10,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
 import com.enesduvan.kelepiravi.data.GameConstants
+import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.model.MarketItem
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
+import com.enesduvan.kelepiravi.viewmodel.RepairResultState
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
@@ -93,7 +94,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                                     Text("Durum: ${item.condition}", color = ConditionScratch, fontSize = 12.sp)
                                     Text("Değer: ₺${formatBalance(currentVal.toString())}", color = MoneyGreen, fontSize = 12.sp)
                                 }
-                                Icon(androidx.compose.material.icons.Icons.Default.ArrowForwardIos, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.ArrowForwardIos, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                             }
                         }
                     }
@@ -103,7 +104,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
             // DETAY GÖRÜNÜMÜ (MOCKUP 5a20)
             val item = selectedItem!!
             val baseVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
-            val currentMultiplier = com.enesduvan.kelepiravi.data.market.MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
+            val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
             val currentVal = baseVal * currentMultiplier
             val cirakCost = viewModel.calculateRepairCost(item, false)
             val ustaCost = viewModel.calculateRepairCost(item, true)
@@ -129,7 +130,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                 // Header
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { selectedItem = null }) {
-                        Icon(androidx.compose.material.icons.Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
                     }
                     Text("Tamirhane", color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
@@ -257,7 +258,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                         Spacer(modifier = Modifier.width(12.dp))
                         Text("Tamir Ediliyor...", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     } else {
-                        Icon(androidx.compose.material.icons.Icons.Default.Build, contentDescription = null, tint = Color.White)
+                        Icon(Icons.Default.Build, contentDescription = null, tint = Color.White)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("Tamire Başla - ₺${formatBalance(selectedCost.toString())}", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }

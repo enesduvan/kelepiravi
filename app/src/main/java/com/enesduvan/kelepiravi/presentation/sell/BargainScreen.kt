@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.presentation.sell
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
@@ -9,8 +9,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -26,13 +28,19 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.data.market.ScamType
 import com.enesduvan.kelepiravi.data.market.SellerPersonality
+import com.enesduvan.kelepiravi.viewmodel.BargainMessage
+import com.enesduvan.kelepiravi.viewmodel.BargainState
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
@@ -202,7 +210,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                         shape = RoundedCornerShape(12.dp)
                     )
 
-                    androidx.compose.foundation.lazy.LazyRow(
+                    LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -277,7 +285,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                         val personality = if (bargainState.item.isScammer && bargainState.item.scamType.isNotEmpty()) {
                             try {
                                 SellerPersonality.getScammerForType(
-                                    com.enesduvan.kelepiravi.data.market.ScamType.valueOf(bargainState.item.scamType)
+                                    ScamType.valueOf(bargainState.item.scamType)
                                 )
                             } catch (e: Exception) { SellerPersonality.fromName(bargainState.item.sellerName) }
                         } else SellerPersonality.fromName(bargainState.item.sellerName)
@@ -296,13 +304,13 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                             else -> TextSecondary
                         }
                         
-                        Text("${bargainState.item.sellerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.weight(1f, fill = false).clickable { viewModel.openSellerProfile(bargainState.item.sellerName, personality.title) }, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                        Text("${bargainState.item.sellerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.weight(1f, fill = false).clickable { viewModel.openSellerProfile(bargainState.item.sellerName, personality.title) }, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
                     Text("₺${formatBalance(bargainState.item.salesValue)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     
                     if (bargainState.item.description.isNotEmpty()) {
-                        Text("Açıklama: \"${bargainState.item.description}\"", color = MarketTextSecondary, fontSize = 11.sp, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, lineHeight = 14.sp)
+                        Text("Açıklama: \"${bargainState.item.description}\"", color = MarketTextSecondary, fontSize = 11.sp, fontStyle = FontStyle.Italic, lineHeight = 14.sp)
                     }
                     Text("İlan Fiyatı", color = TextSecondary, fontSize = 11.sp)
                 }
@@ -393,7 +401,7 @@ fun ChatBubble(msg: BargainMessage) {
         verticalAlignment = Alignment.Bottom
     ) {
         if (!isPlayer) {
-            Box(modifier = Modifier.size(32.dp).clip(androidx.compose.foundation.shape.CircleShape).background(SurfaceVariant), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.size(32.dp).clip(CircleShape).background(SurfaceVariant), contentAlignment = Alignment.Center) {
                 Icon(painterResource(id = R.drawable.person), contentDescription = null, tint = TextSecondary, modifier = Modifier.size(20.dp))
             }
             Spacer(modifier = Modifier.width(8.dp))

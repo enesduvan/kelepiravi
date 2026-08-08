@@ -1,9 +1,10 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.presentation.lootbox
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -219,15 +223,15 @@ fun LootBoxRevealScreen(
                                         .clip(RoundedCornerShape(12.dp))
                                         .background(CardSecondary)
                                 ) {
-                                    val context = androidx.compose.ui.platform.LocalContext.current
+                                    val context = LocalContext.current
                                     val resId = remember(item.imageName) {
                                         context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
                                     }
                                     if (resId != 0) {
-                                        androidx.compose.foundation.Image(
-                                            painter = androidx.compose.ui.res.painterResource(id = resId),
+                                        Image(
+                                            painter = painterResource(id = resId),
                                             contentDescription = item.itemName,
-                                            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                                            contentScale = ContentScale.Crop,
                                             modifier = Modifier.fillMaxSize()
                                         )
                                     } else {

@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.listing
+package com.enesduvan.kelepiravi.viewmodel.listing
 
 import com.enesduvan.kelepiravi.data.model.Listing
 import com.enesduvan.kelepiravi.data.model.MarketItem

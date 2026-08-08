@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.listing
+package com.enesduvan.kelepiravi.viewmodel.listing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

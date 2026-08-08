@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.presentation.market
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,7 +35,9 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
@@ -147,7 +149,7 @@ fun MarketBottomSheetContent(
                     Icon(painter = painterResource(id = R.drawable.ic_trending), contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(text = "Sıfır/Kusursuz Değeri: ", color = MarketTextSecondary, fontSize = 12.sp)
-                    Text(text = "${com.enesduvan.kelepiravi.ui.shared.formatBalance(item.estimatedValue)}₺", color = EstimatedValue, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "${formatBalance(item.estimatedValue)}₺", color = EstimatedValue, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Box(
@@ -180,7 +182,7 @@ fun MarketBottomSheetContent(
                         text = "\"${item.description}\"",
                         color = MarketTextSecondary,
                         fontSize = 13.sp,
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        fontStyle = FontStyle.Italic,
                         lineHeight = 18.sp
                     )
                 }
@@ -254,7 +256,7 @@ fun MarketBottomSheetContent(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
         }
 

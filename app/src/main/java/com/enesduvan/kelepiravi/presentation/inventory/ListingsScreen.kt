@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.inventory
+package com.enesduvan.kelepiravi.presentation.inventory
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -20,8 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.data.model.Listing
-import com.enesduvan.kelepiravi.ui.listing.ListingViewModel
-import com.enesduvan.kelepiravi.ui.market.MarketViewModel
+import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
 import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
@@ -30,11 +30,15 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.ui.text.font.FontStyle
+import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.data.model.Offer
+import kotlin.random.Random
 
 @Composable
 fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel) {
     val activeListings by listingViewModel.activeListings.collectAsState()
-    var lastMinuteBargainOffer by remember { mutableStateOf<Triple<Listing, com.enesduvan.kelepiravi.data.model.Offer, Double>?>(null) }
+    var lastMinuteBargainOffer by remember { mutableStateOf<Triple<Listing, Offer, Double>?>(null) }
     var editingListing by remember { mutableStateOf<Listing?>(null) }
 
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
@@ -51,7 +55,7 @@ fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingVi
             if (activeListings.isEmpty()) {
                 item {
                     EmptyStateIndicator(
-                        iconRes = com.enesduvan.kelepiravi.R.drawable.envanter,
+                        iconRes = R.drawable.envanter,
                         title = "Aktif İlanın Yok",
                         description = "Depondaki eşyaları satmak için ilan ver.",
                         modifier = Modifier.height(300.dp)
@@ -63,7 +67,7 @@ fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingVi
                         listing = listing,
                         onCancelClick = { listingViewModel.cancelListing(it) },
                         onAcceptOffer = { l, amount -> 
-                            if (kotlin.random.Random.nextDouble() < 0.10) {
+                            if (Random.nextDouble() < 0.10) {
                                 val offer = l.offers.find { it.offerAmount.toDoubleOrNull() == amount }
                                 if (offer != null) {
                                     lastMinuteBargainOffer = Triple(l, offer, amount)
@@ -146,7 +150,7 @@ fun ListingCard(
     listing: Listing,
     onCancelClick: (Listing) -> Unit,
     onAcceptOffer: (Listing, Double) -> Unit,
-    onBargainClick: (Listing, com.enesduvan.kelepiravi.data.model.Offer) -> Unit,
+    onBargainClick: (Listing, Offer) -> Unit,
     onEditClick: (Listing) -> Unit
 ) {
     val estimatedValue = listing.item.estimatedValue.toDoubleOrNull() ?: 0.0
@@ -218,7 +222,7 @@ fun ListingCard(
                 
                 // Yorum sayısı görüntülenme ile yavaş yavaş artsın (Her 15 görüntülenmede 1 yorum, max 5)
                 val numComments = (listing.views / 15).coerceIn(1, 5)
-                val random = kotlin.random.Random(listing.id.hashCode() + listing.listedPrice.hashCode())
+                val random = Random(listing.id.hashCode() + listing.listedPrice.hashCode())
                 
                 // Aynı yorumun tekrar etmesini önlemek için shuffle ve take kullanalım
                 commentsList.shuffled(random).take(numComments)
@@ -229,13 +233,13 @@ fun ListingCard(
                     Box(
                         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Color(0xFF1E1E1E)).border(1.dp, Color(0xFF333333), RoundedCornerShape(8.dp)).padding(10.dp)
                     ) {
-                        Text("💬 \"$comment\"", color = TextMuted, fontSize = 12.sp, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic)
+                        Text("💬 \"$comment\"", color = TextMuted, fontSize = 12.sp, fontStyle = FontStyle.Italic)
                     }
                 }
             }
 
             if (listing.offers.isEmpty()) {
-                Text("Henüz teklif yok. Müşteri bekleniyor...", color = TextMuted, fontSize = 12.sp, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                Text("Henüz teklif yok. Müşteri bekleniyor...", color = TextMuted, fontSize = 12.sp, fontStyle = FontStyle.Italic, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             } else {
                 listing.offers.forEach { offer ->
                     Row(

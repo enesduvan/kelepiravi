@@ -1,12 +1,12 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.presentation.seller
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -24,15 +24,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.enesduvan.kelepiravi.R
+import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
+import com.enesduvan.kelepiravi.viewmodel.SellerProfileState
 
 @Composable
 fun SellerProfileDialog(
     profile: SellerProfileState,
     onDismiss: () -> Unit,
-    onItemClick: (com.enesduvan.kelepiravi.data.model.MarketItem) -> Unit
+    onItemClick: (MarketItem) -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -58,7 +60,7 @@ fun SellerProfileDialog(
                         Box(
                             modifier = Modifier
                                 .size(80.dp)
-                                .clip(androidx.compose.foundation.shape.CircleShape)
+                                .clip(CircleShape)
                                 .background(SurfaceVariant),
                             contentAlignment = Alignment.Center
                         ) {

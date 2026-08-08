@@ -28,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,14 +37,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
-import com.enesduvan.kelepiravi.ui.inventory.InventoryScreen
-import com.enesduvan.kelepiravi.ui.market.BargainScreen
-import com.enesduvan.kelepiravi.ui.market.SellBargainScreen
-import com.enesduvan.kelepiravi.ui.market.MarketScreen
-import com.enesduvan.kelepiravi.ui.market.MarketViewModel
-import com.enesduvan.kelepiravi.ui.listing.ListingViewModel
-import com.enesduvan.kelepiravi.ui.market.TamirEkrani
-import com.enesduvan.kelepiravi.ui.market.ProfilEkrani
+import com.enesduvan.kelepiravi.presentation.inventory.InventoryScreen
+import com.enesduvan.kelepiravi.presentation.inventory.ListingsScreen
+import com.enesduvan.kelepiravi.presentation.sell.BargainScreen
+import com.enesduvan.kelepiravi.presentation.sell.SellBargainScreen
+import com.enesduvan.kelepiravi.presentation.market.MarketScreen
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
+import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
+import com.enesduvan.kelepiravi.presentation.repair.TamirEkrani
+import com.enesduvan.kelepiravi.presentation.profile.ProfilEkrani
 import com.enesduvan.kelepiravi.ui.theme.Background
 import com.enesduvan.kelepiravi.ui.theme.NavSelected
 import com.enesduvan.kelepiravi.ui.theme.NavUnselected
@@ -140,7 +140,10 @@ fun AppRoot(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel
                             when (tab) {
                                 0 -> MarketScreen(viewModel = marketViewModel)
                                 1 -> InventoryScreen(marketViewModel = marketViewModel, listingViewModel = listingViewModel)
-                                2 -> com.enesduvan.kelepiravi.ui.inventory.ListingsScreen(marketViewModel = marketViewModel, listingViewModel = listingViewModel)
+                                2 -> ListingsScreen(
+                                    marketViewModel = marketViewModel,
+                                    listingViewModel = listingViewModel
+                                )
                                 3 -> TamirEkrani(viewModel = marketViewModel)
                                 4 -> ProfilEkrani(viewModel = marketViewModel, listingViewModel = listingViewModel)
                             }

@@ -1,15 +1,26 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.presentation.sell
 
 import com.enesduvan.kelepiravi.data.BargainConstants
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
+import com.enesduvan.kelepiravi.data.market.ScamType
 import com.enesduvan.kelepiravi.data.market.SellerPersonality
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.ui.shared.formatBalance
+import com.enesduvan.kelepiravi.viewmodel.BargainMessage
+import com.enesduvan.kelepiravi.viewmodel.BargainState
+import com.enesduvan.kelepiravi.viewmodel.MarketUiState
+import com.enesduvan.kelepiravi.viewmodel.SellBargainState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.random.Random
 
 class NegotiationEngine(
     private val scope: CoroutineScope,
@@ -25,7 +36,7 @@ class NegotiationEngine(
     val sellBargainState: StateFlow<SellBargainState?> = _sellBargainState.asStateFlow()
 
     private fun getCurrentTime(): String {
-        return java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
+        return SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
     }
 
     fun startBargain(item: MarketItem, relationships: Map<String, Int> = emptyMap()) {
@@ -34,17 +45,17 @@ class NegotiationEngine(
 
         val effectivePersonality = if (item.isScammer && item.scamType.isNotEmpty()) {
             try {
-                val scamType = com.enesduvan.kelepiravi.data.market.ScamType.valueOf(item.scamType)
+                val scamType = ScamType.valueOf(item.scamType)
                 SellerPersonality.getScammerForType(scamType)
             } catch (e: Exception) { personality }
         } else personality
 
         val openingLine = if (item.isScammer) {
             effectivePersonality.dialogs.getRushPhrase()
-                ?.let { "Merhaba, ${item.itemName} için fiyatım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialPrice.toString())}. $it" }
-                ?: "Merhaba, ${item.itemName} için fiyatım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialPrice.toString())}."
+                ?.let { "Merhaba, ${item.itemName} için fiyatım ₺${formatBalance(initialPrice.toString())}. $it" }
+                ?: "Merhaba, ${item.itemName} için fiyatım ₺${formatBalance(initialPrice.toString())}."
         } else {
-            "Merhaba, ${item.itemName} için fiyatım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialPrice.toString())}."
+            "Merhaba, ${item.itemName} için fiyatım ₺${formatBalance(initialPrice.toString())}."
         }
 
         val initialMsg = BargainMessage(
@@ -75,7 +86,7 @@ class NegotiationEngine(
         if (state.isDealClosed || state.isFailed) return
 
         val playerMsg = BargainMessage(
-            text = "₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(offerAmount.toString())} teklif ediyorum.",
+            text = "₺${formatBalance(offerAmount.toString())} teklif ediyorum.",
             isFromPlayer = true,
             timestamp = getCurrentTime()
         )
@@ -87,7 +98,7 @@ class NegotiationEngine(
         val ratio = offerAmount / originalPrice
         val personality = if (state.item.isScammer && state.item.scamType.isNotEmpty()) {
             try {
-                val scamType = com.enesduvan.kelepiravi.data.market.ScamType.valueOf(state.item.scamType)
+                val scamType = ScamType.valueOf(state.item.scamType)
                 SellerPersonality.getScammerForType(scamType)
             } catch (e: Exception) { SellerPersonality.fromName(state.item.sellerName) }
         } else SellerPersonality.fromName(state.item.sellerName)
@@ -101,12 +112,16 @@ class NegotiationEngine(
         var lastSellerOffer: Double? = null
 
         val isRepeatOffer = state.lastPlayerOfferAmount != null &&
-            kotlin.math.abs((state.lastPlayerOfferAmount) - offerAmount) < 1.0
+            abs((state.lastPlayerOfferAmount) - offerAmount) < 1.0
         if (isRepeatOffer) {
             val annoyedMsg = personality.dialogs.getRepeatOfferAnnoyed()
             if (annoyedMsg != null) {
                 updatedMessages.add(
-                    BargainMessage(text = annoyedMsg, isFromPlayer = false, timestamp = getCurrentTime())
+                    BargainMessage(
+                        text = annoyedMsg,
+                        isFromPlayer = false,
+                        timestamp = getCurrentTime()
+                    )
                 )
                 newPatience -= BargainConstants.PATIENCE_REPEAT_OFFER_PENALTY
                 _bargainState.value = state.copy(
@@ -119,7 +134,7 @@ class NegotiationEngine(
             }
         }
 
-        if (state.lastSellerOffer != null && kotlin.math.abs(state.lastSellerOffer - offerAmount) < 1.0) {
+        if (state.lastSellerOffer != null && abs(state.lastSellerOffer - offerAmount) < 1.0) {
             sellerResponseText = personality.dialogs.getBuyAccept()
             isDealClosed = true
             agreedPrice = offerAmount
@@ -131,15 +146,15 @@ class NegotiationEngine(
             agreedPrice = offerAmount
             newPatience += BargainConstants.PATIENCE_REWARD
         } else if (ratio >= BargainConstants.BUY_MAYBE_RATIO + personality.buyAcceptRatioModifier) {
-            val chance = kotlin.random.Random.nextDouble()
+            val chance = Random.nextDouble()
             if (chance > BargainConstants.BUY_COUNTER_ACCEPT_CHANCE) {
-                sellerResponseText = "Tamam abi, anlaşalım ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(offerAmount.toString())} olsun."
+                sellerResponseText = "Tamam abi, anlaşalım ₺${formatBalance(offerAmount.toString())} olsun."
                 isDealClosed = true
                 agreedPrice = offerAmount
             } else {
                 val counterOffer = (originalPrice * BargainConstants.BUY_COUNTER_RATIO).toInt().toDouble()
                 lastSellerOffer = counterOffer
-                sellerResponseText = personality.dialogs.getBuyCounter() + " ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(counterOffer.toString())} yapalım ortası olsun."
+                sellerResponseText = personality.dialogs.getBuyCounter() + " ₺${formatBalance(counterOffer.toString())} yapalım ortası olsun."
                 newPatience -= (BargainConstants.PATIENCE_SMALL_PENALTY * personality.patiencePenaltyMultiplier).toInt()
             }
         } else if (ratio >= BargainConstants.BUY_LOW_RATIO + personality.buyAcceptRatioModifier) {
@@ -152,7 +167,7 @@ class NegotiationEngine(
 
         val shouldRush = (personality == SellerPersonality.ACELECI || state.item.isScammer) &&
             !isDealClosed && !isFailed &&
-            kotlin.random.Random.nextDouble() < 0.35
+            Random.nextDouble() < 0.35
         if (shouldRush) {
             personality.dialogs.getRushPhrase()?.let { rush ->
                 updatedMessages.add(
@@ -165,7 +180,11 @@ class NegotiationEngine(
             newPatience = 0
             isFailed = true
             updatedMessages.add(
-                BargainMessage(text = "Benim seninle işim olmaz, satmıyorum!", isFromPlayer = false, timestamp = getCurrentTime())
+                BargainMessage(
+                    text = "Benim seninle işim olmaz, satmıyorum!",
+                    isFromPlayer = false,
+                    timestamp = getCurrentTime()
+                )
             )
         } else {
             val sellerMsg = BargainMessage(
@@ -184,7 +203,11 @@ class NegotiationEngine(
             finalScamPrompt = true
             updatedMessages.removeLastOrNull()
             updatedMessages.add(
-                BargainMessage(text = "Kardeşim ürün bu, sen parayı gönder ben kargoya vereceğim zaten.", isFromPlayer = false, timestamp = getCurrentTime())
+                BargainMessage(
+                    text = "Kardeşim ürün bu, sen parayı gönder ben kargoya vereceğim zaten.",
+                    isFromPlayer = false,
+                    timestamp = getCurrentTime()
+                )
             )
         }
 
@@ -218,7 +241,7 @@ class NegotiationEngine(
         if (!state.isScamPromptActive) return
 
         val itemToBuy = state.item.copy(salesValue = state.agreedPrice.toString())
-        
+
         scope.launch {
             val success = repository.purchaseItem(itemToBuy)
             if (success) {
@@ -227,7 +250,7 @@ class NegotiationEngine(
                         it.itemName == itemToBuy.itemName && it.sellerName == itemToBuy.sellerName
                     }
                 )
-                
+
                 _bargainState.value = state.copy(isDealClosed = true, isScamPromptActive = false)
                 scamRevealFlow.value = itemToBuy
             }
@@ -239,9 +262,21 @@ class NegotiationEngine(
         if (!state.isScamPromptActive) return
 
         val updatedMessages = state.messages.toMutableList()
-        updatedMessages.add(BargainMessage(text = "Kardeşim elden almadan para falan yok.", isFromPlayer = true, timestamp = getCurrentTime()))
-        updatedMessages.add(BargainMessage(text = "Sen bilirsin kardeşim, ucuza mal veriyoruz yaranamıyoruz.", isFromPlayer = false, timestamp = getCurrentTime()))
-        
+        updatedMessages.add(
+            BargainMessage(
+                text = "Kardeşim elden almadan para falan yok.",
+                isFromPlayer = true,
+                timestamp = getCurrentTime()
+            )
+        )
+        updatedMessages.add(
+            BargainMessage(
+                text = "Sen bilirsin kardeşim, ucuza mal veriyoruz yaranamıyoruz.",
+                isFromPlayer = false,
+                timestamp = getCurrentTime()
+            )
+        )
+
         _bargainState.value = state.copy(
             isScamPromptActive = false,
             isFailed = true,
@@ -255,7 +290,7 @@ class NegotiationEngine(
         if (!state.isDealClosed) return
 
         val itemToBuy = state.item.copy(salesValue = state.agreedPrice.toString())
-        
+
         scope.launch {
             val success = repository.purchaseItem(itemToBuy)
             if (success) {
@@ -273,11 +308,13 @@ class NegotiationEngine(
                 closeBargain()
             } else {
                 val updatedMessages = state.messages.toMutableList()
-                updatedMessages.add(BargainMessage(
-                    text = "Sistem Hatası: Yetersiz bakiye veya dükkan kapasitesi dolu!",
-                    isFromPlayer = false,
-                    timestamp = getCurrentTime()
-                ))
+                updatedMessages.add(
+                    BargainMessage(
+                        text = "Sistem Hatası: Yetersiz bakiye veya dükkan kapasitesi dolu!",
+                        isFromPlayer = false,
+                        timestamp = getCurrentTime()
+                    )
+                )
                 _bargainState.value = state.copy(messages = updatedMessages)
             }
         }
@@ -287,11 +324,11 @@ class NegotiationEngine(
         val baseSellPrice = repository.calculateSellPrice(item)
         val initialOffer = baseSellPrice * (
             BargainConstants.SELL_INITIAL_MIN_RATIO +
-                kotlin.random.Random.nextDouble() * BargainConstants.SELL_INITIAL_RANGE
+                Random.nextDouble() * BargainConstants.SELL_INITIAL_RANGE
             )
-        
+
         val initialMsg = BargainMessage(
-            text = "Selam, ${item.itemName} için ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(initialOffer.toString())} verebilirim. Ne dersin?",
+            text = "Selam, ${item.itemName} için ₺${formatBalance(initialOffer.toString())} verebilirim. Ne dersin?",
             isFromPlayer = false,
             timestamp = getCurrentTime()
         )
@@ -313,9 +350,9 @@ class NegotiationEngine(
 
     fun startSellBargainWithOffer(item: MarketItem, relationships: Map<String, Int>, buyerName: String, offerAmount: Double) {
         val baseSellPrice = repository.calculateSellPrice(item)
-        
+
         val initialMsg = BargainMessage(
-            text = "Daha önce anlaştığımız gibi, ${item.itemName} için ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(offerAmount.toString())} veriyorum. Son teklifim budur.",
+            text = "Daha önce anlaştığımız gibi, ${item.itemName} için ₺${formatBalance(offerAmount.toString())} veriyorum. Son teklifim budur.",
             isFromPlayer = false,
             timestamp = getCurrentTime()
         )
@@ -343,7 +380,7 @@ class NegotiationEngine(
         if (state.isDealClosed || state.isFailed) return
 
         val playerMsg = BargainMessage(
-            text = "₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(offerAmount.toString())} olursa hemen senin.",
+            text = "₺${formatBalance(offerAmount.toString())} olursa hemen senin.",
             isFromPlayer = true,
             timestamp = getCurrentTime()
         )
@@ -364,12 +401,16 @@ class NegotiationEngine(
         var lastBuyerOffer: Double? = null
 
         val isRepeatOffer = state.lastPlayerOfferAmount != null &&
-            kotlin.math.abs(state.lastPlayerOfferAmount - offerAmount) < 1.0
+            abs(state.lastPlayerOfferAmount - offerAmount) < 1.0
         if (isRepeatOffer) {
             val annoyedMsg = personality.dialogs.getRepeatOfferAnnoyed()
             if (annoyedMsg != null) {
                 updatedMessages.add(
-                    BargainMessage(text = annoyedMsg, isFromPlayer = false, timestamp = getCurrentTime())
+                    BargainMessage(
+                        text = annoyedMsg,
+                        isFromPlayer = false,
+                        timestamp = getCurrentTime()
+                    )
                 )
                 newPatience -= BargainConstants.PATIENCE_REPEAT_OFFER_PENALTY
                 _sellBargainState.value = state.copy(
@@ -382,7 +423,7 @@ class NegotiationEngine(
             }
         }
 
-        if (state.lastBuyerOffer != null && kotlin.math.abs(state.lastBuyerOffer - offerAmount) < 1.0) {
+        if (state.lastBuyerOffer != null && abs(state.lastBuyerOffer - offerAmount) < 1.0) {
             buyerResponseText = personality.dialogs.getSellAccept()
             isDealClosed = true
             agreedPrice = offerAmount
@@ -396,12 +437,12 @@ class NegotiationEngine(
         } else if (ratio <= BargainConstants.SELL_COUNTER_RATIO + personality.sellAcceptRatioModifier) {
             val counterOffer = offerAmount * BargainConstants.SELL_COUNTER_DISCOUNT
             lastBuyerOffer = counterOffer
-            buyerResponseText = personality.dialogs.getSellCounter() + " ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(counterOffer.toString())} yaparsak el sıkışırız."
+            buyerResponseText = personality.dialogs.getSellCounter() + " ₺${formatBalance(counterOffer.toString())} yaparsak el sıkışırız."
             newPatience -= (BargainConstants.PATIENCE_SELL_SMALL_PENALTY * personality.patiencePenaltyMultiplier).toInt()
         } else if (ratio <= BargainConstants.SELL_HIGH_RATIO + personality.sellAcceptRatioModifier) {
             val counterOffer = basePrice * modifiedAcceptRatio
             lastBuyerOffer = counterOffer
-            buyerResponseText = personality.dialogs.getSellHigh() + " En fazla ₺${com.enesduvan.kelepiravi.ui.shared.formatBalance(counterOffer.toString())} veririm."
+            buyerResponseText = personality.dialogs.getSellHigh() + " En fazla ₺${formatBalance(counterOffer.toString())} veririm."
             newPatience -= (BargainConstants.PATIENCE_SELL_MEDIUM_PENALTY * personality.patiencePenaltyMultiplier).toInt()
         } else {
             buyerResponseText = personality.dialogs.getSellReject()
@@ -412,7 +453,11 @@ class NegotiationEngine(
             newPatience = 0
             isFailed = true
             updatedMessages.add(
-                BargainMessage(text = "Bu fiyata olmaz, ben vazgeçtim!", isFromPlayer = false, timestamp = getCurrentTime())
+                BargainMessage(
+                    text = "Bu fiyata olmaz, ben vazgeçtim!",
+                    isFromPlayer = false,
+                    timestamp = getCurrentTime()
+                )
             )
         } else {
             val buyerMsg = BargainMessage(

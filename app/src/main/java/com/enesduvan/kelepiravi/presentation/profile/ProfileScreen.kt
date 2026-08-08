@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.presentation.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -25,19 +24,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import com.enesduvan.kelepiravi.ui.listing.ListingViewModel
+import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
 import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.market.AchievementManager
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.theme.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
+import com.enesduvan.kelepiravi.presentation.settings.SettingsDialog
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
 
 @Composable
 fun ProfilEkrani(viewModel: MarketViewModel, listingViewModel: ListingViewModel) {
-    var showSettings by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var showSettings by remember { mutableStateOf(false) }
     val isSoundEnabled by listingViewModel.isSoundEnabled.collectAsState()
     val isHapticEnabled by listingViewModel.isHapticEnabled.collectAsState()
     val isQuickSellEnabled by listingViewModel.isFastSellEnabled.collectAsState()
@@ -184,7 +187,7 @@ fun ProfilEkrani(viewModel: MarketViewModel, listingViewModel: ListingViewModel)
                                 .clip(RoundedCornerShape(3.dp)),
                             color = PrimaryOrange,
                             trackColor = SurfaceVariant,
-                            strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                            strokeCap = StrokeCap.Round
                         )
                     }
                 }
@@ -518,7 +521,7 @@ fun BasarimCard(title: String, description: String, icon: ImageVector, isUnlocke
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))

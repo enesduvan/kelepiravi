@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.inventory
+package com.enesduvan.kelepiravi.presentation.inventory
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -15,19 +15,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -35,16 +34,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.enesduvan.kelepiravi.R
-import com.enesduvan.kelepiravi.data.model.Listing
+import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.model.MarketItem
-import com.enesduvan.kelepiravi.ui.listing.ListingViewModel
-import com.enesduvan.kelepiravi.ui.market.MarketViewModel
+import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
 import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.theme.*
+import kotlin.math.abs
 
 val RED = Color(0xFFE53935)
 private val RED_BG = Color(0x22FF6B6B)
@@ -189,7 +190,7 @@ fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingV
 @Composable
 fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
     val baseValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
-    val currentMultiplier = com.enesduvan.kelepiravi.data.market.MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
+    val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
     val estimatedValue = baseValue * currentMultiplier
     val purchasePrice = item.purchasePrice.ifEmpty { item.salesValue }.toDoubleOrNull() ?: 0.0
     
@@ -200,7 +201,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Column(
             modifier = Modifier
@@ -210,11 +211,11 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
             // Header (Sabit)
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp).fillMaxWidth()) {
                 IconButton(onClick = onDismiss) {
-                    Icon(androidx.compose.material.icons.Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
                 }
                 Text("Satışa Koy", color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.weight(1f))
-                Icon(androidx.compose.material.icons.Icons.Default.HelpOutline, contentDescription = "Yardım", tint = MarketTextSecondary)
+                Icon(Icons.Default.HelpOutline, contentDescription = "Yardım", tint = MarketTextSecondary)
             }
 
             // Kaydırılabilir İçerik
@@ -270,7 +271,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Önerilen Fiyat", color = MarketTextSecondary, fontSize = 12.sp)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Icon(androidx.compose.material.icons.Icons.Default.Info, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(14.dp))
+                        Icon(Icons.Default.Info, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(14.dp))
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
@@ -279,21 +280,21 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                         }
                         
                         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            androidx.compose.foundation.text.BasicTextField(
+                            BasicTextField(
                                 value = priceStr,
                                 onValueChange = { newValue ->
                                     if (newValue.all { it.isDigit() } && newValue.length <= 12) {
                                         priceStr = newValue
                                     }
                                 },
-                                textStyle = androidx.compose.ui.text.TextStyle(
+                                textStyle = TextStyle(
                                     color = MoneyGreen,
                                     fontSize = if (priceStr.length > 7) 24.sp else 32.sp,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center
                                 ),
                                 singleLine = true,
-                                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 decorationBox = { innerTextField ->
                                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                                         Text("₺", color = MoneyGreen, fontSize = if (priceStr.length > 7) 24.sp else 32.sp, fontWeight = FontWeight.Bold)
@@ -357,7 +358,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                             Text("₺${formatBalance(netProfit.toString())}", color = MoneyGreen, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
                         }
                         Spacer(modifier = Modifier.weight(1f))
-                        Icon(androidx.compose.material.icons.Icons.Default.TrendingUp, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(48.dp))
+                        Icon(Icons.Default.TrendingUp, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(48.dp))
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Text("Doğru fiyatla hızlıca sat ve daha çok kazan!", color = MarketTextSecondary, fontSize = 12.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -366,7 +367,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Row {
-                            Icon(androidx.compose.material.icons.Icons.Default.ShoppingCart, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Alış Fiyatı", color = MarketTextSecondary, fontSize = 14.sp)
                         }
@@ -375,7 +376,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Row {
-                            Icon(androidx.compose.material.icons.Icons.Default.Receipt, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Receipt, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Vergi (%5)", color = MarketTextSecondary, fontSize = 14.sp)
                         }
@@ -384,7 +385,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Row {
-                            Icon(androidx.compose.material.icons.Icons.Default.TrendingUp, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.TrendingUp, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Tahmini Net Kâr", color = MoneyGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
@@ -408,13 +409,13 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Icon(androidx.compose.material.icons.Icons.Default.LocalOffer, contentDescription = null, tint = Color.White)
+                    Icon(Icons.Default.LocalOffer, contentDescription = null, tint = Color.White)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Satışa Koy", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                    Icon(androidx.compose.material.icons.Icons.Default.VerifiedUser, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Default.VerifiedUser, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("Ürün satışa konulduğunda envanterden düşer.", color = MarketTextSecondary, fontSize = 12.sp)
                 }
@@ -454,7 +455,7 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
     }
     val purchasePrice = item.purchasePrice.ifEmpty { item.salesValue }.toDoubleOrNull() ?: 0.0
     val baseValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
-    val currentMultiplier = com.enesduvan.kelepiravi.data.market.MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
+    val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
     val estimatedValue = baseValue * currentMultiplier
     val profit = estimatedValue - purchasePrice
     val isProfit = profit >= 0
@@ -504,7 +505,7 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
                             .padding(horizontal = 5.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = "${if (isDailyPositive) "▲" else "▼"} ${"%.1f".format(kotlin.math.abs(dailyChange))}%",
+                            text = "${if (isDailyPositive) "▲" else "▼"} ${"%.1f".format(abs(dailyChange))}%",
                             color = if (isDailyPositive) MoneyGreen else RED,
                             fontSize = 9.sp,
                             fontWeight = FontWeight.ExtraBold

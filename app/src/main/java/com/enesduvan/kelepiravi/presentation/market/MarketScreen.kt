@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.presentation.market
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -6,11 +6,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -23,17 +23,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.enesduvan.kelepiravi.data.market.DailyEvent
+import com.enesduvan.kelepiravi.data.event.EventChoice
+import com.enesduvan.kelepiravi.data.event.EventDefinition
+import com.enesduvan.kelepiravi.data.market.ScamType
 import com.enesduvan.kelepiravi.data.model.MarketItem
+import com.enesduvan.kelepiravi.viewmodel.DailySummaryState
+import com.enesduvan.kelepiravi.presentation.lootbox.LootBoxBottomSheet
+import com.enesduvan.kelepiravi.presentation.lootbox.LootBoxRevealScreen
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
+import com.enesduvan.kelepiravi.presentation.seller.SellerProfileDialog
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.shared.bounceClick
 import com.enesduvan.kelepiravi.ui.theme.*
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +85,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
                                 val roiColor = if (roi >= 0) MoneyGreen else Color(0xFFFF6B6B)
                                 val roiSign = if (roi >= 0) "+" else ""
                                 Text(
-                                    "Portföy Kâr: ${roiSign}${String.format(java.util.Locale.US, "%.2f", roi)}%",
+                                    "Portföy Kâr: ${roiSign}${String.format(Locale.US, "%.2f", roi)}%",
                                     color = roiColor,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
@@ -138,11 +147,11 @@ fun MarketScreen(viewModel: MarketViewModel) {
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp, vertical = 4.dp),
                         placeholder = { Text("Ne arıyorsunuz?", color = TextSecondary) },
-                        leadingIcon = { Icon(androidx.compose.material.icons.Icons.Default.Search, contentDescription = "Ara", tint = TextSecondary) },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Ara", tint = TextSecondary) },
                         trailingIcon = {
                             if (uiState.searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                                    Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Temizle", tint = TextSecondary)
+                                    Icon(Icons.Default.Close, contentDescription = "Temizle", tint = TextSecondary)
                                 }
                             }
                         },
@@ -292,9 +301,9 @@ fun MarketScreen(viewModel: MarketViewModel) {
         ) {
             sellerProfile?.let { profile ->
                 SellerProfileDialog(
-                    profile = profile, 
+                    profile = profile,
                     onDismiss = { viewModel.closeSellerProfile() },
-                    onItemClick = { item -> 
+                    onItemClick = { item ->
                         viewModel.closeSellerProfile()
                         viewModel.startBargain(item)
                     }
@@ -308,7 +317,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
 @Composable
 fun ScamRevealDialog(item: MarketItem, onDismiss: () -> Unit) {
     val scamType = try {
-        com.enesduvan.kelepiravi.data.market.ScamType.valueOf(item.scamType)
+        ScamType.valueOf(item.scamType)
     } catch (e: Exception) { null }
 
     Box(
@@ -474,7 +483,7 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier
                     .clip(RoundedCornerShape(16.dp))
                     .background(CardSecondary)
             ) {
-                val context = androidx.compose.ui.platform.LocalContext.current
+                val context = LocalContext.current
                 val resId = remember(item.imageName) {
                     context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
                 }
@@ -527,8 +536,8 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier
 // Ch6: İnteraktif Event Dialogu
 @Composable
 fun InteractiveEventDialog(
-    event: com.enesduvan.kelepiravi.data.event.EventDefinition,
-    onChoiceSelected: (com.enesduvan.kelepiravi.data.event.EventChoice) -> Unit
+    event: EventDefinition,
+    onChoiceSelected: (EventChoice) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -582,7 +591,7 @@ fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
             .fillMaxSize()
             .background(Color(0xEE000000))
             .clickable(
-                interactionSource = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = {}
             ),
@@ -620,3 +629,13 @@ fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
         }
     }
 }
+/*
+@Preview
+@Composable
+fun PreviewMarketScreen() {
+    val dummyViewModel = MarketViewModel(repository = com.enesduvan.kelepiravi.data.repository.KelepiraviRepository(database = com.enesduvan.kelepiravi.data.local.AppDatabaseProvider.getDatabase(androidx.compose.ui.platform.LocalContext.current), context = androidx.compose.ui.platform.LocalContext.current), settingsManager = com.enesduvan.kelepiravi.data.local.SettingsManager(androidx.compose.ui.platform.LocalContext.current), soundManager = com.enesduvan.kelepiravi.data.local.SoundManager(androidx.compose.ui.platform.LocalContext.current, com.enesduvan.kelepiravi.data.local.SettingsManager(androidx.compose.ui.platform.LocalContext.current).isSoundEnabled))
+    KelepiraviTheme {
+        MarketScreen(viewModel = dummyViewModel)
+    }
+}
+*/

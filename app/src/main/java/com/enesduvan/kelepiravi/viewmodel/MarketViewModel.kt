@@ -1,4 +1,4 @@
-package com.enesduvan.kelepiravi.ui.market
+package com.enesduvan.kelepiravi.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +11,6 @@ import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.market.EconomyEngine
 import com.enesduvan.kelepiravi.data.market.LootBoxType
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
-import com.enesduvan.kelepiravi.data.market.SellerPersonality
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
 import com.enesduvan.kelepiravi.data.repository.RepairResult
@@ -27,6 +26,15 @@ import kotlinx.coroutines.launch
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.enesduvan.kelepiravi.data.local.SettingsManager
+import com.enesduvan.kelepiravi.data.local.SoundManager
+import com.enesduvan.kelepiravi.data.market.Achievement
+import com.enesduvan.kelepiravi.data.market.AchievementManager
+import com.enesduvan.kelepiravi.presentation.sell.NegotiationEngine
+import kotlinx.coroutines.delay
+import kotlinx.serialization.json.Json
+import java.util.UUID
+import kotlin.random.Random
 
 @Immutable
 data class PlayerState(
@@ -72,12 +80,12 @@ data class MarketUiState(
     val isDayAdvancing: Boolean = false,
     val isLootBoxSheetOpen: Boolean = false, // Ch9: Zamazon Kutu seçim ekranı
     val purchasedLootBoxItems: List<MarketItem>? = null, // Ch9: Kutudan çıkan eşyalar (reveal için)
-    val latestAchievement: com.enesduvan.kelepiravi.data.market.Achievement? = null
+    val latestAchievement: Achievement? = null
 )
 
 @Immutable
 data class BargainMessage(
-    val id: String = java.util.UUID.randomUUID().toString(),
+    val id: String = UUID.randomUUID().toString(),
     val text: String,
     val isFromPlayer: Boolean,
     val timestamp: String
@@ -150,8 +158,8 @@ data class SellerProfileState(
 
 class MarketViewModel(
     private val repository: KelepiraviRepository,
-    private val settingsManager: com.enesduvan.kelepiravi.data.local.SettingsManager,
-    private val soundManager: com.enesduvan.kelepiravi.data.local.SoundManager
+    private val settingsManager: SettingsManager,
+    private val soundManager: SoundManager
 ) : ViewModel() {
 
     val isHapticEnabled = settingsManager.isHapticEnabled
@@ -176,11 +184,11 @@ class MarketViewModel(
                 unlockedAchievements = entity?.unlockedAchievements ?: "",
                 marketTrends = runCatching {
                     if (entity?.marketTrends.isNullOrBlank()) emptyMap()
-                    else kotlinx.serialization.json.Json.decodeFromString<Map<String, Double>>(entity!!.marketTrends)
+                    else Json.decodeFromString<Map<String, Double>>(entity!!.marketTrends)
                 }.getOrDefault(emptyMap()),
                 npcRelationships = runCatching {
                     if (entity?.npcRelationships.isNullOrBlank()) emptyMap()
-                    else kotlinx.serialization.json.Json.decodeFromString<Map<String, Int>>(entity!!.npcRelationships)
+                    else Json.decodeFromString<Map<String, Int>>(entity!!.npcRelationships)
                 }.getOrDefault(emptyMap()),
                 highestProfit = entity?.highestProfit ?: 0.0,
                 rareItemsFound = entity?.rareItemsFound ?: 0,
@@ -194,14 +202,14 @@ class MarketViewModel(
                 totalBargains = entity?.totalBargains ?: 0,
                 soldCategories = runCatching {
                     if (entity?.soldCategories.isNullOrBlank()) emptyMap()
-                    else kotlinx.serialization.json.Json.decodeFromString<Map<String, Int>>(entity!!.soldCategories)
+                    else Json.decodeFromString<Map<String, Int>>(entity!!.soldCategories)
                 }.getOrDefault(emptyMap()),
                 portfolioValue = EconomyEngine.calculatePortfolioValue(inventory),
                 totalInvestment = EconomyEngine.calculateTotalInvestment(inventory),
                 portfolioROI = EconomyEngine.calculatePortfolioROI(inventory),
                 activeModifiers = runCatching {
                     if (entity?.activeModifiers.isNullOrBlank()) emptyMap()
-                    else kotlinx.serialization.json.Json.decodeFromString<Map<String, Int>>(entity!!.activeModifiers)
+                    else Json.decodeFromString<Map<String, Int>>(entity!!.activeModifiers)
                 }.getOrDefault(emptyMap())
             )
         }
@@ -222,7 +230,8 @@ class MarketViewModel(
     private val _scamReveal = MutableStateFlow<MarketItem?>(null)
     val scamReveal: StateFlow<MarketItem?> = _scamReveal.asStateFlow()
 
-    private val negotiationEngine = NegotiationEngine(viewModelScope, repository, _uiState, _scamReveal)
+    private val negotiationEngine =
+        NegotiationEngine(viewModelScope, repository, _uiState, _scamReveal)
     val bargainState: StateFlow<BargainState?> = negotiationEngine.bargainState
     val sellBargainState: StateFlow<SellBargainState?> = negotiationEngine.sellBargainState
 
@@ -249,7 +258,7 @@ class MarketViewModel(
     val sellerProfile: StateFlow<SellerProfileState?> = _sellerProfile.asStateFlow()
 
     fun openSellerProfile(sellerName: String, sellerTitle: String) {
-        val rng = kotlin.random.Random(sellerName.hashCode())
+        val rng = Random(sellerName.hashCode())
         val isScammer = MarketGenerator.SCAMMER_SELLERS.contains(sellerName)
         
         val rating = if (isScammer) rng.nextDouble(1.0, 3.5) else rng.nextDouble(3.8, 5.0)
@@ -279,11 +288,11 @@ class MarketViewModel(
                 val currentIds = state.unlockedAchievements.split(",").filter { it.isNotEmpty() }
                 if (previousUnlockedIds.isNotEmpty() && currentIds.size > previousUnlockedIds.size) {
                     val newId = currentIds.last()
-                    val newAchievement = com.enesduvan.kelepiravi.data.market.AchievementManager.ALL_ACHIEVEMENTS.find { it.id == newId }
+                    val newAchievement = AchievementManager.ALL_ACHIEVEMENTS.find { it.id == newId }
                     if (newAchievement != null) {
                         _uiState.value = _uiState.value.copy(latestAchievement = newAchievement)
                         launch {
-                            kotlinx.coroutines.delay(5000)
+                            delay(5000)
                             _uiState.value = _uiState.value.copy(latestAchievement = null)
                         }
                     }
@@ -295,11 +304,11 @@ class MarketViewModel(
         // V3.0 Flash Fırsatlar Ticker
         viewModelScope.launch {
             while (true) {
-                kotlinx.coroutines.delay(15000) // Her 15 saniyede bir tetiklenir
-                if (kotlin.random.Random.nextDouble() < 0.20) { // %20 ihtimalle fırsat düşer
+                delay(15000) // Her 15 saniyede bir tetiklenir
+                if (Random.nextDouble() < 0.20) { // %20 ihtimalle fırsat düşer
                     val currentTrends = _playerStateForGenerator()?.marketTrends ?: emptyMap()
                     val currentModifiers = _playerStateForGenerator()?.activeModifiers ?: emptyMap()
-                    val generatedItems = com.enesduvan.kelepiravi.data.market.MarketGenerator.generateItems(1, currentTrends, currentModifiers)
+                    val generatedItems = MarketGenerator.generateItems(1, currentTrends, currentModifiers)
                     
                     if (generatedItems.isNotEmpty()) {
                         val generatedItem = generatedItems.first()
@@ -313,13 +322,13 @@ class MarketViewModel(
                         )
                         
                         _flashNotification.value = "Az önce ₺${flashItem.salesValue} değerinde ${generatedItem.itemName} ilanı düştü!"
-                        
-                        kotlinx.coroutines.delay(4000)
+
+                        delay(4000)
                         _flashNotification.value = null
                         
                         // Flash deal'in başkası tarafından alınma ihtimali (otomatik kaybolma)
                         launch {
-                            kotlinx.coroutines.delay(kotlin.random.Random.nextLong(3000, 8000))
+                            delay(Random.nextLong(3000, 8000))
                             val currentItems = _uiState.value.marketItems
                             if (currentItems.contains(flashItem)) {
                                 _uiState.value = _uiState.value.copy(
@@ -369,14 +378,14 @@ class MarketViewModel(
 
     fun purchaseItem(item: MarketItem) {
         // V3.0: Flash fırsatın başkası tarafından alınmış olma ihtimali
-        if (item.itemName.startsWith("🔥 FLASH") && kotlin.random.Random.nextDouble() < 0.4) {
+        if (item.itemName.startsWith("🔥 FLASH") && Random.nextDouble() < 0.4) {
             _flashNotification.value = "Maalesef, ürün başka bir kullanıcı tarafından alındı!"
             _uiState.value = _uiState.value.copy(
                 marketItems = _uiState.value.marketItems.filterNot { it == item },
                 selectedItem = null
             )
             viewModelScope.launch {
-                kotlinx.coroutines.delay(3000)
+                delay(3000)
                 _flashNotification.value = null
             }
             return
@@ -515,8 +524,8 @@ class MarketViewModel(
             val nextDay = playerState.value.currentDay + 1
             _dailySummary.value = DailySummaryState(
                 day = nextDay,
-                xpGained = com.enesduvan.kelepiravi.data.GameConstants.DAILY_LOGIN_XP,
-                bonusMoney = com.enesduvan.kelepiravi.data.GameConstants.DAILY_LOGIN_BONUS,
+                xpGained = GameConstants.DAILY_LOGIN_XP,
+                bonusMoney = GameConstants.DAILY_LOGIN_BONUS,
                 taxPaid = result.taxPaid,
                 rentPaid = result.rentPaid,
                 event = result.event
@@ -635,8 +644,8 @@ class MarketViewModel(
 
 class MarketViewModelFactory(
     private val repository: KelepiraviRepository,
-    private val settingsManager: com.enesduvan.kelepiravi.data.local.SettingsManager,
-    private val soundManager: com.enesduvan.kelepiravi.data.local.SoundManager
+    private val settingsManager: SettingsManager,
+    private val soundManager: SoundManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MarketViewModel::class.java)) {
