@@ -73,7 +73,7 @@ Text(localized("Eşyaları tamir ederek değerlerini artırabilirsiniz.", "Repai
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (repairableItems.isEmpty()) {
-                    EmptyStateIndicator(iconRes = R.drawable.tamir, title = "İş Yok", description = "Envanterde bozuk eşya yok.")
+                    EmptyStateIndicator(iconRes = R.drawable.tamir, title = localized("İş Yok", "No Jobs"), description = localized("Envanterde bozuk eşya yok.", "There are no damaged items in your inventory."))
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         items(items = repairableItems, key = { marketItemKey(it) }) { item ->
@@ -93,9 +93,9 @@ Text(localized("Eşyaları tamir ederek değerlerini artırabilirsiniz.", "Repai
                                 }
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                                    Text("Durum: ${item.condition}", color = ConditionScratch, fontSize = 12.sp)
-                                    Text("Değer: ₺${formatBalance(currentVal)}", color = MoneyGreen, fontSize = 12.sp)
+Text(localized(item.itemName), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+Text("${localized("Durum:", "Condition:")} ${localized(item.condition)}", color = ConditionScratch, fontSize = 12.sp)
+Text("${localized("Değer:", "Value:")} ₺${formatBalance(currentVal)}", color = MoneyGreen, fontSize = 12.sp)
                                 }
                                 Icon(Icons.Default.ArrowForwardIos, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                             }
@@ -147,7 +147,7 @@ Text(localized("Tamirhane", "Repair Shop"), color = TextPrimary, fontSize = 20.s
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
-                            Text(item.itemName, color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text(localized(item.itemName), color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(4.dp))
                             val (badgeBg, badgeText) = when {
                                 item.condition.contains("Tamir") || item.condition.contains("Bantlı") || 
@@ -156,7 +156,7 @@ Text(localized("Tamirhane", "Repair Shop"), color = TextPrimary, fontSize = 20.s
                                 else -> ConditionScratchBg to ConditionScratch
                             }
                             Box(modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
-                                Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Text(localized(item.condition), color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.height(8.dp))
 Text(localized("Güncel Hasarlı Değeri: ₺${formatBalance(currentVal.toString())}", "Current Damaged Value: ₺${formatBalance(currentVal.toString())}"), color = MarketTextSecondary, fontSize = 12.sp)
@@ -177,8 +177,8 @@ Text(localized("Sıfır Değeri: ₺${formatBalance(baseVal.toString())}", "New 
                             .padding(12.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                            Text(cirakTitle, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text(cirakSub, color = MarketTextSecondary, fontSize = 10.sp)
+                            Text(localized(cirakTitle), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text(localized(cirakSub), color = MarketTextSecondary, fontSize = 10.sp)
                             Spacer(modifier = Modifier.height(8.dp))
                             Text("₺${formatBalance(cirakCost.toString())}", color = PrimaryOrange, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(8.dp))
@@ -196,8 +196,8 @@ Text(localized("Başarı: %$cirakSuccess", "Success: %$cirakSuccess"), color = C
                             .padding(12.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                            Text(ustaTitle, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text(ustaSub, color = MarketTextSecondary, fontSize = 10.sp)
+                            Text(localized(ustaTitle), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text(localized(ustaSub), color = MarketTextSecondary, fontSize = 10.sp)
                             Spacer(modifier = Modifier.height(8.dp))
                             Text("₺${formatBalance(ustaCost.toString())}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(8.dp))
@@ -230,7 +230,7 @@ Text(localized("Satışa Son Etki", "Effect on Sale"), color = MarketTextSeconda
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
 Text(localized("Beklenen Durum:", "Expected Condition:"), color = TextPrimary, fontSize = 14.sp)
-                            Text(expectedResult, color = if(selectedOption == "Usta") MoneyGreen else PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(localized(expectedResult), color = if(selectedOption == "Usta") MoneyGreen else PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -290,14 +290,14 @@ Text(localized("Tamire Başla - ₺${formatBalance(selectedCost.toString())}", "
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
-                        "Usta İş Başında...",
+                        localized("Usta İş Başında...", "The expert is at work..."),
                         color = Color.White,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "Lütfen bekleyin, eşya onarılıyor.",
+                        localized("Lütfen bekleyin, eşya onarılıyor.", "Please wait, the item is being repaired."),
                         color = MarketTextSecondary,
                         fontSize = 15.sp
                     )
@@ -383,8 +383,8 @@ Text(localized("Günlük Tamir Hakkı", "Daily Repair Limit"), color = TextPrima
             }
 
             Text(
-                if (remaining == 0) "⏰ Yarın 2 yeni tamir hakkın olacak"
-                else "Her tamirde %10 başarısızlık riski vardır!",
+                if (remaining == 0) localized("⏰ Yarın 2 yeni tamir hakkın olacak", "⏰ You will have 2 new repair attempts tomorrow")
+                else localized("Her tamirde %10 başarısızlık riski vardır!", "Every repair has a 10% failure risk!"),
                 color = if (remaining == 0) Color(0xFFFF6B6B) else TextSecondary,
                 fontSize = 12.sp
             )
@@ -415,7 +415,7 @@ fun RepairResultDialog(result: RepairResultState, onDismiss: () -> Unit) {
                 Text(if (result.isSuccess) "✅" else "💥", fontSize = 52.sp)
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    if (result.isSuccess) "Tamir Başarılı!" else "Usta Elin Kaydı!",
+                    if (result.isSuccess) localized("Tamir Başarılı!", "Repair Successful!") else localized("Usta Elin Kaydı!", "The Expert Made a Mistake!"),
                     color = if (result.isSuccess) MoneyGreen else Color(0xFFFF4444),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.ExtraBold
@@ -423,9 +423,9 @@ fun RepairResultDialog(result: RepairResultState, onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     if (result.isSuccess)
-                        "${result.itemName} başarıyla tamir edildi. Değeri arttı!"
+                        localized("${result.itemName} başarıyla tamir edildi. Değeri arttı!", "${result.itemName} was repaired successfully. Its value increased!")
                     else
-                        "Tamir sırasında bir şeyler ters gitti... ${result.itemName} daha da bozuldu!\nYeni durum: ${result.newCondition}",
+                        localized("Tamir sırasında bir şeyler ters gitti... ${result.itemName} daha da bozuldu!\nYeni durum: ${result.newCondition}", "Something went wrong during the repair... ${result.itemName} got even worse!\nNew condition: ${result.newCondition}"),
                     color = TextSecondary,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center
@@ -440,7 +440,7 @@ fun RepairResultDialog(result: RepairResultState, onDismiss: () -> Unit) {
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        if (result.isSuccess) "Harika! 🎉" else "Ne yapayım... 😔",
+                        if (result.isSuccess) localized("Harika! 🎉", "Great! 🎉") else localized("Ne yapayım... 😔", "What can I do... 😔"),
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )

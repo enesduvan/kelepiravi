@@ -236,7 +236,7 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                 }
 
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(sellBargainState.item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(localized(sellBargainState.item.itemName), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(painterResource(id = R.drawable.person), contentDescription = null, tint = TextSecondary, modifier = Modifier.size(14.dp))
                         val personality = SellerPersonality.fromName(sellBargainState.buyerName)
@@ -255,8 +255,8 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                             else -> TextSecondary
                         }
 
-                        Text("${sellBargainState.buyerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.weight(1f, fill = false), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                        Text("${sellBargainState.buyerName} [${localized(personality.title)}] •", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.weight(1f, fill = false), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(localized(relText), color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
                     Text("₺${formatBalance(sellBargainState.baseSellPrice)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     Text(localized("Değeri", "Value"), color = TextSecondary, fontSize = 11.sp)
@@ -289,7 +289,7 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                     Text(localized("Alıcı Modu", "Buyer Mood"), color = TextSecondary, fontSize = 10.sp)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(emoji, fontSize = 20.sp)
-                        Text(sellBargainState.buyerMood, color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(localized(sellBargainState.buyerMood), color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                     // Animasyonlu sabır barı
                     Box(modifier = Modifier.width(60.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(SurfaceVariant)) {

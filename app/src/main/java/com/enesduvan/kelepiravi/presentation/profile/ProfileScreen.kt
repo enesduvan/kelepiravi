@@ -374,8 +374,8 @@ Text(localized("KAZANILAN BAŞARIMLAR", "ACHIEVEMENTS EARNED"), color = MarketTe
 
                     if (ach.isHidden && !isUnlocked) {
                         BasarimCard(
-                            title = "Gizemli Görev",
-                            description = "Nasıl açılacağı bilinmiyor...",
+                            title = localized("Gizemli Görev", "Mystery Task"),
+                            description = localized("Nasıl açılacağı bilinmiyor...", "How to unlock it is unknown..."),
                             icon = Icons.Default.HelpOutline,
                             isUnlocked = false
                         )
@@ -423,10 +423,10 @@ fun StatBox(modifier: Modifier, icon: ImageVector, iconTint: Color, title: Strin
                 Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(20.dp))
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(title, color = MarketTextSecondary, fontSize = 11.sp)
+            Text(localized(title), color = MarketTextSecondary, fontSize = 11.sp)
             Spacer(modifier = Modifier.height(4.dp))
             Text(value, color = if(title == "Toplam Kâr") MoneyGreen else TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text(subValue, color = iconTint, fontSize = 10.sp)
+            Text(localized(subValue), color = iconTint, fontSize = 10.sp)
             
             Spacer(modifier = Modifier.weight(1f))
             

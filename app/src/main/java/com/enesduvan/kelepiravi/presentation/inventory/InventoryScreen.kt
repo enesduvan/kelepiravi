@@ -516,22 +516,22 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
             }
 
             Column(modifier = Modifier.weight(1f).padding(start = 14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(localized(item.itemName), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Box(modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
-                    Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(localized(item.condition), color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
                 if (wasScam) {
                     Box(
                         modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xFF3A1A00)).padding(horizontal = 8.dp, vertical = 2.dp)
                     ) {
-                        Text("⚠️ Kazıklandın!", color = Color(0xFFFF8C00), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        Text(localized("⚠️ Kazıklandın!", "⚠️ You got scammed!"), color = Color(0xFFFF8C00), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     }
                 }
-                Text("Alış: ₺${formatBalance(purchasePrice)}", color = TextSecondary, fontSize = 12.sp)
-                Text("Kusursuz: ₺${formatBalance(baseValue)}", color = MarketTextSecondary, fontSize = 11.sp)
+                Text("${localized("Alış:", "Purchase:")} ₺${formatBalance(purchasePrice)}", color = TextSecondary, fontSize = 12.sp)
+                Text("${localized("Kusursuz:", "Perfect:")} ₺${formatBalance(baseValue)}", color = MarketTextSecondary, fontSize = 11.sp)
 
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text("Güncel: ₺${formatBalance(estimatedValue)}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Text("${localized("Güncel:", "Current:")} ₺${formatBalance(estimatedValue)}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                     Text(
                         "${if (isProfit) "+" else ""}${formatBalance(profit)}₺",
                         color = if (isProfit) MoneyGreen else RED,

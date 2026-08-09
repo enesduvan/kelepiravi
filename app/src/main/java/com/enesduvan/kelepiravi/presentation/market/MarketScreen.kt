@@ -125,7 +125,7 @@ fun MarketScreen(
                                     .padding(14.dp)
                             ) {
                                 Text(
-                                    text = msg,
+                                    text = localized(msg),
                                     color = Color.Black,
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 14.sp,
@@ -343,7 +343,7 @@ fun ScamRevealDialog(item: MarketItem, onDismiss: () -> Unit) {
             ) {
                 Text("💀", fontSize = 48.sp)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("KAZIKLANDIN!", color = Color(0xFFFF4444), fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
+                Text(localized("KAZIKLANDIN!", "YOU GOT SCAMMED!"), color = Color(0xFFFF4444), fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Box(
@@ -356,13 +356,13 @@ fun ScamRevealDialog(item: MarketItem, onDismiss: () -> Unit) {
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         if (scamType != null) {
-                            Text(scamType.warningText, color = Color(0xFFFFB74D), fontSize = 13.sp, textAlign = TextAlign.Center)
+                            Text(localized(scamType.warningText), color = Color(0xFFFFB74D), fontSize = 13.sp, textAlign = TextAlign.Center)
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(scamType.revealText, color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Medium)
+                            Text(localized(scamType.revealText), color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Medium)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "Gerçek Durum: ${item.hiddenCondition}",
+                            localized("Gerçek Durum: ${item.hiddenCondition}", "Actual Condition: ${item.hiddenCondition}"),
                             color = Color(0xFFFF6B6B),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold
@@ -372,7 +372,7 @@ fun ScamRevealDialog(item: MarketItem, onDismiss: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "Zamanla bu satıcıları tanımayı öğreneceksin. Her kazıklanma bir deneyimdir! 💪",
+                    localized("Zamanla bu satıcıları tanımayı öğreneceksin. Her kazıklanma bir deneyimdir! 💪", "You will learn to recognize these sellers over time. Every scam is a lesson! 💪"),
                     color = TextSecondary,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center
@@ -384,7 +384,7 @@ fun ScamRevealDialog(item: MarketItem, onDismiss: () -> Unit) {
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF4444)),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Anladım 😤", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(localized("Anladım 😤", "Got it 😤"), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -409,16 +409,16 @@ fun DailySummaryDialog(summary: DailySummaryState, onDismiss: () -> Unit) {
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("${summary.day}. Gün Özeti", color = TextPrimary, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+                Text("${summary.day}. ${localized("Gün Özeti", "Day Summary")}", color = TextPrimary, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Giriş Bonusu:", color = TextSecondary, fontSize = 14.sp)
+                    Text(localized("Giriş Bonusu:", "Login Bonus:"), color = TextSecondary, fontSize = 14.sp)
                     Text("+₺${formatBalance(summary.bonusMoney.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Kazanılan XP:", color = TextSecondary, fontSize = 14.sp)
+                    Text(localized("Kazanılan XP:", "XP Earned:"), color = TextSecondary, fontSize = 14.sp)
                     Text("+${summary.xpGained} XP", color = PrimaryOrange, fontWeight = FontWeight.Bold)
                 }
 
@@ -426,18 +426,18 @@ fun DailySummaryDialog(summary: DailySummaryState, onDismiss: () -> Unit) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Divider(color = SurfaceVariant)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Giderler", color = ErrorRed, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(localized("Giderler", "Expenses"), color = ErrorRed, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     if (summary.rentPaid > 0) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Dükkan Kirası:", color = TextSecondary, fontSize = 14.sp)
+                            Text(localized("Dükkan Kirası:", "Shop Rent:"), color = TextSecondary, fontSize = 14.sp)
                             Text("-₺${formatBalance(summary.rentPaid.toString())}", color = ErrorRed, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                     }
                     if (summary.taxPaid > 0) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Satış Vergisi (%5):", color = TextSecondary, fontSize = 14.sp)
+                            Text(localized("Satış Vergisi (%5):", "Sales Tax (5%):"), color = TextSecondary, fontSize = 14.sp)
                             Text("-₺${formatBalance(summary.taxPaid.toString())}", color = ErrorRed, fontWeight = FontWeight.Bold)
                         }
                     }
@@ -447,10 +447,10 @@ fun DailySummaryDialog(summary: DailySummaryState, onDismiss: () -> Unit) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Divider(color = SurfaceVariant)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("📰 Günün Haberi", color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(localized("📰 Günün Haberi", "📰 Daily News"), color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(summary.event.title, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Text(summary.event.description, color = TextSecondary, fontSize = 13.sp, textAlign = TextAlign.Center)
+                    Text(localized(summary.event.title), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(localized(summary.event.description), color = TextSecondary, fontSize = 13.sp, textAlign = TextAlign.Center)
                 }
                 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -460,7 +460,7 @@ fun DailySummaryDialog(summary: DailySummaryState, onDismiss: () -> Unit) {
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange)
                 ) {
-                    Text("Güne Başla", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(localized("Güne Başla", "Start the Day"), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
         }

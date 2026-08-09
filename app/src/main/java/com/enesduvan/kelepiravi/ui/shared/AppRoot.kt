@@ -213,8 +213,8 @@ fun AppRoot(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(localized("🏆 BAŞARIM AÇILDI!", "🏆 ACHIEVEMENT UNLOCKED!"), color = ReputationGold, fontSize = 10.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 1.sp)
                         Spacer(modifier = Modifier.height(2.dp))
-                        Text(ach.title, color = androidx.compose.ui.graphics.Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                        Text(ach.description, color = com.enesduvan.kelepiravi.ui.theme.TextSecondary, fontSize = 12.sp)
+                        Text(localized(ach.title), color = androidx.compose.ui.graphics.Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(localized(ach.description), color = com.enesduvan.kelepiravi.ui.theme.TextSecondary, fontSize = 12.sp)
                     }
                     if (ach.rewardMoney > 0) {
                         Column(horizontalAlignment = Alignment.End) {

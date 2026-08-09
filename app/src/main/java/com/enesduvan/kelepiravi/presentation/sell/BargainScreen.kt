@@ -144,7 +144,7 @@ Text(localized("Parayı Gönder", "Send Money"), color = Color.White, fontWeight
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice)}", color = MoneyGreen, fontWeight = FontWeight.Bold)
+Text("${localized("Anlaştınız!", "Deal agreed!")}\n₺${formatBalance(bargainState.agreedPrice)}", color = MoneyGreen, fontWeight = FontWeight.Bold)
                         Button(
                             onClick = { 
                                 performHaptic()
@@ -226,7 +226,7 @@ Text(localized("Önerilen: ₺${formatBalance(bargainState.suggestedPrice)}", "S
                             OutlinedTextField(
                                 value = offerText,
                                 onValueChange = { offerText = it },
-                                label = { Text("Teklifin (₺)", color = TextSecondary) },
+label = { Text(localized("Teklifin (₺)", "Your Offer (₺)"), color = TextSecondary) },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 modifier = Modifier.weight(1f),
@@ -263,7 +263,7 @@ Text(localized("Gönder", "Send"), color = Color.Black, fontWeight = FontWeight.
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("Kabul Et (₺${formatBalance(bargainState.lastSellerOffer)})", color = Color.White, fontWeight = FontWeight.Bold)
+Text("${localized("Kabul Et", "Accept")} (₺${formatBalance(bargainState.lastSellerOffer)})", color = Color.White, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -291,7 +291,7 @@ Text(localized("Gönder", "Send"), color = Color.Black, fontWeight = FontWeight.
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen)
                         ) {
-                            Text("Kabul Et (₺${formatBalance(bargainState.lastSellerOffer.toString())})", color = Color.White, fontWeight = FontWeight.Bold)
+Text("${localized("Kabul Et", "Accept")} (₺${formatBalance(bargainState.lastSellerOffer.toString())})", color = Color.White, fontWeight = FontWeight.Bold)
                         }
                     }
 
@@ -337,7 +337,7 @@ Text(localized("Teklif Gönder", "Send Offer"), color = Color.Black, fontWeight 
                 }
 
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(bargainState.item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+Text(localized(bargainState.item.itemName), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(painterResource(id = R.drawable.person), contentDescription = null, tint = TextSecondary, modifier = Modifier.size(14.dp))
                         val personality = if (bargainState.item.isScammer && bargainState.item.scamType.isNotEmpty()) {
@@ -362,15 +362,15 @@ Text(localized("Teklif Gönder", "Send Offer"), color = Color.Black, fontWeight 
                             else -> TextSecondary
                         }
                         
-                        Text("${bargainState.item.sellerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.weight(1f, fill = false).clickable { viewModel.openSellerProfile(bargainState.item.sellerName, personality.title) }, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                        Text("${bargainState.item.sellerName} [${localized(personality.title)}] •", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.weight(1f, fill = false).clickable { viewModel.openSellerProfile(bargainState.item.sellerName, personality.title) }, maxLines = 1, overflow = TextOverflow.Ellipsis)
+Text(localized(relText), color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
                     Text("₺${formatBalance(bargainState.item.salesValue)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     
                     if (bargainState.item.description.isNotEmpty()) {
-                        Text("Açıklama: \"${bargainState.item.description}\"", color = MarketTextSecondary, fontSize = 11.sp, fontStyle = FontStyle.Italic, lineHeight = 14.sp)
+                        Text("${localized("Açıklama:", "Description:")} \"${localized(bargainState.item.description)}\"", color = MarketTextSecondary, fontSize = 11.sp, fontStyle = FontStyle.Italic, lineHeight = 14.sp)
                     }
-                    Text("İlan Fiyatı", color = TextSecondary, fontSize = 11.sp)
+                    Text(localized("İlan Fiyatı", "Listing Price"), color = TextSecondary, fontSize = 11.sp)
                 }
 
                 // Ch6: Animasyonlu sabır barı
@@ -399,7 +399,7 @@ Text(localized("Teklif Gönder", "Send Offer"), color = Color.Black, fontWeight 
 Text(localized("Satıcı Modu", "Seller Mode"), color = TextSecondary, fontSize = 10.sp)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(emoji, fontSize = 20.sp)
-                        Text(bargainState.sellerMood, color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+Text(localized(bargainState.sellerMood), color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                     // Ch6: Animasyonlu sabır barı
                     Box(modifier = Modifier.width(60.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(SurfaceVariant)) {

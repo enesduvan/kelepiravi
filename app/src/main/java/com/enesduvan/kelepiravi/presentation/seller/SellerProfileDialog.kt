@@ -69,7 +69,7 @@ fun SellerProfileDialog(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(profile.sellerName, color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
-                        Text(profile.sellerTitle, color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(localized(profile.sellerTitle), color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
@@ -140,8 +140,8 @@ fun SellerProfileDialog(
                                     }
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Column(modifier = Modifier.weight(1f)) {
-                                        Text(item.itemName, color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                                        Text(item.condition, color = TextSecondary, fontSize = 12.sp)
+                                        Text(localized(item.itemName), color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                        Text(localized(item.condition), color = TextSecondary, fontSize = 12.sp)
                                         Text("₺${formatBalance(item.salesValue)}", color = MoneyGreen, fontWeight = FontWeight.Bold)
                                     }
                                 }

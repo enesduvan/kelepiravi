@@ -124,11 +124,11 @@ fun InteractiveEventDialog(
             ) {
                 Text(localized("👀 OLAY", "👀 EVENT"), color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(event.title, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
+                Text(localized(event.title), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    event.description,
+                    localized(event.description),
                     color = TextPrimary,
                     fontSize = 15.sp,
                     textAlign = TextAlign.Center,
@@ -178,7 +178,7 @@ fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = resultText,
+                    text = localized(resultText),
                     color = Color.White,
                     fontSize = 15.sp,
                     lineHeight = 22.sp,

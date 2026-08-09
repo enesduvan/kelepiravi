@@ -179,7 +179,7 @@ fun ListingCard(
                     )
                 }
                 Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
-                    Text(listing.item.itemName, color = TextPrimary, fontWeight = FontWeight.Bold)
+                    Text(localized(listing.item.itemName), color = TextPrimary, fontWeight = FontWeight.Bold)
 Text(localized("İlan Fiyatı: ₺${formatBalance(listing.listedPrice)}", "Listing Price: ₺${formatBalance(listing.listedPrice)}"), color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     Text("${localized("Piyasa:", "Market:")} ₺${formatBalance(estimatedValue)} (${if (diffPercent > 0) "+" else ""}${"%.0f".format(diffPercent)}%)", color = TextSecondary, fontSize = 12.sp)
                 }
