@@ -23,6 +23,8 @@ import com.enesduvan.kelepiravi.data.event.EventManager
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
+
 data class AdvanceDayResult(
     val event: DailyEvent?,
     val interactiveEvent: EventDefinition?,
@@ -33,11 +35,32 @@ data class AdvanceDayResult(
 class KelepiraviRepository(
     private val database: AppDatabase,
     private val context: android.content.Context
-) {
+) : IKelepiraviRepository {
     private val dao = database.kelepiraviDao()
     private val mutex = Mutex()
 
-    fun getPlayerState(): Flow<List<UserInventoryEntity>> = dao.getAllInventories()
+    override fun getPlayerState(): Flow<List<UserInventoryEntity>> = dao.getAllInventories()
+
+    override suspend fun getUserInventoryItems(): List<MarketItem> {
+        val playerItems = database.inventoryItemDao().getInventory(GameConstants.DEFAULT_USER_ID)
+        return playerItems.map { entity ->
+            val product = MarketGenerator.PRODUCTS.find { it.name == entity.itemId }
+                ?: MarketGenerator.PRODUCTS.random()
+            MarketItem(
+                id = entity.id.toString(),
+                itemName = product.name,
+                category = product.category,
+                condition = "Kusursuz Temiz",
+                sellerName = "Oyuncu",
+                salesValue = product.baseMaxValue.toLong(),
+                estimatedValue = product.baseMaxValue.toLong(),
+                imageName = product.imageKey,
+                purchasePrice = entity.purchasePrice.toLong()
+            )
+        }
+    }
+
+    override suspend fun recordSuccessfulBargain(category: String, profit: Double) {}
 
     // ─── XP / Level ─────────────────────────────────────────────────────────
 
@@ -128,7 +151,7 @@ class KelepiraviRepository(
         }
     }
 
-    suspend fun repairItem(item: MarketItem, isUsta: Boolean = false): RepairResult {
+    override suspend fun repairItem(item: MarketItem, isUsta: Boolean): RepairResult {
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
@@ -186,7 +209,7 @@ class KelepiraviRepository(
         else                           -> "Bantlı / Tamir Gerekli"
     }
 
-    fun calculateRepairCost(item: MarketItem, isUsta: Boolean = false): Double {
+    override fun calculateRepairCost(item: MarketItem, isUsta: Boolean): Double {
         val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition)
             ?: GameConstants.PERFECT_CONDITION_MULTIPLIER
         if (currentMultiplier >= GameConstants.PERFECT_CONDITION_MULTIPLIER) return 0.0
@@ -210,7 +233,7 @@ class KelepiraviRepository(
 
     // ─── Satın Alma ──────────────────────────────────────────────────────────
 
-    suspend fun purchaseItem(item: MarketItem): Boolean {
+    override suspend fun purchaseItem(item: MarketItem): Boolean {
         return mutex.withLock {
             database.withTransaction {
                 val player    = getPlayerOrCreate()
@@ -237,11 +260,11 @@ class KelepiraviRepository(
         }
     }
 
-    suspend fun recordFailedBargain() {
+    override suspend fun recordFailedBargain() {
         // İstatistikler PlayerStatisticsEntity'e taşınacak — şimdilik no-op
     }
 
-    suspend fun buyLootBox(type: LootBoxType): List<MarketItem>? {
+    override suspend fun buyLootBox(type: LootBoxType): List<MarketItem>? {
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
@@ -329,7 +352,7 @@ class KelepiraviRepository(
         }
     }
 
-    fun calculateSellPrice(item: MarketItem): Double {
+    override fun calculateSellPrice(item: MarketItem): Double {
         val estimated  = item.estimatedValue.toDouble()
         val multiplier = MarketGenerator.getConditionMultiplier(item.condition)
         return ((estimated * multiplier) * GameConstants.SELL_PRICE_ROUNDING_SCALE).toLong() /
@@ -338,7 +361,7 @@ class KelepiraviRepository(
 
     // ─── Gün Geçişi ──────────────────────────────────────────────────────────
 
-    suspend fun advanceDay(): AdvanceDayResult {
+    override suspend fun advanceDay(): AdvanceDayResult {
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
@@ -377,13 +400,13 @@ class KelepiraviRepository(
         }
     }
 
-    suspend fun applyEventChoice(choice: EventChoice): List<String> {
+    override suspend fun applyEventChoice(choice: EventChoice): List<MarketItem> {
         return mutex.withLock {
             database.withTransaction {
                 val player           = getPlayerOrCreate()
                 var currentBalance   = player.balance.toDouble()
                 var newXp            = player.xp
-                val generatedItemNames = mutableListOf<String>()
+                val generatedItems = mutableListOf<MarketItem>()
 
                 for (reward in choice.rewards) {
                     when (reward.type) {
@@ -395,7 +418,7 @@ class KelepiraviRepository(
                             val item = MarketGenerator.generateNormalItem(
                                 kotlin.random.Random.Default, product, emptyMap()
                             )
-                            generatedItemNames.add(item.itemName)
+                            generatedItems.add(item)
                         }
                     }
                 }
@@ -414,14 +437,14 @@ class KelepiraviRepository(
                 val xpGain     = (newXp - player.xp).coerceAtLeast(0)
                 val basePlayer = if (xpGain > 0) processXpGain(player, xpGain) else player
                 dao.updateInventory(basePlayer.copy(balance = currentBalance.toLong()))
-                generatedItemNames
+                generatedItems
             }
         }
     }
 
     // ─── Yükseltmeler ────────────────────────────────────────────────────────
 
-    suspend fun upgradeShop(cost: Double): Boolean {
+    override suspend fun upgradeShop(cost: Double): Boolean {
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
@@ -439,7 +462,7 @@ class KelepiraviRepository(
         }
     }
 
-    suspend fun upgradeMechanic(cost: Double): Boolean {
+    override suspend fun upgradeMechanic(cost: Double): Boolean {
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()

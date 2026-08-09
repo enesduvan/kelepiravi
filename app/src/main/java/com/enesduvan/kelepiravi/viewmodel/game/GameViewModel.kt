@@ -3,44 +3,27 @@ package com.enesduvan.kelepiravi.viewmodel.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.event.EventChoice
 import com.enesduvan.kelepiravi.data.event.EventDefinition
 import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.domain.usecase.AdvanceDayUseCase
+import com.enesduvan.kelepiravi.domain.usecase.GetPlayerStateUseCase
 import com.enesduvan.kelepiravi.viewmodel.DailySummaryState
 import com.enesduvan.kelepiravi.viewmodel.PlayerState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class GameViewModel(
-    private val repository: KelepiraviRepository
+    private val repository: KelepiraviRepository,
+    private val getPlayerStateUseCase: GetPlayerStateUseCase = GetPlayerStateUseCase(repository),
+    private val advanceDayUseCase: AdvanceDayUseCase = AdvanceDayUseCase(repository)
 ) : ViewModel() {
 
-    val playerState: StateFlow<PlayerState> = repository
-        .getPlayerState()
-        .map { list ->
-            val entity = list.firstOrNull { it.playerId == GameConstants.DEFAULT_USER_ID }
-            PlayerState(
-                balance          = entity?.balance ?: GameConstants.INITIAL_BALANCE,
-                inventory        = emptyList(),
-                currentDay       = entity?.currentDay ?: 1,
-                xp               = entity?.xp ?: 0,
-                level            = entity?.level ?: 1,
-                shopLevel        = entity?.shopLevel ?: 1,
-                mechanicLevel    = entity?.mechanicLevel ?: 1,
-                unlockedAchievements = entity?.unlockedAchievements ?: "",
-                totalRepairs     = entity?.totalRepairs ?: 0,
-                hasBoughtScam    = entity?.hasBoughtScam ?: false,
-                hasBoughtAbsurd  = entity?.hasBoughtAbsurd ?: false,
-                dailyRepairsUsed = entity?.dailyRepairsUsed ?: 0,
-                lastRepairDay    = entity?.lastRepairDay ?: 0
-            )
-        }
+    val playerState: StateFlow<PlayerState> = getPlayerStateUseCase()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -63,16 +46,8 @@ class GameViewModel(
         if (_isDayAdvancing.value) return
         _isDayAdvancing.value = true
         viewModelScope.launch {
-            val result = repository.advanceDay()
-            val nextDay = playerState.value.currentDay + 1
-            _dailySummary.value = DailySummaryState(
-                day = nextDay,
-                xpGained = GameConstants.DAILY_LOGIN_XP,
-                bonusMoney = GameConstants.DAILY_LOGIN_BONUS,
-                taxPaid = result.taxPaid,
-                rentPaid = result.rentPaid,
-                event = result.event
-            )
+            val (summary, result) = advanceDayUseCase.advance(playerState.value.currentDay)
+            _dailySummary.value = summary
             _interactiveEvent.value = result.interactiveEvent
             onDayAdvanced()
             _isDayAdvancing.value = false
@@ -89,7 +64,7 @@ class GameViewModel(
 
     fun applyInteractiveEventChoice(choice: EventChoice) {
         viewModelScope.launch {
-            val generatedItems = repository.applyEventChoice(choice)
+            val generatedItems = advanceDayUseCase.applyEventChoice(choice)
             _interactiveEvent.value = null
             
             val resultText = buildString {

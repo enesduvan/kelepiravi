@@ -18,6 +18,11 @@ import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.market.NegotiationEngine
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.domain.usecase.AdvanceDayUseCase
+import com.enesduvan.kelepiravi.domain.usecase.GetPlayerStateUseCase
+import com.enesduvan.kelepiravi.domain.usecase.PurchaseItemUseCase
+import com.enesduvan.kelepiravi.domain.usecase.RepairItemUseCase
+import com.enesduvan.kelepiravi.domain.usecase.UpgradeShopUseCase
 import com.enesduvan.kelepiravi.data.repository.RepairResult
 import com.enesduvan.kelepiravi.ui.shared.SoundManager
 import kotlinx.coroutines.delay
@@ -155,34 +160,18 @@ data class RepairResultState(
     val itemName: String = ""
 )
 
-// ─── MarketViewModel ──────────────────────────────────────────────────────────
-
 class MarketViewModel(
     private val repository: KelepiraviRepository,
     private val settingsManager: SettingsManager,
-    private val soundManager: SoundManager
+    private val soundManager: SoundManager,
+    private val getPlayerStateUseCase: GetPlayerStateUseCase = GetPlayerStateUseCase(repository),
+    private val purchaseItemUseCase: PurchaseItemUseCase = PurchaseItemUseCase(repository),
+    private val advanceDayUseCase: AdvanceDayUseCase = AdvanceDayUseCase(repository),
+    private val upgradeShopUseCase: UpgradeShopUseCase = UpgradeShopUseCase(repository),
+    private val repairItemUseCase: RepairItemUseCase = RepairItemUseCase(repository)
 ) : ViewModel() {
 
-    val playerState: StateFlow<PlayerState> = repository
-        .getPlayerState()
-        .map { list ->
-            val entity = list.firstOrNull { it.playerId == GameConstants.DEFAULT_USER_ID }
-            PlayerState(
-                balance          = entity?.balance ?: GameConstants.INITIAL_BALANCE,
-                inventory        = emptyList(),
-                currentDay       = entity?.currentDay ?: 1,
-                xp               = entity?.xp ?: 0,
-                level            = entity?.level ?: 1,
-                shopLevel        = entity?.shopLevel ?: 1,
-                mechanicLevel    = entity?.mechanicLevel ?: 1,
-                unlockedAchievements = entity?.unlockedAchievements ?: "",
-                totalRepairs     = entity?.totalRepairs ?: 0,
-                hasBoughtScam    = entity?.hasBoughtScam ?: false,
-                hasBoughtAbsurd  = entity?.hasBoughtAbsurd ?: false,
-                dailyRepairsUsed = entity?.dailyRepairsUsed ?: 0,
-                lastRepairDay    = entity?.lastRepairDay ?: 0
-            )
-        }
+    val playerState: StateFlow<PlayerState> = getPlayerStateUseCase()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -298,7 +287,7 @@ class MarketViewModel(
 
     fun purchaseItem(item: MarketItem) {
         viewModelScope.launch {
-            val success = repository.purchaseItem(item)
+            val (success, achievement) = purchaseItemUseCase(item, playerState.value)
             if (success) {
                 soundManager.playCoinSound()
                 _uiState.value = _uiState.value.copy(
@@ -306,17 +295,8 @@ class MarketViewModel(
                     selectedItem = null
                 )
 
-                val newlyUnlocked = AchievementManager.checkAchievements(
-                    balance = playerState.value.balance.toDouble(),
-                    itemsBought = playerState.value.itemsBought + 1,
-                    itemsSold = playerState.value.itemsSold,
-                    totalRepairs = playerState.value.totalRepairs,
-                    boughtScam = playerState.value.hasBoughtScam || item.isScammer,
-                    boughtAbsurd = playerState.value.hasBoughtAbsurd,
-                    unlockedIds = playerState.value.unlockedAchievements.split(",").filter { it.isNotBlank() }
-                )
-                if (newlyUnlocked.isNotEmpty()) {
-                    _uiState.value = _uiState.value.copy(latestAchievement = newlyUnlocked.first())
+                if (achievement != null) {
+                    _uiState.value = _uiState.value.copy(latestAchievement = achievement)
                     viewModelScope.launch {
                         delay(4000)
                         _uiState.value = _uiState.value.copy(latestAchievement = null)
@@ -393,12 +373,12 @@ class MarketViewModel(
     }
 
     fun calculateRepairCost(item: MarketItem, isUsta: Boolean = false): Double {
-        return repository.calculateRepairCost(item, isUsta)
+        return repairItemUseCase.calculateRepairCost(item, isUsta)
     }
 
     fun repairItem(item: MarketItem, isUsta: Boolean = false) {
         viewModelScope.launch {
-            when (val result = repository.repairItem(item, isUsta)) {
+            when (val result = repairItemUseCase.repair(item, isUsta)) {
                 is RepairResult.Success -> {
                     _repairResult.value = RepairResultState(isSuccess = true, itemName = item.itemName)
                 }
@@ -431,50 +411,24 @@ class MarketViewModel(
         _sellerProfile.value = null
     }
 
-    fun getShopUpgradeCost(level: Int): Double = when (level) {
-        1 -> 15000.0
-        2 -> 50000.0
-        3 -> 150000.0
-        4 -> 500000.0
-        else -> 0.0
-    }
+    fun getShopUpgradeCost(level: Int): Double = upgradeShopUseCase.getShopUpgradeCost(level)
 
-    fun getMechanicUpgradeCost(level: Int): Double = when (level) {
-        1 -> 20000.0
-        2 -> 75000.0
-        3 -> 250000.0
-        4 -> 1000000.0
-        else -> 0.0
-    }
+    fun getMechanicUpgradeCost(level: Int): Double = upgradeShopUseCase.getMechanicUpgradeCost(level)
 
     fun upgradeShop() {
-        val level = playerState.value.shopLevel
-        if (level >= 5) return
-        val cost = getShopUpgradeCost(level)
-        viewModelScope.launch { repository.upgradeShop(cost) }
+        viewModelScope.launch { upgradeShopUseCase.upgradeShop(playerState.value.shopLevel) }
     }
 
     fun upgradeMechanic() {
-        val level = playerState.value.mechanicLevel
-        if (level >= 5) return
-        val cost = getMechanicUpgradeCost(level)
-        viewModelScope.launch { repository.upgradeMechanic(cost) }
+        viewModelScope.launch { upgradeShopUseCase.upgradeMechanic(playerState.value.mechanicLevel) }
     }
 
     // ─── Gün İlerletme & Etkinlikler ──────────────────────────────────────────
 
     fun advanceDay(onDayAdvanced: () -> Unit = {}) {
         viewModelScope.launch {
-            val result = repository.advanceDay()
-            val nextDay = playerState.value.currentDay + 1
-            _dailySummary.value = DailySummaryState(
-                day = nextDay,
-                xpGained = GameConstants.DAILY_LOGIN_XP,
-                bonusMoney = GameConstants.DAILY_LOGIN_BONUS,
-                taxPaid = result.taxPaid,
-                rentPaid = result.rentPaid,
-                event = result.event
-            )
+            val (summary, result) = advanceDayUseCase.advance(playerState.value.currentDay)
+            _dailySummary.value = summary
             _interactiveEvent.value = result.interactiveEvent
             onDayAdvanced()
         }
@@ -484,7 +438,7 @@ class MarketViewModel(
     fun dismissInteractiveEvent() { _interactiveEvent.value = null }
     fun applyInteractiveEventChoice(choice: EventChoice) {
         viewModelScope.launch {
-            val generatedItems = repository.applyEventChoice(choice)
+            val generatedItems = advanceDayUseCase.applyEventChoice(choice)
             _interactiveEvent.value = null
             _eventResult.value = choice.outcomeText ?: "Etkinlik tamamlandı."
         }
