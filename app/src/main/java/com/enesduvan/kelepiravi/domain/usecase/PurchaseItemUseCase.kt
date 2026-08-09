@@ -4,7 +4,7 @@ import com.enesduvan.kelepiravi.data.market.Achievement
 import com.enesduvan.kelepiravi.data.market.AchievementManager
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
-import com.enesduvan.kelepiravi.viewmodel.PlayerState
+import com.enesduvan.kelepiravi.domain.model.PlayerState
 
 class PurchaseItemUseCase(private val repository: IKelepiraviRepository) {
     suspend operator fun invoke(item: MarketItem, playerState: PlayerState): Pair<Boolean, Achievement?> {

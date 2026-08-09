@@ -2,12 +2,12 @@ package com.enesduvan.kelepiravi.data.market
 
 import com.enesduvan.kelepiravi.data.BargainConstants
 import com.enesduvan.kelepiravi.data.model.MarketItem
-import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
-import com.enesduvan.kelepiravi.viewmodel.BargainMessage
-import com.enesduvan.kelepiravi.viewmodel.BargainState
-import com.enesduvan.kelepiravi.viewmodel.MarketUiState
-import com.enesduvan.kelepiravi.viewmodel.SellBargainState
+import com.enesduvan.kelepiravi.domain.model.BargainMessage
+import com.enesduvan.kelepiravi.domain.model.BargainState
+import com.enesduvan.kelepiravi.domain.model.MarketUiState
+import com.enesduvan.kelepiravi.domain.model.SellBargainState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +21,7 @@ import kotlin.random.Random
 
 class NegotiationEngine(
     private val scope: CoroutineScope,
-    private val repository: KelepiraviRepository,
+    private val repository: IKelepiraviRepository,
     private val uiStateFlow: MutableStateFlow<MarketUiState>,
     private val scamRevealFlow: MutableStateFlow<MarketItem?>
 ) {
@@ -81,6 +81,7 @@ class NegotiationEngine(
     fun sendOffer(offerAmount: Double) {
         val state = _bargainState.value ?: return
         if (state.isDealClosed || state.isFailed) return
+        if (!offerAmount.isFinite() || offerAmount <= 0.0) return
 
         val playerMsg = BargainMessage(
             text = "₺${formatBalance(offerAmount)} teklif ediyorum.",
@@ -108,8 +109,8 @@ class NegotiationEngine(
         var agreedPrice = 0.0
         var lastSellerOffer: Double? = null
 
-        val isRepeatOffer = state.lastPlayerOfferAmount != null &&
-            abs((state.lastPlayerOfferAmount) - offerAmount) < 1.0
+        val isRepeatOffer = state.lastPlayerOfferAmount > 0.0 &&
+            abs(state.lastPlayerOfferAmount - offerAmount) < 1.0
         if (isRepeatOffer) {
             val annoyedMsg = personality.dialogs.getRepeatOfferAnnoyed()
             if (annoyedMsg != null) {
@@ -131,7 +132,7 @@ class NegotiationEngine(
             }
         }
 
-        if (state.lastSellerOffer != null && abs(state.lastSellerOffer - offerAmount) < 1.0) {
+        if (state.lastSellerOffer > 0.0 && abs(state.lastSellerOffer - offerAmount) < 1.0) {
             sellerResponseText = personality.dialogs.getBuyAccept()
             isDealClosed = true
             agreedPrice = offerAmount
@@ -375,6 +376,7 @@ class NegotiationEngine(
     fun sendSellOffer(offerAmount: Double) {
         val state = _sellBargainState.value ?: return
         if (state.isDealClosed || state.isFailed) return
+        if (!offerAmount.isFinite() || offerAmount <= 0.0) return
 
         val playerMsg = BargainMessage(
             text = "₺${formatBalance(offerAmount)} olursa hemen senin.",
@@ -397,7 +399,7 @@ class NegotiationEngine(
         var agreedPrice = 0.0
         var lastBuyerOffer: Double? = null
 
-        val isRepeatOffer = state.lastPlayerOfferAmount != null &&
+        val isRepeatOffer = state.lastPlayerOfferAmount > 0.0 &&
             abs(state.lastPlayerOfferAmount - offerAmount) < 1.0
         if (isRepeatOffer) {
             val annoyedMsg = personality.dialogs.getRepeatOfferAnnoyed()
@@ -420,7 +422,7 @@ class NegotiationEngine(
             }
         }
 
-        if (state.lastBuyerOffer != null && abs(state.lastBuyerOffer - offerAmount) < 1.0) {
+        if (state.lastBuyerOffer > 0.0 && abs(state.lastBuyerOffer - offerAmount) < 1.0) {
             buyerResponseText = personality.dialogs.getSellAccept()
             isDealClosed = true
             agreedPrice = offerAmount

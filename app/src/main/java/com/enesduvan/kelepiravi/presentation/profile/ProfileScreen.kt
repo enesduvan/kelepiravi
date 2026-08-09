@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import com.enesduvan.kelepiravi.presentation.settings.SettingsDialog
 import com.enesduvan.kelepiravi.viewmodel.profile.ProfileViewModel
+import com.enesduvan.kelepiravi.ui.localization.localized
 
 @Composable
 fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel) {
@@ -44,6 +45,7 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
     val isSoundEnabled by listingViewModel.isSoundEnabled.collectAsState()
     val isHapticEnabled by listingViewModel.isHapticEnabled.collectAsState()
     val isQuickSellEnabled by listingViewModel.isFastSellEnabled.collectAsState()
+    val language by listingViewModel.language.collectAsState()
 
     val playerState by viewModel.playerState.collectAsState()
 
@@ -104,11 +106,11 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Row(modifier = Modifier.padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.AttachMoney, contentDescription = "Para", tint = BalanceGreen, modifier = Modifier.size(24.dp))
+Icon(Icons.Default.AttachMoney, contentDescription = localized("Para", "Money"), tint = BalanceGreen, modifier = Modifier.size(24.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
                             Text("₺${formatBalance(playerState.balance)}", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text("Bakiye", color = MarketTextSecondary, fontSize = 10.sp)
+Text(localized("Bakiye", "Balance"), color = MarketTextSecondary, fontSize = 10.sp)
                         }
                     }
                 }
@@ -123,11 +125,11 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Row(modifier = Modifier.padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Star, contentDescription = "İtibar", tint = ReputationGold, modifier = Modifier.size(24.dp))
+Icon(Icons.Default.Star, contentDescription = localized("İtibar", "Reputation"), tint = ReputationGold, modifier = Modifier.size(24.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
                             Text("${playerState.xp / 10}", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text("İtibar", color = MarketTextSecondary, fontSize = 10.sp)
+Text(localized("İtibar", "Reputation"), color = MarketTextSecondary, fontSize = 10.sp)
                         }
                     }
                 }
@@ -140,7 +142,7 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
                         .background(CardSecondary, RoundedCornerShape(12.dp))
                         .border(1.dp, MarketBorderSoft, RoundedCornerShape(12.dp))
                 ) {
-                    Icon(Icons.Default.Settings, contentDescription = "Ayarlar", tint = MarketTextSecondary)
+Icon(Icons.Default.Settings, contentDescription = localized("Ayarlar", "Settings"), tint = MarketTextSecondary)
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -164,17 +166,17 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
                             .border(2.dp, PrimaryOrange, RoundedCornerShape(36.dp)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Person, contentDescription = "Avatar", tint = PrimaryOrange, modifier = Modifier.size(40.dp))
+Icon(Icons.Default.Person, contentDescription = localized("Avatar", "Avatar"), tint = PrimaryOrange, modifier = Modifier.size(40.dp))
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(badgeName, color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                        Text("Profesyonel Flipper", color = MarketTextSecondary, fontSize = 14.sp)
+Text(localized("Profesyonel Flipper", "Professional Flipper"), color = MarketTextSecondary, fontSize = 14.sp)
                         
                         Spacer(modifier = Modifier.height(12.dp))
                         
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Seviye $level", color = PrimaryOrange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+Text(localized("Seviye $level", "Level $level"), color = PrimaryOrange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             Text("$xp / $requiredXp XP", color = MarketTextSecondary, fontSize = 12.sp)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
@@ -198,8 +200,8 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
         // İSTATİSTİKLER BÖLÜMÜ
         item {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("İSTATİSTİKLER", color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp)
-                Text("Tüm Zamanlar ▾", color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("İSTATİSTİKLER", "STATISTICS"), color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp)
+Text(localized("Tüm Zamanlar ▾", "All Time ▾"), color = MarketTextSecondary, fontSize = 12.sp)
             }
             Spacer(modifier = Modifier.height(12.dp))
             
@@ -273,7 +275,7 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
 
         // DÜKKAN YOLCULUĞU BÖLÜMÜ
         item {
-            Text("DÜKKAN YOLCULUĞU", color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp, modifier = Modifier.fillMaxWidth())
+Text(localized("DÜKKAN YOLCULUĞU", "SHOP JOURNEY"), color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(12.dp))
             
             LazyRow(
@@ -324,16 +326,16 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(modifier = Modifier.size(40.dp).background(CardSecondary, RoundedCornerShape(20.dp)), contentAlignment = Alignment.Center) {
-                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Yükselt", tint = ReputationGold)
+                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = localized("Yükselt", "Upgrade"), tint = ReputationGold)
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
-                                Text("Dükkanı Yükselt", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                                Text("Daha iyi ürünlere eriş ve kârını artır!", color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("Dükkanı Yükselt", "Upgrade Shop"), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+Text(localized("Daha iyi ürünlere eriş ve kârını artır!", "Access better items and increase your profit!"), color = MarketTextSecondary, fontSize = 12.sp)
                             }
                         }
                         Column(horizontalAlignment = Alignment.End) {
-                            Text("Yükseltme Maliyeti", color = MarketTextSecondary, fontSize = 10.sp)
+Text(localized("Yükseltme Maliyeti", "Upgrade Cost"), color = MarketTextSecondary, fontSize = 10.sp)
                             Text(if (isMaxed) "MAX" else "₺${formatBalance(shopCost.toString())}", color = ReputationGold, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         }
                     }
@@ -345,9 +347,9 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
                         modifier = Modifier.fillMaxWidth().height(48.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Upgrade", tint = Color.White)
+                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = localized("Yükselt", "Upgrade"), tint = Color.White)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(if (isMaxed) "MAKSİMUM SEVİYE" else "Dükkanı Yükselt", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+Text(localized(if (isMaxed) "MAKSİMUM SEVİYE" else "Dükkanı Yükselt"), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -357,7 +359,7 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
 
         // KUPA ODASI (BAŞARIMLAR)
         item {
-            Text("KAZANILAN BAŞARIMLAR", color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp, modifier = Modifier.fillMaxWidth())
+Text(localized("KAZANILAN BAŞARIMLAR", "ACHIEVEMENTS EARNED"), color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(12.dp))
 
             val unlockedIds = playerState.unlockedAchievements.split(",").filter { it.isNotEmpty() }
@@ -401,6 +403,8 @@ fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel
             onHapticToggle = { listingViewModel.setHapticEnabled(it) },
             isQuickSellEnabled = isQuickSellEnabled,
             onQuickSellToggle = { listingViewModel.setFastSellEnabled(it) }
+            ,language = language,
+            onLanguageChange = { listingViewModel.setLanguage(it) }
         )
     }
 }
@@ -477,15 +481,15 @@ fun DukkanCard(title: String, status: String, levelReq: Int, isUnlocked: Boolean
             Spacer(modifier = Modifier.weight(1f))
             
             if (status == "Gecildi") {
-                Icon(Icons.Default.CheckCircle, contentDescription = "Geçildi", tint = MoneyGreen, modifier = Modifier.size(24.dp))
+                Icon(Icons.Default.CheckCircle, contentDescription = localized("Geçildi", "Completed"), tint = MoneyGreen, modifier = Modifier.size(24.dp))
             } else if (status == "Mevcut") {
                 Box(modifier = Modifier.background(ReputationGold, RoundedCornerShape(4.dp)).padding(horizontal = 6.dp, vertical = 2.dp)) {
                     Text("Seviye $levelReq", color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Mevcut Seviye", color = ReputationGold, fontSize = 10.sp)
+Text(localized("Mevcut Seviye", "Current Level"), color = ReputationGold, fontSize = 10.sp)
             } else {
-                Icon(Icons.Default.Lock, contentDescription = "Kilitli", tint = MarketTextSecondary, modifier = Modifier.size(20.dp))
+                Icon(Icons.Default.Lock, contentDescription = localized("Kilitli", "Locked"), tint = MarketTextSecondary, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("Seviye $levelReq", color = MarketTextSecondary, fontSize = 10.sp)
             }
@@ -529,15 +533,15 @@ fun BasarimCard(title: String, description: String, icon: ImageVector, isUnlocke
             Spacer(modifier = Modifier.weight(1f))
             if (isUnlocked) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = "Kazanıldı", tint = MoneyGreen, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Default.CheckCircle, contentDescription = localized("Kazanıldı", "Earned"), tint = MoneyGreen, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Kazanıldı", color = MoneyGreen, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+Text(localized("Kazanıldı", "Earned"), color = MoneyGreen, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Lock, contentDescription = "Kilitli", tint = MarketTextSecondary, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Default.Lock, contentDescription = localized("Kilitli", "Locked"), tint = MarketTextSecondary, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Kilitli", color = MarketTextSecondary, fontSize = 10.sp)
+                    Text(localized("Kilitli", "Locked"), color = MarketTextSecondary, fontSize = 10.sp)
                 }
             }
         }

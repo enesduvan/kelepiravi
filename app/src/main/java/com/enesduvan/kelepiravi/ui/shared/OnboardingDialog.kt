@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.enesduvan.kelepiravi.ui.theme.*
+import com.enesduvan.kelepiravi.ui.localization.localized
 
 @Composable
 fun OnboardingDialog(onComplete: () -> Unit) {
@@ -36,9 +37,9 @@ fun OnboardingDialog(onComplete: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val title = when(step) {
-                    1 -> "Hoşgeldin Kelepir Avcısı!"
-                    2 -> "Değer Mekaniği ve Tamir"
-                    else -> "Ticaretin Altın Kuralları"
+                    1 -> localized("Hoşgeldin Kelepir Avcısı!", "Welcome, Bargain Hunter!")
+                    2 -> localized("Değer Mekaniği ve Tamir", "Value Mechanics and Repair")
+                    else -> localized("Ticaretin Altın Kuralları", "Golden Rules of Trading")
                 }
 
                 Text(
@@ -52,9 +53,9 @@ fun OnboardingDialog(onComplete: () -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 val content = when(step) {
-                    1 -> "Amacın çok basit:\n\nDüşük fiyattan alıp, yüksek fiyata satarak dünyanın en zengin tüccarı olmak!\n\nMarketten fırsatları yakala, envanterine ekle ve kârla sat."
-                    2 -> "Her eşyanın iki değeri vardır:\n\n1. Kusursuz Değeri: Eşyanın sıfır/hasarsız halinin piyasa değeridir.\n2. Güncel Değeri: Eşyanın hasar durumuna göre düşmüş gerçek fiyatıdır.\n\nTaktik: Hasarlı malları ucuz fiyattan alıp tamirhaneye götürürsen, eşyanın güncel değeri kusursuz değerine fırlar ve devasa kâr edersin!"
-                    else -> "• Pazarlık: Müşteriler sabırsızdır. Çok yüksek fiyat istersen masadan kalkarlar.\n\n• Etkinlikler (Events): Bazen zabıta veya hırsız gelebilir. Verdiğin kararlar itibarını etkiler.\n\n• İtibar: İtibarın yüksekse müşteriler seninle pazarlıkta daha esnek olurlar."
+                    1 -> localized("Amacın çok basit:\n\nDüşük fiyattan alıp, yüksek fiyata satarak dünyanın en zengin tüccarı olmak!\n\nMarketten fırsatları yakala, envanterine ekle ve kârla sat.", "Your goal is simple:\n\nBuy low and sell high to become the richest trader in the world!\n\nFind bargains in the market, add them to your inventory, and sell for a profit.")
+                    2 -> localized("Her eşyanın iki değeri vardır:\n\n1. Kusursuz Değeri: Eşyanın sıfır/hasarsız halinin piyasa değeridir.\n2. Güncel Değeri: Eşyanın hasar durumuna göre düşmüş gerçek fiyatıdır.\n\nTaktik: Hasarlı malları ucuz fiyattan alıp tamirhaneye götürürsen, eşyanın güncel değeri kusursuz değerine fırlar ve devasa kâr edersin!", "Every item has two values:\n\n1. Perfect Value: The market value of a new, undamaged item.\n2. Current Value: The item's real value after damage is accounted for.\n\nTip: Buy damaged goods cheaply and repair them to raise their current value and make a huge profit!")
+                    else -> localized("• Pazarlık: Müşteriler sabırsızdır. Çok yüksek fiyat istersen masadan kalkarlar.\n\n• Etkinlikler (Events): Bazen zabıta veya hırsız gelebilir. Verdiğin kararlar itibarını etkiler.\n\n• İtibar: İtibarın yüksekse müşteriler seninle pazarlıkta daha esnek olurlar.", "• Bargaining: Customers are impatient. Ask too much and they will walk away.\n\n• Events: Authorities or thieves may appear. Your decisions affect your reputation.\n\n• Reputation: A high reputation makes customers more flexible during negotiations.")
                 }
 
                 Text(
@@ -85,7 +86,7 @@ fun OnboardingDialog(onComplete: () -> Unit) {
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = if (step < 3) "Devam Et" else "Oynamaya Başla!",
+                        text = if (step < 3) localized("Devam Et", "Continue") else localized("Oynamaya Başla!", "Start Playing!"),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.enesduvan.kelepiravi.data.market.NegotiationEngine
 import com.enesduvan.kelepiravi.data.model.MarketItem
-import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
 import com.enesduvan.kelepiravi.domain.usecase.GetPlayerStateUseCase
 import com.enesduvan.kelepiravi.ui.shared.SoundManager
 import com.enesduvan.kelepiravi.viewmodel.BargainState
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 
 class BargainViewModel(
-    private val repository: KelepiraviRepository,
+    private val repository: IKelepiraviRepository,
     private val soundManager: SoundManager,
     private val getPlayerStateUseCase: GetPlayerStateUseCase = GetPlayerStateUseCase(repository)
 ) : ViewModel() {
@@ -100,7 +100,7 @@ class BargainViewModel(
 }
 
 class BargainViewModelFactory(
-    private val repository: KelepiraviRepository,
+    private val repository: IKelepiraviRepository,
     private val soundManager: SoundManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

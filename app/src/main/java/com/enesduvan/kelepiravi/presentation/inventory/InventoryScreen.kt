@@ -46,6 +46,7 @@ import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.shared.bounceClick
+import com.enesduvan.kelepiravi.ui.localization.localized
 import com.enesduvan.kelepiravi.ui.theme.*
 import kotlin.math.abs
 
@@ -80,8 +81,8 @@ fun InventoryScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainV
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("Envanter", color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
-                            Text("Satın aldığın fırsatlar.", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
+Text(localized("Envanter", "Inventory"), color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+Text(localized("Satın aldığın fırsatlar.", "The bargains you bought."), color = TextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
                         }
                         Box(
                             modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(SurfaceVariant).padding(horizontal = 12.dp, vertical = 8.dp),
@@ -89,7 +90,7 @@ fun InventoryScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainV
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("📅", fontSize = 14.sp)
-                                Text("Gün ${playerState.currentDay}", color = TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+Text(localized("Gün ${playerState.currentDay}", "Day ${playerState.currentDay}"), color = TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -111,7 +112,7 @@ fun InventoryScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainV
                                 .padding(16.dp)
                         ) {
                             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                Text("Portföy Özeti", color = TextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+Text(localized("Portföy Özeti", "Portfolio Summary"), color = TextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     PortfolioStatBox("Yatırım", "₺${formatBalance(playerState.totalInvestment.toString())}", TextPrimary, Modifier.weight(1f))
                                     PortfolioStatBox("Değer", "₺${formatBalance(playerState.portfolioValue.toString())}", MoneyGreen, Modifier.weight(1f))
@@ -211,11 +212,11 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
             // Header (Sabit)
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp).fillMaxWidth()) {
                 IconButton(onClick = onDismiss) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
+Icon(Icons.Default.ArrowBack, contentDescription = localized("Geri", "Back"), tint = TextPrimary)
                 }
-                Text("Satışa Koy", color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+Text(localized("Satışa Koy", "List for Sale"), color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.weight(1f))
-                Icon(Icons.Default.HelpOutline, contentDescription = "Yardım", tint = MarketTextSecondary)
+Icon(Icons.Default.HelpOutline, contentDescription = localized("Yardım", "Help"), tint = MarketTextSecondary)
             }
 
             // Kaydırılabilir İçerik
@@ -248,12 +249,12 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                             Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text("Sıfır/Kusursuz Değeri: ₺${formatBalance(baseValue.toString())}", color = MarketTextSecondary, fontSize = 11.sp)
+Text(localized("Sıfır/Kusursuz Değeri: ₺${formatBalance(baseValue.toString())}", "New/Perfect Value: ₺${formatBalance(baseValue.toString())}"), color = MarketTextSecondary, fontSize = 11.sp)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text("Güncel Hasarlı Değeri", color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("Güncel Hasarlı Değeri", "Current Damaged Value"), color = MarketTextSecondary, fontSize = 12.sp)
                         Text("₺${formatBalance(estimatedValue.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("Envanterdeki Adet", color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("Envanterdeki Adet", "Quantity in Inventory"), color = MarketTextSecondary, fontSize = 12.sp)
                         Text("1", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
                 }
@@ -266,10 +267,10 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     .border(1.dp, MarketBorderSoft, RoundedCornerShape(16.dp)).padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("FİYAT BELİRLE", color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp)
+                    Text(localized("FİYAT BELİRLE", "SET PRICE"), color = MarketTextSecondary, fontSize = 12.sp, letterSpacing = 1.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Önerilen Fiyat", color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("Önerilen Fiyat", "Suggested Price"), color = MarketTextSecondary, fontSize = 12.sp)
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(Icons.Default.Info, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(14.dp))
                     }
@@ -335,7 +336,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     }
                     
                     Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                        Text("Satılma Olasılığı: ", color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("Satılma Olasılığı: ", "Sale Probability: "), color = MarketTextSecondary, fontSize = 12.sp)
                         Text(sellProbability, color = probColor, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                     }
                 }
@@ -354,14 +355,14 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
-                            Text("Tahmini Net Kârın", color = MarketTextSecondary, fontSize = 14.sp)
+Text(localized("Tahmini Net Kârın", "Estimated Net Profit"), color = MarketTextSecondary, fontSize = 14.sp)
                             Text("₺${formatBalance(netProfit.toString())}", color = MoneyGreen, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
                         }
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(Icons.Default.TrendingUp, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(48.dp))
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("Doğru fiyatla hızlıca sat ve daha çok kazan!", color = MarketTextSecondary, fontSize = 12.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+Text(localized("Doğru fiyatla hızlıca sat ve daha çok kazan!", "Sell quickly at the right price and earn more!"), color = MarketTextSecondary, fontSize = 12.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
                     Spacer(modifier = Modifier.height(16.dp))
                     HorizontalDivider(color = MarketBorderSoft)
                     Spacer(modifier = Modifier.height(16.dp))
@@ -369,7 +370,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                         Row {
                             Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Alış Fiyatı", color = MarketTextSecondary, fontSize = 14.sp)
+Text(localized("Alış Fiyatı", "Purchase Price"), color = MarketTextSecondary, fontSize = 14.sp)
                         }
                         Text("₺${formatBalance(purchasePrice.toString())}", color = MarketTextSecondary, fontSize = 14.sp)
                     }
@@ -378,7 +379,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                         Row {
                             Icon(Icons.Default.Receipt, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Vergi (%5)", color = MarketTextSecondary, fontSize = 14.sp)
+Text(localized("Vergi (%5)", "Tax (5%)"), color = MarketTextSecondary, fontSize = 14.sp)
                         }
                         Text("-₺${formatBalance(tax.toString())}", color = MarketTextSecondary, fontSize = 14.sp)
                     }
@@ -387,7 +388,7 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                         Row {
                             Icon(Icons.Default.TrendingUp, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Tahmini Net Kâr", color = MoneyGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+Text(localized("Tahmini Net Kâr", "Estimated Net Profit"), color = MoneyGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                         Text("₺${formatBalance(netProfit.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
@@ -411,13 +412,13 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                 ) {
                     Icon(Icons.Default.LocalOffer, contentDescription = null, tint = Color.White)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Satışa Koy", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+Text(localized("Satışa Koy", "List for Sale"), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.VerifiedUser, contentDescription = null, tint = MoneyGreen, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Ürün satışa konulduğunda envanterden düşer.", color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("Ürün satışa konulduğunda envanterden düşer.", "The item leaves your inventory when listed for sale."), color = MarketTextSecondary, fontSize = 12.sp)
                 }
             }
         }
@@ -550,7 +551,7 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
                     shape = RoundedCornerShape(14.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     modifier = Modifier.height(36.dp)
-                ) { Text(if (isFastSell) "Pazarlık Yap" else "İlan Ver", color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+) { Text(localized(if (isFastSell) "Pazarlık Yap" else "İlan Ver"), color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
             }
         }
     }

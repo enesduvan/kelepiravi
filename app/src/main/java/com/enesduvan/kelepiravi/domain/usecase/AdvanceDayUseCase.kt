@@ -5,7 +5,7 @@ import com.enesduvan.kelepiravi.data.event.EventChoice
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.data.repository.AdvanceDayResult
 import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
-import com.enesduvan.kelepiravi.viewmodel.DailySummaryState
+import com.enesduvan.kelepiravi.domain.model.DailySummaryState
 
 class AdvanceDayUseCase(private val repository: IKelepiraviRepository) {
 

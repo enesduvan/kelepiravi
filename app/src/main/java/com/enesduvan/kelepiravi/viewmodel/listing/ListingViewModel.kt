@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import com.enesduvan.kelepiravi.data.listing.ListingEngine
 import com.enesduvan.kelepiravi.data.listing.ListingUseCase
+import com.enesduvan.kelepiravi.ui.localization.AppLanguage
 
 class ListingViewModel(
     private val listingUseCase: ListingUseCase,
@@ -32,6 +33,7 @@ class ListingViewModel(
     val isSoundEnabled = settingsManager.isSoundEnabled
     val isHapticEnabled = settingsManager.isHapticEnabled
     val isOnboardingCompleted = settingsManager.isOnboardingCompleted
+    val language = settingsManager.language
 
     fun setFastSellEnabled(enabled: Boolean) {
         settingsManager.setFastSellEnabled(enabled)
@@ -47,6 +49,10 @@ class ListingViewModel(
 
     fun setOnboardingCompleted() {
         settingsManager.setOnboardingCompleted()
+    }
+
+    fun setLanguage(language: AppLanguage) {
+        settingsManager.setLanguage(language)
     }
 
     fun addListing(item: MarketItem, price: String) {

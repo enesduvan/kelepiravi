@@ -44,6 +44,7 @@ import com.enesduvan.kelepiravi.R
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
+import com.enesduvan.kelepiravi.ui.localization.localized
 import com.enesduvan.kelepiravi.ui.theme.BalanceGreen
 import com.enesduvan.kelepiravi.ui.theme.BuyButton
 import com.enesduvan.kelepiravi.ui.theme.BuyButtonText
@@ -142,13 +143,13 @@ fun MarketBottomSheetContent(
                 ) {
                     Icon(painter = painterResource(id = R.drawable.ic_person), contentDescription = null, tint = PrimaryOrange, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Satıcı: ${item.sellerName} (Görüntüle)", color = PrimaryOrange, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+Text(text = localized("Satıcı: ${item.sellerName} (Görüntüle)", "Seller: ${item.sellerName} (View)"), color = PrimaryOrange, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(id = R.drawable.ic_trending), contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Sıfır/Kusursuz Değeri: ", color = MarketTextSecondary, fontSize = 12.sp)
+Text(text = localized("Sıfır/Kusursuz Değeri: ", "New/Perfect Value: "), color = MarketTextSecondary, fontSize = 12.sp)
                     Text(text = "${formatBalance(item.estimatedValue)}₺", color = EstimatedValue, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
 
@@ -171,13 +172,13 @@ fun MarketBottomSheetContent(
                     Row(verticalAlignment = Alignment.Top) {
                         Icon(painter = painterResource(id = R.drawable.ic_tag), contentDescription = null, tint = BalanceGreen, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Bu ürün piyasaya göre yaklaşık %20 ucuz görünüyor!", color = MarketTextSecondary, fontSize = 11.sp, lineHeight = 16.sp)
+Text(text = localized("Bu ürün piyasaya göre yaklaşık %20 ucuz görünüyor!", "This item looks about 20% cheaper than the market price!"), color = MarketTextSecondary, fontSize = 11.sp, lineHeight = 16.sp)
                     }
                 }
 
                 if (item.description.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("Açıklama:", color = MarketTextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+Text(localized("Açıklama:", "Description:"), color = MarketTextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     Text(
                         text = "\"${item.description}\"",
                         color = MarketTextSecondary,
@@ -204,14 +205,14 @@ fun MarketBottomSheetContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text(text = "Fiyat", color = MarketTextSecondary, fontSize = 12.sp)
+Text(text = localized("Fiyat", "Price"), color = MarketTextSecondary, fontSize = 12.sp)
                     Text(text = "₺ ${formatBalance(item.salesValue)}", color = PriceText, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(id = R.drawable.ic_money), contentDescription = null, tint = BalanceGreen, modifier = Modifier.size(28.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Column(horizontalAlignment = Alignment.Start) {
-                        Text(text = "Bakiye", color = MarketTextSecondary, fontSize = 12.sp)
+Text(text = localized("Bakiye", "Balance"), color = MarketTextSecondary, fontSize = 12.sp)
                         Text(text = "₺ $guncelBakiyeStr", color = BalanceGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
                 }
@@ -232,7 +233,7 @@ fun MarketBottomSheetContent(
             Icon(painter = painterResource(id = R.drawable.ic_lightbulb), contentDescription = null, tint = BalanceGreen, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(10.dp))
             Column {
-                Text(text = "İpucu", color = BalanceGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+Text(text = localized("İpucu", "Tip"), color = BalanceGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "${item.itemName} tamir edilirse veya satılırsa güzel kâr bırakabilir.",
@@ -274,7 +275,7 @@ fun MarketBottomSheetContent(
         ) {
             Icon(painter = painterResource(id = R.drawable.ic_cart), contentDescription = null, tint = if (isFull) Color(0xFFAAAAAA) else Color.White, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Satın Al", color = if (isFull) Color(0xFFAAAAAA) else BuyButtonText, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+Text(text = localized("Satın Al", "Buy"), color = if (isFull) Color(0xFFAAAAAA) else BuyButtonText, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -289,7 +290,7 @@ fun MarketBottomSheetContent(
             shape = RoundedCornerShape(12.dp)
         ) {
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = "Pazarlık Yap", color = BalanceGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+Text(text = localized("Pazarlık Yap", "Bargain"), color = BalanceGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = BalanceGreen)
         }

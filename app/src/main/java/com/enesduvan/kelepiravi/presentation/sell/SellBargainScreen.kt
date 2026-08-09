@@ -37,6 +37,7 @@ import com.enesduvan.kelepiravi.R
 import com.enesduvan.kelepiravi.data.market.SellerPersonality
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
+import com.enesduvan.kelepiravi.ui.localization.localized
 import com.enesduvan.kelepiravi.ui.theme.*
 import com.enesduvan.kelepiravi.viewmodel.BargainMessage
 import com.enesduvan.kelepiravi.viewmodel.SellBargainState
@@ -76,10 +77,10 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pazarlık Masası", fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                title = { Text(localized("Pazarlık Masası", "Bargaining Table"), fontWeight = FontWeight.Bold, fontSize = 18.sp) },
                 navigationIcon = {
                     IconButton(onClick = { viewModel.closeSellBargain() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri")
+                        Icon(Icons.Default.ArrowBack, contentDescription = localized("Geri", "Back"))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -105,8 +106,8 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("🤝 Anlaşma Sağlandı!", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Text("Anlaşılan Fiyat: ₺${formatBalance(sellBargainState.agreedPrice)}", color = Color.White, fontSize = 14.sp)
+                        Text(localized("🤝 Anlaşma Sağlandı!", "🤝 Deal Closed!"), color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text("${localized("Anlaşılan Fiyat:", "Agreed Price:")} ₺${formatBalance(sellBargainState.agreedPrice)}", color = Color.White, fontSize = 14.sp)
                         Button(
                             onClick = { 
                                 performHaptic()
@@ -116,7 +117,7 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Eşyayı Sat", color = Color.Black, fontWeight = FontWeight.Bold)
+                            Text(localized("Eşyayı Sat", "Sell Item"), color = Color.Black, fontWeight = FontWeight.Bold)
                         }
                     }
                 } else if (sellBargainState.isFailed) {
@@ -125,8 +126,8 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("💥 Pazarlık Çöktü", color = RED, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Text("Alıcı masadan kalktı. Artık bu kişiye satamazsınız.", color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center)
+                        Text(localized("💥 Pazarlık Çöktü", "💥 Bargain Failed"), color = RED, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text(localized("Alıcı masadan kalktı. Artık bu kişiye satamazsınız.", "The buyer walked away. You can no longer sell to this person."), color = Color.White, fontSize = 14.sp, textAlign = TextAlign.Center)
                         Button(
                             onClick = { 
                                 performHaptic()
@@ -136,14 +137,14 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Geri Dön", color = TextPrimary, fontWeight = FontWeight.Bold)
+                            Text(localized("Geri Dön", "Go Back"), color = TextPrimary, fontWeight = FontWeight.Bold)
                         }
                     }
                 } else {
                     val currentBase = sellBargainState.baseSellPrice
                     val lastOffer = sellBargainState.lastBuyerOffer
 
-                    if (lastOffer != null) {
+                    if (lastOffer > 0.0) {
                         Button(
                             onClick = { 
                                 performHaptic()
@@ -153,7 +154,7 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                             colors = ButtonDefaults.buttonColors(containerColor = GREEN_DARK),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Teklifi Kabul Et: ₺${formatBalance(lastOffer)}", color = MoneyGreen, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text("${localized("Teklifi Kabul Et:", "Accept Offer:")} ₺${formatBalance(lastOffer)}", color = MoneyGreen, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
 
@@ -179,7 +180,7 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                         value = offerText,
                         onValueChange = { if (it.all { char -> char.isDigit() }) offerText = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Kendi teklifini gir...", color = TextMuted) },
+                        placeholder = { Text(localized("Kendi teklifini gir...", "Enter your offer..."), color = TextMuted) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -205,10 +206,10 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                     ) {
                         Icon(Icons.Default.Send, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Teklif Gönder", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        Text(localized("Teklif Gönder", "Send Offer"), color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     }
                     Text(
-                        "Teklifleriniz sadece siz ve alıcı tarafından görülür.",
+                        localized("Teklifleriniz sadece siz ve alıcı tarafından görülür.", "Only you and the buyer can see your offers."),
                         color = TextSecondary, fontSize = 11.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center
                     )
                 }
@@ -258,7 +259,7 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                         Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
                     Text("₺${formatBalance(sellBargainState.baseSellPrice)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
-                    Text("Değeri", color = TextSecondary, fontSize = 11.sp)
+                    Text(localized("Değeri", "Value"), color = TextSecondary, fontSize = 11.sp)
                 }
 
                 // Ch6: Alıcı Modu — animasyonlu
@@ -285,7 +286,7 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Text("Alıcı Modu", color = TextSecondary, fontSize = 10.sp)
+                    Text(localized("Alıcı Modu", "Buyer Mood"), color = TextSecondary, fontSize = 10.sp)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(emoji, fontSize = 20.sp)
                         Text(sellBargainState.buyerMood, color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -299,7 +300,7 @@ fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargain
 
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
-                Text("   Güvenli Satış Pazarlığı   ", color = TextSecondary, fontSize = 12.sp)
+                Text("   ${localized("Güvenli Satış Pazarlığı", "Safe Selling Bargain")}   ", color = TextSecondary, fontSize = 12.sp)
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
             }
 

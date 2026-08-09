@@ -10,6 +10,7 @@ class SoundManager(private val context: Context, private val isSoundEnabled: Sta
     private var coinSoundId = 0
     private var clickSoundId = 0
     private var applauseSoundId = 0
+    private var released = false
 
     init {
         val audioAttributes = AudioAttributes.Builder()
@@ -39,21 +40,24 @@ class SoundManager(private val context: Context, private val isSoundEnabled: Sta
     }
 
     fun playCoinSound() {
-        if (!isSoundEnabled.value || coinSoundId == 0) return
+        if (released || !isSoundEnabled.value || coinSoundId == 0) return
         soundPool.play(coinSoundId, 1f, 1f, 1, 0, 1f)
     }
 
     fun playClickSound() {
-        if (!isSoundEnabled.value || clickSoundId == 0) return
+        if (released || !isSoundEnabled.value || clickSoundId == 0) return
         soundPool.play(clickSoundId, 0.5f, 0.5f, 1, 0, 1f)
     }
 
     fun playApplauseSound() {
-        if (!isSoundEnabled.value || applauseSoundId == 0) return
+        if (released || !isSoundEnabled.value || applauseSoundId == 0) return
         soundPool.play(applauseSoundId, 1f, 1f, 1, 0, 1f)
     }
 
     fun release() {
-        soundPool.release()
+        if (!released) {
+            released = true
+            soundPool.release()
+        }
     }
 }

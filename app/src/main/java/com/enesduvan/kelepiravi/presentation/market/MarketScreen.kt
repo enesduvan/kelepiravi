@@ -41,6 +41,7 @@ import com.enesduvan.kelepiravi.presentation.seller.SellerProfileDialog
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.shared.bounceClick
+import com.enesduvan.kelepiravi.ui.localization.localized
 import com.enesduvan.kelepiravi.presentation.market.components.*
 import com.enesduvan.kelepiravi.ui.theme.*
 import java.util.Locale
@@ -89,7 +90,7 @@ fun MarketScreen(
                                 val roiColor = if (roi >= 0) MoneyGreen else Color(0xFFFF6B6B)
                                 val roiSign = if (roi >= 0) "+" else ""
                                 Text(
-                                    "Portföy Kâr: ${roiSign}${String.format(Locale.US, "%.2f", roi)}%",
+                                    localized("Portföy Kâr: ${roiSign}${String.format(Locale.US, "%.2f", roi)}%", "Portfolio Profit: ${roiSign}${String.format(Locale.US, "%.2f", roi)}%"),
                                     color = roiColor,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
@@ -105,7 +106,7 @@ fun MarketScreen(
                             if (uiState.isDayAdvancing) {
                                 CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.Black, strokeWidth = 2.dp)
                             } else {
-                                Text("Yeni Gün (${playerState.currentDay})", color = Color.Black, fontWeight = FontWeight.Bold)
+                                Text(localized("Yeni Gün (${playerState.currentDay})", "New Day (${playerState.currentDay})"), color = Color.Black, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -136,7 +137,7 @@ fun MarketScreen(
                     }
 
                     Text(
-                        "Sokak Satıcısı",
+                        localized("Sokak Satıcısı", "Street Trader"),
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
@@ -150,12 +151,12 @@ fun MarketScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp, vertical = 4.dp),
-                        placeholder = { Text("Ne arıyorsunuz?", color = TextSecondary) },
-                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Ara", tint = TextSecondary) },
+                        placeholder = { Text(localized("Ne arıyorsunuz?", "What are you looking for?"), color = TextSecondary) },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = localized("Ara", "Search"), tint = TextSecondary) },
                         trailingIcon = {
                             if (uiState.searchQuery.isNotEmpty()) {
                                 IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Temizle", tint = TextSecondary)
+                                    Icon(Icons.Default.Close, contentDescription = localized("Temizle", "Clear"), tint = TextSecondary)
                                 }
                             }
                         },
@@ -186,7 +187,7 @@ fun MarketScreen(
                                 onClick = { viewModel.selectCategory(category) },
                                 label = {
                                     Text(
-                                        category,
+                                        localized(category),
                                         color = if (isSelected) Color.Black else TextSecondary,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -211,7 +212,7 @@ fun MarketScreen(
                     contentColor = FABIcon,
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text("📦 Zamazon", fontWeight = FontWeight.Bold)
+                    Text(localized("📦 Zamazon", "📦 Zamazon"), fontWeight = FontWeight.Bold)
                 }
             }
         ) { innerPadding ->

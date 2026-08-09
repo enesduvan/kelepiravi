@@ -2,16 +2,13 @@ package com.enesduvan.kelepiravi.data.listing
 
 import com.enesduvan.kelepiravi.data.model.Listing
 import com.enesduvan.kelepiravi.data.model.MarketItem
-import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class ListingUseCase(
-    private val repository: KelepiraviRepository
+    private val repository: IKelepiraviRepository
 ) {
-    val activeListings: Flow<List<Listing>> = repository.getPlayerState().map {
-        it.firstOrNull()?.activeListings ?: emptyList()
-    }
+    val activeListings: Flow<List<Listing>> = repository.observeActiveListings()
 
     suspend fun createListing(item: MarketItem, price: String): Boolean {
         if (price.isBlank()) return false

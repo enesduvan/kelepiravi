@@ -28,6 +28,7 @@ import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.shared.bounceClick
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.theme.*
+import com.enesduvan.kelepiravi.ui.localization.localized
 
 @Composable
 fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier = Modifier) {
@@ -72,7 +73,7 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(localized(item.itemName), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(4.dp))
                 val (bgColor, textColor) = when {
                     item.condition.contains("Kusursuz") -> ConditionPerfectBg to ConditionPerfect
@@ -86,14 +87,14 @@ fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier
                         .background(bgColor)
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-                    Text(item.condition, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(localized(item.condition), color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Satıcı: ${item.sellerName}", color = TextMuted, fontSize = 12.sp)
+                Text("${localized("Satıcı:", "Seller:")} ${item.sellerName}", color = TextMuted, fontSize = 12.sp)
             }
 
             Column(horizontalAlignment = Alignment.End) {
-                Text("İstenen", color = TextSecondary, fontSize = 10.sp)
+                Text(localized("İstenen", "Asking"), color = TextSecondary, fontSize = 10.sp)
                 Text("₺${formatBalance(item.salesValue)}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
             }
         }
@@ -121,7 +122,7 @@ fun InteractiveEventDialog(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("👀 OLAY", color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(localized("👀 OLAY", "👀 EVENT"), color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(event.title, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(16.dp))
@@ -142,7 +143,7 @@ fun InteractiveEventDialog(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(choice.text, color = Color.Black, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                        Text(localized(choice.text), color = Color.Black, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
                     }
                 }
             }
@@ -173,7 +174,7 @@ fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("📌 OLAY SONUCU", color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(localized("📌 OLAY SONUCU", "📌 EVENT RESULT"), color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
@@ -190,7 +191,7 @@ fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
                     colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
                     modifier = Modifier.fillMaxWidth(0.6f).height(48.dp)
                 ) {
-                    Text("Devam Et", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(localized("Devam Et", "Continue"), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
             }
         }

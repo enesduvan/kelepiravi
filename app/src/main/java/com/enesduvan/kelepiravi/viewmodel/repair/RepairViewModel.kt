@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.enesduvan.kelepiravi.data.model.MarketItem
-import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
-import com.enesduvan.kelepiravi.data.repository.RepairResult
+import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
+import com.enesduvan.kelepiravi.domain.model.RepairResult
 import com.enesduvan.kelepiravi.domain.usecase.GetPlayerStateUseCase
 import com.enesduvan.kelepiravi.domain.usecase.RepairItemUseCase
 import com.enesduvan.kelepiravi.viewmodel.PlayerState
@@ -25,7 +25,7 @@ data class RepairResultState(
 )
 
 class RepairViewModel(
-    private val repository: KelepiraviRepository,
+    private val repository: IKelepiraviRepository,
     private val getPlayerStateUseCase: GetPlayerStateUseCase = GetPlayerStateUseCase(repository),
     private val repairItemUseCase: RepairItemUseCase = RepairItemUseCase(repository)
 ) : ViewModel() {
@@ -62,6 +62,7 @@ class RepairViewModel(
                 }
                 is RepairResult.LimitReached -> {}
                 is RepairResult.NotEnoughMoney -> {}
+                is RepairResult.NotOwned -> {}
             }
         }
     }
@@ -72,7 +73,7 @@ class RepairViewModel(
 }
 
 class RepairViewModelFactory(
-    private val repository: KelepiraviRepository
+    private val repository: IKelepiraviRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RepairViewModel::class.java)) {

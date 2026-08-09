@@ -28,6 +28,7 @@ import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
+import com.enesduvan.kelepiravi.ui.localization.localized
 import com.enesduvan.kelepiravi.viewmodel.SellerProfileState
 
 @Composable
@@ -81,15 +82,15 @@ fun SellerProfileDialog(
                                     Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFD700), modifier = Modifier.size(16.dp))
                                     Text(" ${String.format("%.1f", profile.rating)}", color = TextPrimary, fontWeight = FontWeight.Bold)
                                 }
-                                Text("Puan", color = TextSecondary, fontSize = 12.sp)
+                                Text(localized("Puan", "Rating"), color = TextSecondary, fontSize = 12.sp)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("${profile.totalSales}", color = TextPrimary, fontWeight = FontWeight.Bold)
-                                Text("Satış", color = TextSecondary, fontSize = 12.sp)
+                                Text(localized("Satış", "Sales"), color = TextSecondary, fontSize = 12.sp)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("${profile.joinYear}", color = TextPrimary, fontWeight = FontWeight.Bold)
-                                Text("Katılım", color = TextSecondary, fontSize = 12.sp)
+                                Text(localized("Katılım", "Joined"), color = TextSecondary, fontSize = 12.sp)
                             }
                         }
                     }
@@ -104,7 +105,7 @@ fun SellerProfileDialog(
                         .weight(1f)
                         .padding(horizontal = 16.dp)
                 ) {
-                    Text("Bu Satıcının Diğer İlanları", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(localized("Bu Satıcının Diğer İlanları", "Other Listings by This Seller"), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     LazyColumn(
@@ -157,7 +158,7 @@ fun SellerProfileDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Kapat", color = TextPrimary, fontWeight = FontWeight.Bold)
+                        Text(localized("Kapat", "Close"), color = TextPrimary, fontWeight = FontWeight.Bold)
                     }
                 }
             }

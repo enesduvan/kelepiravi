@@ -44,6 +44,7 @@ import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
+import com.enesduvan.kelepiravi.ui.localization.localized
 
 import com.enesduvan.kelepiravi.viewmodel.bargain.BargainViewModel
 
@@ -81,12 +82,12 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
             TopAppBar(
                 title = {
                     Column {
-                        Text("Pazarlık", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+Text(localized("Pazarlık", "Bargain"), color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = { viewModel.closeBargain() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
+Icon(Icons.Default.ArrowBack, contentDescription = localized("Geri", "Back"), tint = TextPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Surface)
@@ -103,7 +104,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("Satıcı ödemeyi önden istiyor. Ne yapacaksın?", color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+Text(localized("Satıcı ödemeyi önden istiyor. Ne yapacaksın?", "The seller wants payment up front. What will you do?"), color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Button(
                             onClick = { 
@@ -114,7 +115,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                             colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Vazgeç", color = TextPrimary, fontWeight = FontWeight.Bold)
+Text(localized("Vazgeç", "Give Up"), color = TextPrimary, fontWeight = FontWeight.Bold)
                         }
                         Button(
                             onClick = { 
@@ -125,7 +126,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B6B)),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Parayı Gönder", color = Color.White, fontWeight = FontWeight.Bold)
+Text(localized("Parayı Gönder", "Send Money"), color = Color.White, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -152,7 +153,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                             colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Satın Al", color = Color.Black, fontWeight = FontWeight.Bold)
+Text(localized("Satın Al", "Buy"), color = Color.Black, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -166,7 +167,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Satıcı masadan kalktı.", color = Color(0xFFFF6B6B), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+Text(localized("Satıcı masadan kalktı.", "The seller walked away."), color = Color(0xFFFF6B6B), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = { 
@@ -176,7 +177,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                         colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Geri Dön", color = TextPrimary)
+Text(localized("Geri Dön", "Go Back"), color = TextPrimary)
                     }
                 }
             } else {
@@ -192,9 +193,9 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                     if (bargainState.isDealClosed) {
                         Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice)}", color = MoneyGreen, fontWeight = FontWeight.Bold)
                     } else if (bargainState.isFailed) {
-                        Text("Pazarlık Çöktü!", color = Color(0xFFFF6B6B), fontWeight = FontWeight.Bold)
+Text(localized("Pazarlık Çöktü!", "Bargain Failed!"), color = Color(0xFFFF6B6B), fontWeight = FontWeight.Bold)
                     } else {
-                        Text("Pazarlık Devam Ediyor...", color = TextSecondary)
+Text(localized("Pazarlık Devam Ediyor...", "Bargaining in progress..."), color = TextSecondary)
                     }
                 }
 
@@ -204,8 +205,8 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Satıcı Sabrı: %${bargainState.sellerPatience}", color = TextSecondary, fontSize = 13.sp)
-                        Text("Önerilen: ₺${formatBalance(bargainState.suggestedPrice)}", color = MoneyGreen, fontSize = 13.sp)
+Text(localized("Satıcı Sabrı: %${bargainState.sellerPatience}", "Seller Patience: %${bargainState.sellerPatience}"), color = TextSecondary, fontSize = 13.sp)
+Text(localized("Önerilen: ₺${formatBalance(bargainState.suggestedPrice)}", "Suggested: ₺${formatBalance(bargainState.suggestedPrice)}"), color = MoneyGreen, fontSize = 13.sp)
                     }
 
                     Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -249,11 +250,11 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                                 colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("Gönder", color = Color.Black, fontWeight = FontWeight.Bold)
+Text(localized("Gönder", "Send"), color = Color.Black, fontWeight = FontWeight.Bold)
                             }
                         }
 
-                        if (bargainState.lastSellerOffer != null) {
+                        if (bargainState.lastSellerOffer > 0.0) {
                             Button(
                                 onClick = {
                                     viewModel.sendOffer(bargainState.lastSellerOffer)
@@ -280,7 +281,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                         item { QuickOfferButton("+500") { val v = offerText.toIntOrNull() ?: 0; offerText = (v + 500).toString() } }
                     }
 
-                    if (bargainState.lastSellerOffer != null && !bargainState.isDealClosed && !bargainState.isFailed) {
+                    if (bargainState.lastSellerOffer > 0.0 && !bargainState.isDealClosed && !bargainState.isFailed) {
                         Button(
                             onClick = { 
                                 performHaptic()
@@ -306,7 +307,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                     ) {
                         Icon(Icons.Default.Send, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Teklif Gönder", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+Text(localized("Teklif Gönder", "Send Offer"), color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     }
                     Text(
                         "Teklifleriniz sadece siz ve satıcı tarafından görülür.",
@@ -395,7 +396,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Text("Satıcı Modu", color = TextSecondary, fontSize = 10.sp)
+Text(localized("Satıcı Modu", "Seller Mode"), color = TextSecondary, fontSize = 10.sp)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(emoji, fontSize = 20.sp)
                         Text(bargainState.sellerMood, color = moodColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -409,7 +410,7 @@ fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
 
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
-                Text("   Güvenli Pazarlık   ", color = TextSecondary, fontSize = 12.sp)
+Text(localized("   Güvenli Pazarlık   ", "   Safe Bargaining   "), color = TextSecondary, fontSize = 12.sp)
                 Box(modifier = Modifier.weight(1f).height(1.dp).background(SurfaceVariant))
             }
 

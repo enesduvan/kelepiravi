@@ -16,6 +16,8 @@ import com.enesduvan.kelepiravi.ui.theme.PrimaryOrange
 import com.enesduvan.kelepiravi.ui.theme.Surface
 import com.enesduvan.kelepiravi.ui.theme.TextPrimary
 import com.enesduvan.kelepiravi.ui.theme.TextSecondary
+import com.enesduvan.kelepiravi.ui.localization.AppLanguage
+import com.enesduvan.kelepiravi.ui.localization.localized
 
 @Composable
 fun SettingsDialog(
@@ -25,7 +27,9 @@ fun SettingsDialog(
     isHapticEnabled: Boolean,
     onHapticToggle: (Boolean) -> Unit,
     isQuickSellEnabled: Boolean,
-    onQuickSellToggle: (Boolean) -> Unit
+    onQuickSellToggle: (Boolean) -> Unit,
+    language: AppLanguage,
+    onLanguageChange: (AppLanguage) -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -42,31 +46,45 @@ fun SettingsDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Ayarlar", color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                Text(localized("Ayarlar", "Settings"), color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
 
                 SettingToggleRow(
-                    title = "Ses Efektleri",
-                    subtitle = "Oyun içi tık, para ve diğer sesler",
+                    title = localized("Ses Efektleri", "Sound Effects"),
+                    subtitle = localized("Oyun içi tık, para ve diğer sesler", "In-game clicks, coins and other sounds"),
                     checked = isSoundEnabled,
                     onCheckedChange = onSoundToggle
                 )
                 
                 SettingToggleRow(
-                    title = "Titreşim (Haptik)",
-                    subtitle = "Dokunuşlarda hafif titreşim hissi",
+                    title = localized("Titreşim (Haptik)", "Haptic Feedback"),
+                    subtitle = localized("Dokunuşlarda hafif titreşim hissi", "Light vibration on touch"),
                     checked = isHapticEnabled,
                     onCheckedChange = onHapticToggle
                 )
 
                 SettingToggleRow(
-                    title = "Hızlı Satış Modu",
-                    subtitle = "Aktif ilan beklemek yerine anında satış",
+                    title = localized("Hızlı Satış Modu", "Quick Sell Mode"),
+                    subtitle = localized("Aktif ilan beklemek yerine anında satış", "Sell instantly instead of waiting for a listing"),
                     checked = isQuickSellEnabled,
                     onCheckedChange = onQuickSellToggle
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                Text(localized("Dil", "Language"), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(
+                        selected = language == AppLanguage.TURKISH,
+                        onClick = { onLanguageChange(AppLanguage.TURKISH) },
+                        label = { Text("Türkçe") }
+                    )
+                    FilterChip(
+                        selected = language == AppLanguage.ENGLISH,
+                        onClick = { onLanguageChange(AppLanguage.ENGLISH) },
+                        label = { Text("English") }
+                    )
+                }
 
                 Button(
                     onClick = onDismiss,
@@ -74,7 +92,7 @@ fun SettingsDialog(
                     modifier = Modifier.fillMaxWidth().height(48.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Kapat", color = Color.Black, fontWeight = FontWeight.Bold)
+                    Text(localized("Kapat", "Close"), color = Color.Black, fontWeight = FontWeight.Bold)
                 }
             }
         }

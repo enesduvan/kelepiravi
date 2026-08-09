@@ -26,6 +26,7 @@ import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
+import com.enesduvan.kelepiravi.ui.localization.localized
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material.icons.Icons
@@ -49,8 +50,8 @@ fun ListingsScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainVi
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
-                Text("Aktif İlanlar", color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
-                Text("Kelepir fırsatlarına gelen teklifler.", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
+Text(localized("Aktif İlanlar", "Active Listings"), color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+Text(localized("Kelepir fırsatlarına gelen teklifler.", "Offers on your bargain listings."), color = TextSecondary, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
                 Spacer(modifier = Modifier.height(12.dp))
             }
             if (activeListings.isEmpty()) {
@@ -93,7 +94,7 @@ fun ListingsScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainVi
         var newPriceStr by remember { mutableStateOf(editingListing!!.listedPrice.toString()) }
         AlertDialog(
             onDismissRequest = { editingListing = null },
-            title = { Text("İlanı Düzenle", color = TextPrimary) },
+title = { Text(localized("İlanı Düzenle", "Edit Listing"), color = TextPrimary) },
             text = {
                 OutlinedTextField(
                     value = newPriceStr,
@@ -108,10 +109,10 @@ fun ListingsScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainVi
                         listingViewModel.updateListingPrice(editingListing!!, newPriceStr)
                         editingListing = null
                     }
-                }) { Text("Güncelle") }
+}) { Text(localized("Güncelle", "Update")) }
             },
             dismissButton = {
-                TextButton(onClick = { editingListing = null }) { Text("İptal", color = TextSecondary) }
+TextButton(onClick = { editingListing = null }) { Text(localized("İptal", "Cancel"), color = TextSecondary) }
             },
             containerColor = Surface
         )
@@ -123,8 +124,8 @@ fun ListingsScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainVi
         val newAmount = originalAmount - discount
         AlertDialog(
             onDismissRequest = { lastMinuteBargainOffer = null },
-            title = { Text("Son Saniye Pazarlığı!", color = MoneyGreen, fontWeight = FontWeight.Bold) },
-            text = { Text("${offer.npcName} son anda fikrini değiştirdi. '₺${formatBalance(newAmount.toString())} olursa hemen alırım' diyor. Ne dersin?", color = TextPrimary) },
+title = { Text(localized("Son Saniye Pazarlığı!", "Last-Minute Bargain!"), color = MoneyGreen, fontWeight = FontWeight.Bold) },
+            text = { Text("${offer.npcName} ${localized("son anda fikrini değiştirdi. '₺${formatBalance(newAmount.toString())} olursa hemen alırım' diyor. Ne dersin?", "changed their mind at the last second. 'I will buy it right away for ₺${formatBalance(newAmount.toString())}'. What do you say?")}", color = TextPrimary) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -132,11 +133,11 @@ fun ListingsScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainVi
                         lastMinuteBargainOffer = null
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen)
-                ) { Text("Kabul Et", color = Color.White) }
+) { Text(localized("Kabul Et", "Accept"), color = Color.White) }
             },
             dismissButton = {
                 TextButton(onClick = { lastMinuteBargainOffer = null }) {
-                    Text("Reddet", color = RED)
+Text(localized("Reddet", "Reject"), color = RED)
                 }
             },
             containerColor = Surface,
@@ -179,11 +180,11 @@ fun ListingCard(
                 }
                 Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
                     Text(listing.item.itemName, color = TextPrimary, fontWeight = FontWeight.Bold)
-                    Text("İlan Fiyatı: ₺${formatBalance(listing.listedPrice)}", color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    Text("Piyasa: ₺${formatBalance(estimatedValue)} (${if (diffPercent > 0) "+" else ""}${"%.0f".format(diffPercent)}%)", color = TextSecondary, fontSize = 12.sp)
+Text(localized("İlan Fiyatı: ₺${formatBalance(listing.listedPrice)}", "Listing Price: ₺${formatBalance(listing.listedPrice)}"), color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("${localized("Piyasa:", "Market:")} ₺${formatBalance(estimatedValue)} (${if (diffPercent > 0) "+" else ""}${"%.0f".format(diffPercent)}%)", color = TextSecondary, fontSize = 12.sp)
                 }
                 IconButton(onClick = { onEditClick(listing) }) {
-                    Icon(Icons.Default.Edit, contentDescription = "Düzenle", tint = TextSecondary)
+Icon(Icons.Default.Edit, contentDescription = localized("Düzenle", "Edit"), tint = TextSecondary)
                 }
             }
 
@@ -191,9 +192,9 @@ fun ListingCard(
                 modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(SurfaceVariant).padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text("👀 ${listing.views} Kişi Baktı", color = TextSecondary, fontSize = 12.sp)
-                Text("❤️ ${listing.favorites} Favori", color = TextSecondary, fontSize = 12.sp)
-                Text("⏳ ${listing.listedDay}. Gün", color = TextSecondary, fontSize = 12.sp)
+                Text("👀 ${listing.views} ${localized("Kişi Baktı", "Views")}", color = TextSecondary, fontSize = 12.sp)
+                Text("❤️ ${listing.favorites} ${localized("Favori", "Favorites")}", color = TextSecondary, fontSize = 12.sp)
+                Text("⏳ ${listing.listedDay}. ${localized("Gün", "Day")}", color = TextSecondary, fontSize = 12.sp)
             }
             
             val comments = remember(listing.id, listing.listedPrice, listing.views) {
@@ -240,7 +241,7 @@ fun ListingCard(
             }
 
             if (listing.offers.isEmpty()) {
-                Text("Henüz teklif yok. Müşteri bekleniyor...", color = TextMuted, fontSize = 12.sp, fontStyle = FontStyle.Italic, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                Text(localized("Henüz teklif yok. Müşteri bekleniyor...", "No offers yet. Waiting for a buyer..."), color = TextMuted, fontSize = 12.sp, fontStyle = FontStyle.Italic, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             } else {
                 listing.offers.forEach { offer ->
                     Row(
@@ -250,7 +251,7 @@ fun ListingCard(
                     ) {
                         Column {
                             Text(offer.npcName, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                            Text("Teklifi: ₺${formatBalance(offer.offerAmount)}", color = MoneyGreen, fontSize = 13.sp)
+                            Text("${localized("Teklifi:", "Offer:")} ₺${formatBalance(offer.offerAmount)}", color = MoneyGreen, fontSize = 13.sp)
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Button(
@@ -259,7 +260,7 @@ fun ListingCard(
                                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                                 modifier = Modifier.height(30.dp)
                             ) {
-                                Text("Pazarlık", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+Text(localized("Pazarlık", "Bargain"), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                             Button(
                                 onClick = { onAcceptOffer(listing, offer.offerAmount.toDouble()) },
@@ -267,7 +268,7 @@ fun ListingCard(
                                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                                 modifier = Modifier.height(30.dp)
                             ) {
-                                Text("Kabul Et", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Text(localized("Kabul Et", "Accept"), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -280,7 +281,7 @@ fun ListingCard(
                 border = BorderStroke(1.dp, RED),
                 modifier = Modifier.fillMaxWidth().height(36.dp)
             ) {
-                Text("İlanı Kaldır", color = RED, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+Text(localized("İlanı Kaldır", "Remove Listing"), color = RED, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
         }
     }

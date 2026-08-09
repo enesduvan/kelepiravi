@@ -57,6 +57,9 @@ import com.enesduvan.kelepiravi.viewmodel.game.GameViewModel
 import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
 import com.enesduvan.kelepiravi.viewmodel.profile.ProfileViewModel
 import com.enesduvan.kelepiravi.viewmodel.repair.RepairViewModel
+import com.enesduvan.kelepiravi.ui.localization.LocalAppLanguage
+import com.enesduvan.kelepiravi.ui.localization.localized
+import androidx.compose.runtime.CompositionLocalProvider
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -74,7 +77,9 @@ fun AppRoot(
     val sellBargainState by bargainViewModel.sellBargainState.collectAsState()
     val uiState by marketViewModel.uiState.collectAsState()
     val latestAchievement = uiState.latestAchievement
+    val language by listingViewModel.language.collectAsState()
 
+    CompositionLocalProvider(LocalAppLanguage provides language) {
     Box(modifier = Modifier.fillMaxSize()) {
 
     // Ch6: Pazarlık ekranlarına geçişte yatay animasyon
@@ -111,31 +116,31 @@ fun AppRoot(
                             NavItem(
                                 selected = selectedTab == 0,
                                 onClick = { selectedTab = 0 },
-                                label = "Pazar",
+                                label = localized("Pazar", "Market"),
                                 painter = painterResource(id = R.drawable.home)
                             )
                             NavItem(
                                 selected = selectedTab == 1,
                                 onClick = { selectedTab = 1 },
-                                label = "Envanter",
+                                label = localized("Envanter", "Inventory"),
                                 painter = painterResource(id = R.drawable.envanter)
                             )
                             NavItem(
                                 selected = selectedTab == 2,
                                 onClick = { selectedTab = 2 },
-                                label = "İlanlar",
+                                label = localized("İlanlar", "Listings"),
                                 painter = painterResource(id = R.drawable.ic_tag)
                             )
                             NavItem(
                                 selected = selectedTab == 3,
                                 onClick = { selectedTab = 3 },
-                                label = "Tamir",
+                                label = localized("Tamir", "Repair"),
                                 painter = painterResource(id = R.drawable.tamir)
                             )
                             NavItem(
                                 selected = selectedTab == 4,
                                 onClick = { selectedTab = 4 },
-                                label = "Profil",
+                                label = localized("Profil", "Profile"),
                                 painter = painterResource(id = R.drawable.person)
                             )
                         }
@@ -202,24 +207,25 @@ fun AppRoot(
                         modifier = Modifier.size(48.dp).background(SurfaceVariant, RoundedCornerShape(24.dp)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(ach.iconRes, contentDescription = "Kupa", tint = ReputationGold, modifier = Modifier.size(28.dp))
+                        Icon(ach.iconRes, contentDescription = localized("Kupa", "Achievement"), tint = ReputationGold, modifier = Modifier.size(28.dp))
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("🏆 BAŞARIM AÇILDI!", color = ReputationGold, fontSize = 10.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 1.sp)
+                        Text(localized("🏆 BAŞARIM AÇILDI!", "🏆 ACHIEVEMENT UNLOCKED!"), color = ReputationGold, fontSize = 10.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 1.sp)
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(ach.title, color = androidx.compose.ui.graphics.Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         Text(ach.description, color = com.enesduvan.kelepiravi.ui.theme.TextSecondary, fontSize = 12.sp)
                     }
                     if (ach.rewardMoney > 0) {
                         Column(horizontalAlignment = Alignment.End) {
-                            Text("Ödül", color = MoneyGreen, fontSize = 10.sp)
+                        Text(localized("Ödül", "Reward"), color = MoneyGreen, fontSize = 10.sp)
                             Text("+₺${ach.rewardMoney.toInt()}", color = MoneyGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
             }
         }
+    }
     }
     }
 }

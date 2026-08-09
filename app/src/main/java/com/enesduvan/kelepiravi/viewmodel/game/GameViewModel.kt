@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.enesduvan.kelepiravi.data.event.EventChoice
 import com.enesduvan.kelepiravi.data.event.EventDefinition
-import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
 import com.enesduvan.kelepiravi.domain.usecase.AdvanceDayUseCase
 import com.enesduvan.kelepiravi.domain.usecase.GetPlayerStateUseCase
 import com.enesduvan.kelepiravi.viewmodel.DailySummaryState
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class GameViewModel(
-    private val repository: KelepiraviRepository,
+    private val repository: IKelepiraviRepository,
     private val getPlayerStateUseCase: GetPlayerStateUseCase = GetPlayerStateUseCase(repository),
     private val advanceDayUseCase: AdvanceDayUseCase = AdvanceDayUseCase(repository)
 ) : ViewModel() {
@@ -110,7 +110,7 @@ class GameViewModel(
 }
 
 class GameViewModelFactory(
-    private val repository: KelepiraviRepository
+    private val repository: IKelepiraviRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(GameViewModel::class.java)) {

@@ -82,7 +82,10 @@ data class UserInventoryItemEntity(
 
     val purchasePrice: Double,
 
-    val condition: Int
+    val condition: Int,
+
+    /** Full item snapshot. Keeping this avoids losing scam/condition metadata. */
+    val itemJson: String = ""
 )
 @Entity(
     tableName = "user_listings",
@@ -101,7 +104,10 @@ data class UserListingEntity(
 
     val listedDay: Int,
 
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+
+    /** Full listing snapshot for views, offers and item metadata. */
+    val listingJson: String = ""
 )
 
 @Entity(tableName = "player_statistics")

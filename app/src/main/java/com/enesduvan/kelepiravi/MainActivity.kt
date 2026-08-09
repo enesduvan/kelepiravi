@@ -107,11 +107,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        soundManager.release()
-    }
-
     private fun scheduleOfflineNotifications() {
         val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(2, TimeUnit.HOURS)
             .build()

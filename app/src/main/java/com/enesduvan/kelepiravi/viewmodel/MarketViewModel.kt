@@ -17,13 +17,13 @@ import com.enesduvan.kelepiravi.data.market.LootBoxType
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.market.NegotiationEngine
 import com.enesduvan.kelepiravi.data.model.MarketItem
-import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
 import com.enesduvan.kelepiravi.domain.usecase.AdvanceDayUseCase
 import com.enesduvan.kelepiravi.domain.usecase.GetPlayerStateUseCase
 import com.enesduvan.kelepiravi.domain.usecase.PurchaseItemUseCase
 import com.enesduvan.kelepiravi.domain.usecase.RepairItemUseCase
 import com.enesduvan.kelepiravi.domain.usecase.UpgradeShopUseCase
-import com.enesduvan.kelepiravi.data.repository.RepairResult
+import com.enesduvan.kelepiravi.domain.model.RepairResult
 import com.enesduvan.kelepiravi.ui.shared.SoundManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,40 +38,17 @@ import kotlin.random.Random
 
 // ─── State Modelleri ──────────────────────────────────────────────────────────
 
-@Immutable
-data class PlayerState(
-    val balance: Long = GameConstants.INITIAL_BALANCE,
-    val inventory: List<MarketItem> = emptyList(),
-    val currentDay: Int = 1,
-    val xp: Int = 0,
-    val level: Int = 1,
-    val totalProfit: Double = 0.0,
-    val itemsBought: Int = 0,
-    val itemsSold: Int = 0,
-    val unlockedAchievements: String = "",
-    val marketTrends: Map<String, Double> = emptyMap(),
-    val npcRelationships: Map<String, Int> = emptyMap(),
-    val highestProfit: Double = 0.0,
-    val rareItemsFound: Int = 0,
-    val totalRepairs: Int = 0,
-    val hasBoughtScam: Boolean = false,
-    val hasBoughtAbsurd: Boolean = false,
-    val dailyRepairsUsed: Int = 0,
-    val lastRepairDay: Int = 0,
-    val dailyRevenue: Double = 0.0,
-    val shopLevel: Int = 1,
-    val mechanicLevel: Int = 1,
-    val successfulBargains: Int = 0,
-    val totalBargains: Int = 0,
-    val soldCategories: Map<String, Int> = emptyMap(),
-    val portfolioValue: Double = 0.0,
-    val totalInvestment: Double = 0.0,
-    val portfolioROI: Double = 0.0,
-    val activeModifiers: Map<String, Int> = emptyMap()
-)
+typealias PlayerState = com.enesduvan.kelepiravi.domain.model.PlayerState
+typealias MarketUiState = com.enesduvan.kelepiravi.domain.model.MarketUiState
+typealias BargainMessage = com.enesduvan.kelepiravi.domain.model.BargainMessage
+typealias BargainState = com.enesduvan.kelepiravi.domain.model.BargainState
+typealias SellBargainState = com.enesduvan.kelepiravi.domain.model.SellBargainState
+typealias DailySummaryState = com.enesduvan.kelepiravi.domain.model.DailySummaryState
+typealias SellerProfileState = com.enesduvan.kelepiravi.domain.model.SellerProfileState
+typealias RepairResultState = com.enesduvan.kelepiravi.domain.model.RepairResultState
 
 @Stable
-data class MarketUiState(
+data class LegacyMarketUiState(
     val marketItems: List<MarketItem> = emptyList(),
     val isRefreshing: Boolean = false,
     val selectedItem: MarketItem? = null,
@@ -84,7 +61,7 @@ data class MarketUiState(
 )
 
 @Immutable
-data class BargainMessage(
+data class LegacyBargainMessage(
     val id: String = UUID.randomUUID().toString(),
     val text: String,
     val isFromPlayer: Boolean,
@@ -92,7 +69,7 @@ data class BargainMessage(
 )
 
 @Stable
-data class BargainState(
+data class LegacyBargainState(
     val item: MarketItem,
     val messages: List<BargainMessage> = emptyList(),
     val sellerPatience: Int = BargainConstants.STARTING_PATIENCE,
@@ -111,7 +88,7 @@ data class BargainState(
 )
 
 @Stable
-data class SellBargainState(
+data class LegacySellBargainState(
     val item: MarketItem,
     val buyerName: String = "Alıcı",
     val buyerTitle: String = "Müşteri",
@@ -130,7 +107,7 @@ data class SellBargainState(
 )
 
 @Immutable
-data class DailySummaryState(
+data class LegacyDailySummaryState(
     val day: Int,
     val xpGained: Int,
     val bonusMoney: Double,
@@ -140,7 +117,7 @@ data class DailySummaryState(
 )
 
 @Immutable
-data class SellerProfileState(
+data class LegacySellerProfileState(
     val name: String,
     val title: String,
     val rating: Double,
@@ -154,14 +131,14 @@ data class SellerProfileState(
 }
 
 @Immutable
-data class RepairResultState(
+data class LegacyRepairResultState(
     val isSuccess: Boolean,
     val newCondition: String = "",
     val itemName: String = ""
 )
 
 class MarketViewModel(
-    private val repository: KelepiraviRepository,
+    private val repository: IKelepiraviRepository,
     private val settingsManager: SettingsManager,
     private val soundManager: SoundManager,
     private val getPlayerStateUseCase: GetPlayerStateUseCase = GetPlayerStateUseCase(repository),
@@ -170,6 +147,11 @@ class MarketViewModel(
     private val upgradeShopUseCase: UpgradeShopUseCase = UpgradeShopUseCase(repository),
     private val repairItemUseCase: RepairItemUseCase = RepairItemUseCase(repository)
 ) : ViewModel() {
+
+    override fun onCleared() {
+        soundManager.release()
+        super.onCleared()
+    }
 
     val playerState: StateFlow<PlayerState> = getPlayerStateUseCase()
         .stateIn(
@@ -215,6 +197,7 @@ class MarketViewModel(
     val isHapticEnabled = settingsManager.isHapticEnabled
 
     init {
+        viewModelScope.launch { repository.initializePlayerIfNeeded() }
         refreshMarket()
         startFlashDealsTicker()
     }
@@ -387,6 +370,7 @@ class MarketViewModel(
                 }
                 is RepairResult.LimitReached -> {}
                 is RepairResult.NotEnoughMoney -> {}
+                is RepairResult.NotOwned -> {}
             }
         }
     }
@@ -496,7 +480,7 @@ class MarketViewModel(
 }
 
 class MarketViewModelFactory(
-    private val repository: KelepiraviRepository,
+    private val repository: IKelepiraviRepository,
     private val settingsManager: SettingsManager,
     private val soundManager: SoundManager
 ) : ViewModelProvider.Factory {

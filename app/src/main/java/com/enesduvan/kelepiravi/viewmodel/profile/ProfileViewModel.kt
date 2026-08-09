@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
-import com.enesduvan.kelepiravi.data.repository.KelepiraviRepository
+import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
 import com.enesduvan.kelepiravi.domain.usecase.GetPlayerStateUseCase
 import com.enesduvan.kelepiravi.domain.usecase.UpgradeShopUseCase
 import com.enesduvan.kelepiravi.viewmodel.PlayerState
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class ProfileViewModel(
-    private val repository: KelepiraviRepository,
+    private val repository: IKelepiraviRepository,
     private val getPlayerStateUseCase: GetPlayerStateUseCase = GetPlayerStateUseCase(repository),
     private val upgradeShopUseCase: UpgradeShopUseCase = UpgradeShopUseCase(repository)
 ) : ViewModel() {
@@ -66,7 +66,7 @@ class ProfileViewModel(
 }
 
 class ProfileViewModelFactory(
-    private val repository: KelepiraviRepository
+    private val repository: IKelepiraviRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {

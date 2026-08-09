@@ -29,6 +29,7 @@ import com.enesduvan.kelepiravi.data.market.LootBoxType
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.theme.*
+import com.enesduvan.kelepiravi.ui.localization.localized
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,14 +67,14 @@ fun LootBoxBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Zamazon Paletleri",
+                localized("Zamazon Paletleri", "Zamazon Pallets"),
                 color = TextPrimary,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "İçinden ne çıkacağı belli olmayan kapalı paletler! Bazen hurda, bazen altın madeni.",
+                localized("İçinden ne çıkacağı belli olmayan kapalı paletler! Bazen hurda, bazen altın madeni.", "Sealed pallets with a mystery inside! Sometimes scrap, sometimes a gold mine."),
                 color = TextSecondary,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
@@ -82,7 +83,7 @@ fun LootBoxBottomSheet(
 
             if (isFull) {
                 Text(
-                    text = "Dükkanında yeterli yer yok! (En az 3 boş yer gerekli)",
+                    text = localized("Dükkanında yeterli yer yok! (En az 3 boş yer gerekli)", "Not enough room in your shop! (At least 3 empty slots required)"),
                     color = Color(0xFFFF6B6B),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -123,14 +124,14 @@ fun LootBoxBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = boxType.title,
+                                text = localized(boxType.title),
                                 color = if (canBuy) DealGreen else TextSecondary,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = boxType.description,
+                                text = localized(boxType.description),
                                 color = TextMuted,
                                 fontSize = 12.sp
                             )
@@ -195,7 +196,7 @@ fun LootBoxRevealScreen(
                     .fillMaxHeight(0.8f)
             ) {
                 Text(
-                    "Palet Açıldı!",
+                    localized("Palet Açıldı!", "Pallet Opened!"),
                     color = DealGreen,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.ExtraBold
@@ -240,9 +241,9 @@ fun LootBoxRevealScreen(
                                 }
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {
-                                    Text(item.itemName, color = TextPrimary, fontWeight = FontWeight.Bold)
-                                    Text("Durum: ${item.condition}", color = TextSecondary, fontSize = 12.sp)
-                                    Text("Değer: ₺${formatBalance(item.estimatedValue)}", color = MoneyGreen, fontSize = 12.sp)
+                                    Text(localized(item.itemName), color = TextPrimary, fontWeight = FontWeight.Bold)
+                                    Text("${localized("Durum:", "Condition:")} ${localized(item.condition)}", color = TextSecondary, fontSize = 12.sp)
+                                    Text("${localized("Değer:", "Value:")} ₺${formatBalance(item.estimatedValue)}", color = MoneyGreen, fontSize = 12.sp)
                                 }
                             }
                         }
@@ -251,7 +252,7 @@ fun LootBoxRevealScreen(
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    "Devam etmek için ekrana dokun",
+                    localized("Devam etmek için ekrana dokun", "Tap the screen to continue"),
                     color = TextMuted,
                     fontSize = 14.sp
                 )

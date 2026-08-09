@@ -36,6 +36,7 @@ import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.shared.bounceClick
 import com.enesduvan.kelepiravi.ui.theme.*
+import com.enesduvan.kelepiravi.ui.localization.localized
 import kotlinx.coroutines.delay
 import com.enesduvan.kelepiravi.viewmodel.repair.RepairViewModel
 
@@ -64,8 +65,8 @@ fun TamirEkrani(viewModel: RepairViewModel) {
         if (selectedItem == null) {
             // LİSTE GÖRÜNÜMÜ
             Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                Text("Tamir Atölyesi", color = TextPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text("Eşyaları tamir ederek değerlerini artırabilirsiniz.", color = MarketTextSecondary, fontSize = 14.sp)
+Text(localized("Tamir Atölyesi", "Repair Workshop"), color = TextPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+Text(localized("Eşyaları tamir ederek değerlerini artırabilirsiniz.", "Repair items to increase their value."), color = MarketTextSecondary, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 DailyRepairCounter(remaining = remainingRepairs, total = GameConstants.DAILY_REPAIR_LIMIT)
@@ -132,9 +133,9 @@ fun TamirEkrani(viewModel: RepairViewModel) {
                 // Header
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { selectedItem = null }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri", tint = TextPrimary)
+Icon(Icons.Default.ArrowBack, contentDescription = localized("Geri", "Back"), tint = TextPrimary)
                     }
-                    Text("Tamirhane", color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+Text(localized("Tamirhane", "Repair Shop"), color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -158,8 +159,8 @@ fun TamirEkrani(viewModel: RepairViewModel) {
                                 Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text("Güncel Hasarlı Değeri: ₺${formatBalance(currentVal.toString())}", color = MarketTextSecondary, fontSize = 12.sp)
-                            Text("Sıfır Değeri: ₺${formatBalance(baseVal.toString())}", color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+Text(localized("Güncel Hasarlı Değeri: ₺${formatBalance(currentVal.toString())}", "Current Damaged Value: ₺${formatBalance(currentVal.toString())}"), color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("Sıfır Değeri: ₺${formatBalance(baseVal.toString())}", "New Value: ₺${formatBalance(baseVal.toString())}"), color = MoneyGreen, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -183,7 +184,7 @@ fun TamirEkrani(viewModel: RepairViewModel) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Box(modifier = Modifier.fillMaxWidth().height(4.dp).background(Color(0xFFFF4444), RoundedCornerShape(2.dp)))
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text("Başarı: %$cirakSuccess", color = Color(0xFFFF4444), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+Text(localized("Başarı: %$cirakSuccess", "Success: %$cirakSuccess"), color = Color(0xFFFF4444), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                     // USTA
@@ -202,7 +203,7 @@ fun TamirEkrani(viewModel: RepairViewModel) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Box(modifier = Modifier.fillMaxWidth().height(4.dp).background(MoneyGreen, RoundedCornerShape(2.dp)))
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text("Başarı: %$ustaSuccess", color = MoneyGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+Text(localized("Başarı: %$ustaSuccess", "Success: %$ustaSuccess"), color = MoneyGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -225,15 +226,15 @@ fun TamirEkrani(viewModel: RepairViewModel) {
                     modifier = Modifier.fillMaxWidth().background(Card, RoundedCornerShape(12.dp)).border(1.dp, MarketBorderSoft, RoundedCornerShape(12.dp)).padding(16.dp)
                 ) {
                     Column {
-                        Text("Satışa Son Etki", color = MarketTextSecondary, fontSize = 12.sp)
+Text(localized("Satışa Son Etki", "Effect on Sale"), color = MarketTextSecondary, fontSize = 12.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Beklenen Durum:", color = TextPrimary, fontSize = 14.sp)
+Text(localized("Beklenen Durum:", "Expected Condition:"), color = TextPrimary, fontSize = 14.sp)
                             Text(expectedResult, color = if(selectedOption == "Usta") MoneyGreen else PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Tahmini Yeni Değer:", color = TextPrimary, fontSize = 14.sp)
+Text(localized("Tahmini Yeni Değer:", "Estimated New Value:"), color = TextPrimary, fontSize = 14.sp)
                             Text("₺${formatBalance(expectedGain.toString())}", color = MoneyGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         }
                     }
@@ -258,11 +259,11 @@ fun TamirEkrani(viewModel: RepairViewModel) {
                     if (isRepairing) {
                         CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text("Tamir Ediliyor...", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+Text(localized("Tamir Ediliyor...", "Repairing..."), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     } else {
                         Icon(Icons.Default.Build, contentDescription = null, tint = Color.White)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Tamire Başla - ₺${formatBalance(selectedCost.toString())}", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+Text(localized("Tamire Başla - ₺${formatBalance(selectedCost.toString())}", "Start Repair - ₺${formatBalance(selectedCost.toString())}"), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -355,7 +356,7 @@ fun DailyRepairCounter(remaining: Int, total: Int) {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("🔧", fontSize = 20.sp)
-                    Text("Günlük Tamir Hakkı", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+Text(localized("Günlük Tamir Hakkı", "Daily Repair Limit"), color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                 }
                 Text(
                     "$remaining / $total",

@@ -2,9 +2,9 @@ package com.enesduvan.kelepiravi.domain.usecase
 
 import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.model.MarketItem
-import com.enesduvan.kelepiravi.data.repository.RepairResult
+import com.enesduvan.kelepiravi.domain.model.RepairResult
 import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
-import com.enesduvan.kelepiravi.viewmodel.PlayerState
+import com.enesduvan.kelepiravi.domain.model.PlayerState
 
 class RepairItemUseCase(private val repository: IKelepiraviRepository) {
 

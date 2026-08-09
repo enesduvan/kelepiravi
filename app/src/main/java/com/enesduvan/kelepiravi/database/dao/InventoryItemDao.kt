@@ -22,6 +22,9 @@ interface InventoryItemDao {
     @Query("SELECT * FROM user_inventory_items WHERE id = :id LIMIT 1")
     suspend fun getItemById(id: Long): UserInventoryItemEntity?
 
+    @Query("SELECT * FROM user_inventory_items WHERE id = :id AND playerId = :playerId LIMIT 1")
+    suspend fun getItemByIdForPlayer(id: Long, playerId: Int): UserInventoryItemEntity?
+
     @Query("SELECT * FROM user_inventory_items WHERE playerId = :playerId AND itemId = :itemId")
     suspend fun getItemsByItemId(playerId: Int, itemId: String): List<UserInventoryItemEntity>
 
@@ -45,6 +48,9 @@ interface InventoryItemDao {
 
     @Query("DELETE FROM user_inventory_items WHERE id = :id")
     suspend fun deleteItem(id: Long): Int
+
+    @Query("DELETE FROM user_inventory_items WHERE id = :id AND playerId = :playerId")
+    suspend fun deleteItemForPlayer(id: Long, playerId: Int): Int
 
     @Query("DELETE FROM user_inventory_items WHERE playerId = :playerId")
     suspend fun deleteAllForPlayer(playerId: Int): Int

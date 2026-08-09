@@ -4,6 +4,12 @@ import androidx.room.withTransaction
 import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.database.AppDatabase
 import com.enesduvan.kelepiravi.database.entity.UserInventoryEntity
+import com.enesduvan.kelepiravi.database.entity.UserInventoryItemEntity
+import com.enesduvan.kelepiravi.database.entity.UserListingEntity
+import com.enesduvan.kelepiravi.database.entity.PlayerProgressEntity
+import com.enesduvan.kelepiravi.database.entity.PlayerStatisticsEntity
+import com.enesduvan.kelepiravi.database.entity.PlayerEventStateEntity
+import com.enesduvan.kelepiravi.database.entity.PlayerNpcRelationshipEntity
 import com.enesduvan.kelepiravi.data.market.AchievementManager
 import com.enesduvan.kelepiravi.data.market.DailyEvent
 import com.enesduvan.kelepiravi.data.market.EconomyEngine
@@ -14,8 +20,10 @@ import com.enesduvan.kelepiravi.data.model.Listing
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
 import com.enesduvan.kelepiravi.data.event.EventChoice
 import com.enesduvan.kelepiravi.data.event.EventDefinition
 import com.enesduvan.kelepiravi.data.event.EventLoader
@@ -24,6 +32,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 import com.enesduvan.kelepiravi.domain.repository.IKelepiraviRepository
+import com.enesduvan.kelepiravi.domain.model.RepairResult
 
 data class AdvanceDayResult(
     val event: DailyEvent?,
@@ -37,30 +46,52 @@ class KelepiraviRepository(
     private val context: android.content.Context
 ) : IKelepiraviRepository {
     private val dao = database.kelepiraviDao()
+    private val inventoryDao = database.inventoryItemDao()
+    private val listingDao = database.listingDao()
+    private val statisticsDao = database.playerStatisticsDao()
+    private val relationshipDao = database.npcRelationshipDao()
     private val mutex = Mutex()
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
 
     override fun getPlayerState(): Flow<List<UserInventoryEntity>> = dao.getAllInventories()
 
-    override suspend fun getUserInventoryItems(): List<MarketItem> {
-        val playerItems = database.inventoryItemDao().getInventory(GameConstants.DEFAULT_USER_ID)
-        return playerItems.map { entity ->
-            val product = MarketGenerator.PRODUCTS.find { it.name == entity.itemId }
-                ?: MarketGenerator.PRODUCTS.random()
-            MarketItem(
-                id = entity.id.toString(),
-                itemName = product.name,
-                category = product.category,
-                condition = "Kusursuz Temiz",
-                sellerName = "Oyuncu",
-                salesValue = product.baseMaxValue.toLong(),
-                estimatedValue = product.baseMaxValue.toLong(),
-                imageName = product.imageKey,
-                purchasePrice = entity.purchasePrice.toLong()
-            )
+    override fun observeUserInventoryItems(): Flow<List<MarketItem>> =
+        inventoryDao.observeInventory(GameConstants.DEFAULT_USER_ID).map { entities ->
+            entities.map(::toMarketItem)
         }
+
+    override fun observePlayerStatistics(): Flow<PlayerStatisticsEntity?> =
+        statisticsDao.observeStatistics(GameConstants.DEFAULT_USER_ID)
+
+    override fun observeActiveListings(): Flow<List<Listing>> =
+        listingDao.observeActiveListings(GameConstants.DEFAULT_USER_ID).map { entities ->
+            entities.mapNotNull { entity -> decodeListing(entity) }
+        }
+
+    override suspend fun getUserInventoryItems(): List<MarketItem> {
+        return inventoryDao.getInventory(GameConstants.DEFAULT_USER_ID).map(::toMarketItem)
     }
 
-    override suspend fun recordSuccessfulBargain(category: String, profit: Double) {}
+    override suspend fun recordSuccessfulBargain(category: String, profit: Double) {
+        mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val stats = getStatisticsOrCreate(player.playerId)
+                statisticsDao.upsert(
+                    stats.copy(
+                        successfulBargains = stats.successfulBargains + 1,
+                        totalBargains = stats.totalBargains + 1,
+                        totalProfit = stats.totalProfit + profit,
+                        highestProfit = maxOf(stats.highestProfit, profit),
+                        soldCategories = updateCategoryCount(stats.soldCategories, category)
+                    )
+                )
+            }
+        }
+    }
 
     // ─── XP / Level ─────────────────────────────────────────────────────────
 
@@ -117,7 +148,7 @@ class KelepiraviRepository(
 
     // ─── Init ────────────────────────────────────────────────────────────────
 
-    suspend fun initializePlayerIfNeeded() {
+    override suspend fun initializePlayerIfNeeded() {
         mutex.withLock {
             database.withTransaction {
                 getPlayerOrCreate()
@@ -155,6 +186,8 @@ class KelepiraviRepository(
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
+                val inventoryEntity = findOwnedItem(item)
+                    ?: return@withTransaction RepairResult.NotOwned
 
                 val isNewDay        = player.lastRepairDay != player.currentDay
                 val repairsUsedToday = if (isNewDay) 0 else player.dailyRepairsUsed
@@ -176,6 +209,13 @@ class KelepiraviRepository(
 
                 if (isFailure) {
                     val failureCost = cost * 0.3
+                    val failedItem = item.copy(condition = degradeCondition(item.condition))
+                    inventoryDao.updateItem(
+                        inventoryEntity.copy(
+                            condition = conditionCode(failedItem.condition),
+                            itemJson = json.encodeToString(failedItem)
+                        )
+                    )
                     dao.updateInventory(
                         player.copy(
                             balance          = player.balance - failureCost.toLong(),
@@ -183,9 +223,16 @@ class KelepiraviRepository(
                             lastRepairDay    = player.currentDay
                         )
                     )
-                    return@withTransaction RepairResult.Failure(degradeCondition(item.condition))
+                    return@withTransaction RepairResult.Failure(failedItem.condition)
                 }
 
+                val repairedItem = item.copy(condition = improveCondition(item.condition))
+                inventoryDao.updateItem(
+                    inventoryEntity.copy(
+                        condition = conditionCode(repairedItem.condition),
+                        itemJson = json.encodeToString(repairedItem)
+                    )
+                )
                 val basePlayer = processXpGain(player, GameConstants.REPAIR_XP)
                 dao.updateInventory(
                     processAchievements(
@@ -197,6 +244,7 @@ class KelepiraviRepository(
                         )
                     )
                 )
+                statisticsDao.incrementRepairs(player.playerId)
                 RepairResult.Success
             }
         }
@@ -239,7 +287,10 @@ class KelepiraviRepository(
                 val player    = getPlayerOrCreate()
                 val maxCapacity = 5 + (player.shopLevel * 5)
                 // Envanter sayısı artık ayrı tabloda — geçici olarak player entity'den kontrol yok
-                if (player.balance.toDouble() < item.salesValue.toDouble()) return@withTransaction false
+                if (item.salesValue <= 0L || inventoryDao.getInventoryCount(player.playerId) >= maxCapacity) {
+                    return@withTransaction false
+                }
+                if (player.balance < item.salesValue) return@withTransaction false
 
                 val isAbsurd     = item.itemName.contains("NASA", ignoreCase = true) ||
                                    item.itemName.contains("F-16", ignoreCase = true)
@@ -255,22 +306,47 @@ class KelepiraviRepository(
                     )
                 )
                 dao.updateInventory(finalPlayer)
+                inventoryDao.insertItem(
+                    UserInventoryItemEntity(
+                        playerId = player.playerId,
+                        itemId = item.itemName,
+                        purchasePrice = item.salesValue.toDouble(),
+                        condition = conditionCode(item.condition),
+                        itemJson = json.encodeToString(
+                            item.copy(
+                                purchasePrice = item.salesValue,
+                                purchaseDate = LocalDate.now().toString()
+                            )
+                        )
+                    )
+                )
+                statisticsDao.incrementItemsBought(player.playerId)
                 true
             }
         }
     }
 
     override suspend fun recordFailedBargain() {
-        // İstatistikler PlayerStatisticsEntity'e taşınacak — şimdilik no-op
+        mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val stats = getStatisticsOrCreate(player.playerId)
+                statisticsDao.upsert(stats.copy(totalBargains = stats.totalBargains + 1))
+            }
+        }
     }
 
     override suspend fun buyLootBox(type: LootBoxType): List<MarketItem>? {
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
-                if (player.balance.toDouble() < type.price) return@withTransaction null
+                if (type.price <= 0.0 || player.balance.toDouble() < type.price) return@withTransaction null
 
                 val generatedItems  = LootBoxGenerator.openBox(type)
+                val maxCapacity = 5 + (player.shopLevel * 5)
+                if (inventoryDao.getInventoryCount(player.playerId) + generatedItems.size > maxCapacity) {
+                    return@withTransaction null
+                }
                 val isAbsurdBox     = generatedItems.any {
                     it.itemName.contains("NASA", true) || it.itemName.contains("F-16", true)
                 }
@@ -282,6 +358,17 @@ class KelepiraviRepository(
                     )
                 )
                 dao.updateInventory(finalPlayer)
+                generatedItems.forEach { generatedItem ->
+                    inventoryDao.insertItem(
+                        UserInventoryItemEntity(
+                            playerId = player.playerId,
+                            itemId = generatedItem.itemName,
+                            purchasePrice = type.price / generatedItems.size.coerceAtLeast(1),
+                            condition = conditionCode(generatedItem.condition),
+                            itemJson = json.encodeToString(generatedItem)
+                        )
+                    )
+                }
                 generatedItems
             }
         }
@@ -289,11 +376,16 @@ class KelepiraviRepository(
 
     // ─── Satış ───────────────────────────────────────────────────────────────
 
-    suspend fun sellItem(item: MarketItem, agreedPrice: Double? = null): Boolean {
+    override suspend fun sellItem(item: MarketItem, agreedPrice: Double?): Boolean {
         return mutex.withLock {
             database.withTransaction {
-                val player    = getPlayerOrCreate()
+                val player = getPlayerOrCreate()
+                val inventoryEntity = findOwnedItem(item) ?: return@withTransaction false
                 val sellPrice = agreedPrice ?: calculateSellPrice(item)
+                if (!sellPrice.isFinite() || sellPrice <= 0.0) return@withTransaction false
+                if (listingDao.getActiveListings(player.playerId).any { it.itemId == inventoryEntity.id }) {
+                    return@withTransaction false
+                }
 
                 val xpGain    = GameConstants.SELL_BASE_XP +
                     (sellPrice / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
@@ -302,6 +394,16 @@ class KelepiraviRepository(
                     basePlayer.copy(balance = player.balance + sellPrice.toLong())
                 )
                 dao.updateInventory(finalPlayer)
+                inventoryDao.deleteItemForPlayer(inventoryEntity.id, player.playerId)
+                val stats = getStatisticsOrCreate(player.playerId)
+                statisticsDao.upsert(
+                    stats.copy(
+                        itemsSold = stats.itemsSold + 1,
+                        totalProfit = stats.totalProfit + (sellPrice - inventoryEntity.purchasePrice),
+                        dailyRevenue = stats.dailyRevenue + sellPrice,
+                        highestProfit = maxOf(stats.highestProfit, sellPrice - inventoryEntity.purchasePrice)
+                    )
+                )
                 true
             }
         }
@@ -312,34 +414,134 @@ class KelepiraviRepository(
     // Geçiş sürecinde listing işlemleri JSON sütunları yerine ayrı tabloya taşınacak.
     // Şimdilik listing flow'u boş döner; PlayerStatisticsEntity/UserListingEntity ile dolacak.
 
-    suspend fun addListing(item: MarketItem, price: String): Boolean {
-        // TODO: UserListingEntity kullan
-        return false
+    override suspend fun addListing(item: MarketItem, price: String): Boolean {
+        val askingPrice = price.toDoubleOrNull()
+            ?: return false
+        if (!askingPrice.isFinite() || askingPrice <= 0.0) return false
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val inventoryEntity = findOwnedItem(item) ?: return@withTransaction false
+                val maxListings = 5 + (player.shopLevel * 5)
+                if (listingDao.getActiveListingCount(player.playerId) >= maxListings) return@withTransaction false
+                if (listingDao.getActiveListings(player.playerId).any { it.itemId == inventoryEntity.id }) {
+                    return@withTransaction false
+                }
+
+                val listingId = listingDao.insertListing(
+                    UserListingEntity(
+                        playerId = player.playerId,
+                        itemId = inventoryEntity.id,
+                        askingPrice = askingPrice,
+                        listedDay = player.currentDay,
+                        listingJson = json.encodeToString(
+                            Listing(
+                                item = item,
+                                listedPrice = askingPrice.toLong(),
+                                listedDay = player.currentDay
+                            )
+                        )
+                    )
+                )
+                val listing = Listing(
+                    id = listingId.toString(),
+                    item = item,
+                    listedPrice = askingPrice.toLong(),
+                    listedDay = player.currentDay
+                )
+                listingDao.updateListing(
+                    UserListingEntity(
+                        id = listingId,
+                        playerId = player.playerId,
+                        itemId = inventoryEntity.id,
+                        askingPrice = askingPrice,
+                        listedDay = player.currentDay,
+                        listingJson = json.encodeToString(listing)
+                    )
+                )
+                true
+            }
+        }
     }
 
-    suspend fun updateListingPrice(listing: Listing, newPrice: String): Boolean {
-        // TODO: UserListingEntity güncelle
-        return false
+    override suspend fun updateListingPrice(listing: Listing, newPrice: String): Boolean {
+        val askingPrice = newPrice.toDoubleOrNull()
+            ?: return false
+        if (!askingPrice.isFinite() || askingPrice <= 0.0) return false
+        val listingId = listing.id.toLongOrNull() ?: return false
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val updated = listing.copy(listedPrice = askingPrice.toLong())
+                listingDao.updatePriceForPlayer(
+                    id = listingId,
+                    playerId = player.playerId,
+                    newPrice = askingPrice,
+                    listingJson = json.encodeToString(updated)
+                ) > 0
+            }
+        }
     }
 
-    suspend fun removeListing(listing: Listing): Boolean {
-        // TODO: UserListingEntity sil
-        return false
+    override suspend fun removeListing(listing: Listing): Boolean {
+        val listingId = listing.id.toLongOrNull() ?: return false
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                listingDao.deactivateListingForPlayer(listingId, player.playerId) > 0
+            }
+        }
     }
 
-    suspend fun updateActiveListings(newListings: List<Listing>) {
-        // TODO: UserListingEntity toplu güncelle
+    override suspend fun updateActiveListings(newListings: List<Listing>) {
+        mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                newListings.forEach { listing ->
+                    val listingId = listing.id.toLongOrNull() ?: return@forEach
+                    val existing = listingDao.getListingByIdForPlayer(listingId, player.playerId)
+                        ?: return@forEach
+                    listingDao.updateListing(
+                        existing.copy(
+                            askingPrice = listing.listedPrice.toDouble(),
+                            listedDay = listing.listedDay,
+                            listingJson = json.encodeToString(listing)
+                        )
+                    )
+                }
+            }
+        }
     }
 
     suspend fun updateListing(updatedListing: Listing): Boolean {
-        // TODO: UserListingEntity güncelle
-        return false
-    }
-
-    suspend fun sellListing(listing: Listing, agreedPrice: Double): Boolean {
+        val listingId = updatedListing.id.toLongOrNull() ?: return false
         return mutex.withLock {
             database.withTransaction {
-                val player  = getPlayerOrCreate()
+                val player = getPlayerOrCreate()
+                val existing = listingDao.getListingByIdForPlayer(listingId, player.playerId)
+                    ?: return@withTransaction false
+                listingDao.updateListing(
+                    existing.copy(
+                        askingPrice = updatedListing.listedPrice.toDouble(),
+                        listedDay = updatedListing.listedDay,
+                        listingJson = json.encodeToString(updatedListing)
+                    )
+                ) > 0
+            }
+        }
+    }
+
+    override suspend fun sellListing(listing: Listing, agreedPrice: Double): Boolean {
+        return mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                if (!agreedPrice.isFinite() || agreedPrice <= 0.0) return@withTransaction false
+                val listingId = listing.id.toLongOrNull() ?: return@withTransaction false
+                val storedListing = listingDao.getListingByIdForPlayer(listingId, player.playerId)
+                    ?: return@withTransaction false
+                if (!storedListing.isActive) return@withTransaction false
+                val inventoryEntity = inventoryDao.getItemByIdForPlayer(storedListing.itemId, player.playerId)
+                    ?: return@withTransaction false
                 val xpGain  = GameConstants.SELL_BASE_XP +
                     (agreedPrice / GameConstants.PROFIT_PER_XP).coerceAtLeast(0.0).toInt()
                 val basePlayer  = processXpGain(player, xpGain)
@@ -347,6 +549,17 @@ class KelepiraviRepository(
                     basePlayer.copy(balance = player.balance + agreedPrice.toLong())
                 )
                 dao.updateInventory(finalPlayer)
+                inventoryDao.deleteItemForPlayer(inventoryEntity.id, player.playerId)
+                listingDao.deactivateListingForPlayer(listingId, player.playerId)
+                val stats = getStatisticsOrCreate(player.playerId)
+                statisticsDao.upsert(
+                    stats.copy(
+                        itemsSold = stats.itemsSold + 1,
+                        totalProfit = stats.totalProfit + (agreedPrice - inventoryEntity.purchasePrice),
+                        dailyRevenue = stats.dailyRevenue + agreedPrice,
+                        highestProfit = maxOf(stats.highestProfit, agreedPrice - inventoryEntity.purchasePrice)
+                    )
+                )
                 true
             }
         }
@@ -437,6 +650,17 @@ class KelepiraviRepository(
                 val xpGain     = (newXp - player.xp).coerceAtLeast(0)
                 val basePlayer = if (xpGain > 0) processXpGain(player, xpGain) else player
                 dao.updateInventory(basePlayer.copy(balance = currentBalance.toLong()))
+                generatedItems.forEach { generatedItem ->
+                    inventoryDao.insertItem(
+                        UserInventoryItemEntity(
+                            playerId = player.playerId,
+                            itemId = generatedItem.itemName,
+                            purchasePrice = 0.0,
+                            condition = conditionCode(generatedItem.condition),
+                            itemJson = json.encodeToString(generatedItem)
+                        )
+                    )
+                }
                 generatedItems
             }
         }
@@ -448,7 +672,7 @@ class KelepiraviRepository(
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
-                if (player.balance.toDouble() < cost) return@withTransaction false
+                if (!cost.isFinite() || cost <= 0.0 || player.balance.toDouble() < cost) return@withTransaction false
                 if (player.shopLevel >= 5) return@withTransaction false
 
                 dao.updateInventory(
@@ -466,7 +690,7 @@ class KelepiraviRepository(
         return mutex.withLock {
             database.withTransaction {
                 val player = getPlayerOrCreate()
-                if (player.balance.toDouble() < cost) return@withTransaction false
+                if (!cost.isFinite() || cost <= 0.0 || player.balance.toDouble() < cost) return@withTransaction false
                 if (player.mechanicLevel >= 5) return@withTransaction false
 
                 dao.updateInventory(
@@ -480,15 +704,31 @@ class KelepiraviRepository(
         }
     }
 
-    suspend fun updateNpcRelationship(npcName: String, delta: Int) {
-        // TODO: PlayerNpcRelationshipEntity kullan
+    override suspend fun updateNpcRelationship(npcName: String, delta: Int) {
+        if (npcName.isBlank() || delta == 0) return
+        mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val current = relationshipDao.getScore(player.playerId, npcName) ?: 0
+                relationshipDao.upsert(
+                    PlayerNpcRelationshipEntity(
+                        playerId = player.playerId,
+                        npcId = npcName,
+                        relationshipScore = (current + delta).coerceIn(-100, 100)
+                    )
+                )
+            }
+        }
     }
 
     // ─── Yardımcı ────────────────────────────────────────────────────────────
 
     private suspend fun getPlayerOrCreate(): UserInventoryEntity {
         val existing = dao.getInventoryById(GameConstants.DEFAULT_USER_ID)
-        if (existing != null) return existing
+        if (existing != null) {
+            ensureModernPlayerRows(existing)
+            return existing
+        }
 
         val created = UserInventoryEntity(
             playerId = GameConstants.DEFAULT_USER_ID,
@@ -496,14 +736,113 @@ class KelepiraviRepository(
             currentDay = GameConstants.INITIAL_DAY
         )
         dao.insertInventory(created)
+        ensureModernPlayerRows(created)
         return created
+    }
+
+    private suspend fun ensureModernPlayerRows(player: UserInventoryEntity) {
+        val progressDao = database.playerProgressDao()
+        if (progressDao.getPlayer(player.playerId) == null) {
+            progressDao.upsert(
+                PlayerProgressEntity(
+                    playerId = player.playerId,
+                    balance = player.balance,
+                    currentDay = player.currentDay,
+                    xp = player.xp,
+                    level = player.level,
+                    shopLevel = player.shopLevel,
+                    mechanicLevel = player.mechanicLevel
+                )
+            )
+        }
+        if (statisticsDao.getStatistics(player.playerId) == null) {
+            statisticsDao.upsert(PlayerStatisticsEntity(playerId = player.playerId))
+        }
+        if (database.playerEventStateDao().getEventState(player.playerId) == null) {
+            database.playerEventStateDao().upsert(PlayerEventStateEntity(playerId = player.playerId))
+        }
+    }
+
+    private suspend fun getStatisticsOrCreate(playerId: Int): PlayerStatisticsEntity {
+        return statisticsDao.getStatistics(playerId)
+            ?: PlayerStatisticsEntity(playerId = playerId).also { statisticsDao.upsert(it) }
+    }
+
+    private suspend fun findOwnedItem(item: MarketItem): UserInventoryItemEntity? {
+        val itemId = item.id.toLongOrNull() ?: return null
+        return inventoryDao.getItemByIdForPlayer(itemId, GameConstants.DEFAULT_USER_ID)
+    }
+
+    private fun toMarketItem(entity: UserInventoryItemEntity): MarketItem {
+        val decoded = entity.itemJson.takeIf { it.isNotBlank() }?.let {
+            runCatching { json.decodeFromString<MarketItem>(it) }.getOrNull()
+        }
+        if (decoded != null) {
+            return decoded.copy(
+                id = entity.id.toString(),
+                purchasePrice = entity.purchasePrice.toLong()
+            )
+        }
+
+        val product = MarketGenerator.PRODUCTS.find { it.name == entity.itemId }
+            ?: MarketGenerator.PRODUCTS.first()
+        return MarketItem(
+            id = entity.id.toString(),
+            itemName = product.name,
+            category = product.category,
+            condition = conditionName(entity.condition),
+            sellerName = "Oyuncu",
+            salesValue = product.baseMaxValue.toLong(),
+            estimatedValue = product.baseMaxValue.toLong(),
+            imageName = product.imageKey,
+            purchasePrice = entity.purchasePrice.toLong()
+        )
+    }
+
+    private fun decodeListing(entity: UserListingEntity): Listing? {
+        val decoded = entity.listingJson.takeIf { it.isNotBlank() }?.let {
+            runCatching { json.decodeFromString<Listing>(it) }.getOrNull()
+        } ?: return null
+        return decoded.copy(
+            id = entity.id.toString(),
+            listedPrice = entity.askingPrice.toLong(),
+            listedDay = entity.listedDay
+        )
+    }
+
+    private fun conditionCode(condition: String): Int = when {
+        condition.contains("Kusursuz", ignoreCase = true) -> 0
+        condition.contains("Hafif", ignoreCase = true) -> 1
+        condition.contains("Orta", ignoreCase = true) -> 2
+        condition.contains("Kırık", ignoreCase = true) -> 3
+        else -> 4
+    }
+
+    private fun conditionName(code: Int): String = when (code.coerceIn(0, 4)) {
+        0 -> "Kusursuz Temiz"
+        1 -> "Hafif Çizik"
+        2 -> "Orta Hasar"
+        3 -> "Kırık / Arızalı"
+        else -> "Bantlı / Tamir Gerekli"
+    }
+
+    private fun improveCondition(condition: String): String = when {
+        condition.contains("Bantlı", ignoreCase = true) -> "Kırık / Arızalı"
+        condition.contains("Kırık", ignoreCase = true) -> "Orta Hasar"
+        condition.contains("Orta", ignoreCase = true) -> "Hafif Çizik"
+        condition.contains("Hafif", ignoreCase = true) -> "Kusursuz Temiz"
+        else -> condition
+    }
+
+    private fun updateCategoryCount(serialized: String, category: String): String {
+        val values = mutableMapOf<String, Int>()
+        serialized.split(',').forEach { entry ->
+            val parts = entry.split(':', limit = 2)
+            if (parts.size == 2) values[parts[0]] = parts[1].toIntOrNull() ?: 0
+        }
+        values[category] = (values[category] ?: 0) + 1
+        return values.entries.joinToString(",") { "${it.key}:${it.value}" }
     }
 }
 
 // ─── Tamir Sonuç Durumu ──────────────────────────────────────────────────────
-sealed class RepairResult {
-    object Success : RepairResult()
-    data class Failure(val newCondition: String) : RepairResult()
-    object LimitReached : RepairResult()
-    object NotEnoughMoney : RepairResult()
-}
