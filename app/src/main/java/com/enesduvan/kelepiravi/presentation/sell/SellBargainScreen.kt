@@ -39,8 +39,8 @@ import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
 import com.enesduvan.kelepiravi.viewmodel.BargainMessage
-import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
 import com.enesduvan.kelepiravi.viewmodel.SellBargainState
+import com.enesduvan.kelepiravi.viewmodel.bargain.BargainViewModel
 
 private val RED = Color(0xFFFF6B6B)
 private val RED_DARK = Color(0xFF3A1A1A)
@@ -48,14 +48,13 @@ private val GREEN_DARK = Color(0xFF1A3A1A)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainState) {
+fun SellBargainScreen(viewModel: BargainViewModel, sellBargainState: SellBargainState) {
     var offerText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
     
     val haptic = LocalHapticFeedback.current
-    val isHapticEnabled by viewModel.isHapticEnabled.collectAsState()
     val performHaptic = {
-        if (isHapticEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
     // Ch6: Animasyonlu sabır barı
@@ -107,7 +106,7 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text("🤝 Anlaşma Sağlandı!", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Text("Anlaşılan Fiyat: ₺${formatBalance(sellBargainState.agreedPrice.toString())}", color = Color.White, fontSize = 14.sp)
+                        Text("Anlaşılan Fiyat: ₺${formatBalance(sellBargainState.agreedPrice)}", color = Color.White, fontSize = 14.sp)
                         Button(
                             onClick = { 
                                 performHaptic()
@@ -154,7 +153,7 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                             colors = ButtonDefaults.buttonColors(containerColor = GREEN_DARK),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Teklifi Kabul Et: ₺${formatBalance(lastOffer.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text("Teklifi Kabul Et: ₺${formatBalance(lastOffer)}", color = MoneyGreen, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
 
@@ -162,16 +161,16 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        SellQuickOfferButton("₺${formatBalance((currentBase).toString())}", modifier = Modifier.weight(1f)) {
+                        SellQuickOfferButton("₺${formatBalance(currentBase)}", modifier = Modifier.weight(1f)) {
                             viewModel.sendSellOffer(currentBase)
                         }
-                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.05).toString())}", modifier = Modifier.weight(1f)) {
+                        SellQuickOfferButton("₺${formatBalance(currentBase * 1.05)}", modifier = Modifier.weight(1f)) {
                             viewModel.sendSellOffer(currentBase * 1.05)
                         }
-                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.15).toString())}", modifier = Modifier.weight(1f)) {
+                        SellQuickOfferButton("₺${formatBalance(currentBase * 1.15)}", modifier = Modifier.weight(1f)) {
                             viewModel.sendSellOffer(currentBase * 1.15)
                         }
-                        SellQuickOfferButton("₺${formatBalance((currentBase * 1.30).toString())}", modifier = Modifier.weight(1f)) {
+                        SellQuickOfferButton("₺${formatBalance(currentBase * 1.30)}", modifier = Modifier.weight(1f)) {
                             viewModel.sendSellOffer(currentBase * 1.30)
                         }
                     }
@@ -258,7 +257,7 @@ fun SellBargainScreen(viewModel: MarketViewModel, sellBargainState: SellBargainS
                         Text("${sellBargainState.buyerName} [${personality.title}] •", color = TextSecondary, fontSize = 13.sp, modifier = Modifier.weight(1f, fill = false), maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Text(relText, color = relColor, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
-                    Text("₺${formatBalance(sellBargainState.baseSellPrice.toString())}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("₺${formatBalance(sellBargainState.baseSellPrice)}", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     Text("Değeri", color = TextSecondary, fontSize = 11.sp)
                 }
 

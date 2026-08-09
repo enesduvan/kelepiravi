@@ -26,6 +26,8 @@ fun formatBalance(balance: String): String {
     }
 }
 
+fun formatBalance(amount: Long): String = String.format(TurkishLocale, "%,d", amount)
+
 /** Assets klasöründeki JSON dosyasından MarketItem listesi okur. */
 fun formatBalance(amount: Double): String = formatBalance(amount.toString())
 

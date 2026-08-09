@@ -7,7 +7,7 @@ import java.util.UUID
 data class Listing(
     val id: String = UUID.randomUUID().toString(),
     val item: MarketItem,
-    val listedPrice: String,
+    val listedPrice: Long,
     val listedDay: Int,
     val views: Int = 0,
     val favorites: Int = 0,

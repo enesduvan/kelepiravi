@@ -7,7 +7,7 @@ import java.util.UUID
 data class Offer(
     val id: String = UUID.randomUUID().toString(),
     val npcName: String,
-    val offerAmount: String,
+    val offerAmount: Long,
     val timestamp: Long = System.currentTimeMillis(),
     val status: OfferStatus = OfferStatus.PENDING
 )

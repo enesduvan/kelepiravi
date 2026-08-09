@@ -27,7 +27,9 @@ import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
-import com.enesduvan.kelepiravi.viewmodel.RepairResultState
+import com.enesduvan.kelepiravi.viewmodel.repair.RepairResultState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
@@ -35,10 +37,10 @@ import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.shared.bounceClick
 import com.enesduvan.kelepiravi.ui.theme.*
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.enesduvan.kelepiravi.viewmodel.repair.RepairViewModel
 
 @Composable
-fun TamirEkrani(viewModel: MarketViewModel) {
+fun TamirEkrani(viewModel: RepairViewModel) {
     val playerState by viewModel.playerState.collectAsState()
     val repairResult by viewModel.repairResult.collectAsState()
     
@@ -74,7 +76,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         items(items = repairableItems, key = { marketItemKey(it) }) { item ->
-                            val currentVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+                            val currentVal = item.estimatedValue.toDouble()
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -92,7 +94,7 @@ fun TamirEkrani(viewModel: MarketViewModel) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                                     Text("Durum: ${item.condition}", color = ConditionScratch, fontSize = 12.sp)
-                                    Text("Değer: ₺${formatBalance(currentVal.toString())}", color = MoneyGreen, fontSize = 12.sp)
+                                    Text("Değer: ₺${formatBalance(currentVal)}", color = MoneyGreen, fontSize = 12.sp)
                                 }
                                 Icon(Icons.Default.ArrowForwardIos, contentDescription = null, tint = MarketTextSecondary, modifier = Modifier.size(16.dp))
                             }
@@ -103,13 +105,13 @@ fun TamirEkrani(viewModel: MarketViewModel) {
         } else {
             // DETAY GÖRÜNÜMÜ (MOCKUP 5a20)
             val item = selectedItem!!
-            val baseVal = item.estimatedValue.toDoubleOrNull() ?: 0.0
+            val baseVal = item.estimatedValue.toDouble()
             val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
             val currentVal = baseVal * currentMultiplier
             val cirakCost = viewModel.calculateRepairCost(item, false)
             val ustaCost = viewModel.calculateRepairCost(item, true)
             val selectedCost = if (selectedOption == "Cirak") cirakCost else ustaCost
-            val canAfford = (playerState.balance.toDoubleOrNull() ?: 0.0) >= selectedCost
+            val canAfford = playerState.balance.toDouble() >= selectedCost
             val canRepair = remainingRepairs > 0 && canAfford && !isRepairing
             
             val mechanicLevel = playerState.mechanicLevel

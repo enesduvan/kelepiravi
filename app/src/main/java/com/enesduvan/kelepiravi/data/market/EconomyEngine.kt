@@ -2,7 +2,6 @@ package com.enesduvan.kelepiravi.data.market
 
 import com.enesduvan.kelepiravi.data.GameConstants
 import com.enesduvan.kelepiravi.data.model.MarketItem
-import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -16,6 +15,8 @@ import kotlin.random.Random
  * - Mobilya / Ev Aletleri → Düşük volatilite (stabil)
  * - Kondisyon kötüyse negatif bias (bozuk mal daha hızlı değer kaybeder)
  * - Günlük olaylar: %25 ihtimalle tetiklenir, tek kategoriyi veya tüm piyasayı etkiler
+ *
+ * Para birimi: Long (kuruş cinsinden değil, tam TL — kesirler atılır)
  */
 object EconomyEngine {
 
@@ -116,18 +117,20 @@ object EconomyEngine {
                 GameConstants.MAX_DAILY_CHANGE
             )
 
-            val currentValue = item.estimatedValue.toDoubleOrNull() ?: 100.0
-            val originalPurchase = item.purchasePrice.toDoubleOrNull()
+            // Long → Double → hesapla → Long'a geri dön
+            val currentValue = item.estimatedValue.toDouble()
+            val originalPurchase = item.purchasePrice.toDouble()
 
             // Yeni değer: orijinal alış fiyatının %10'unun altına düşemez
-            val floor = (originalPurchase ?: currentValue) * GameConstants.PURCHASE_VALUE_FLOOR_RATIO
+            val floor = (if (originalPurchase > 0) originalPurchase else currentValue) *
+                GameConstants.PURCHASE_VALUE_FLOOR_RATIO
             val newValue = (currentValue * (1.0 + totalChange)).coerceAtLeast(floor)
 
             // Günlük % değişim (1 ondalık)
             val changePercent = ((totalChange * 1000.0).roundToInt() / 10.0)
 
             item.copy(
-                estimatedValue = newValue.roundToInt().coerceAtLeast(5).toString(),
+                estimatedValue = newValue.toLong().coerceAtLeast(5L),
                 dailyChangePercent = changePercent
             )
         }
@@ -136,20 +139,20 @@ object EconomyEngine {
         val newMarketTrends = currentMarketTrends.toMutableMap()
         CATEGORY_VOLATILITY.keys.forEach { category ->
             var currentTrend = newMarketTrends[category] ?: 1.0
-            
+
             // 1. Mean reversion (normale dönüş) - 1.0'a doğru her gün hafifçe yaklaşır
             val diffFromNormal = currentTrend - 1.0
-            currentTrend -= diffFromNormal * 0.15 
-            
+            currentTrend -= diffFromNormal * 0.15
+
             // 2. Rastgele dalgalanma (±2%)
             val randomDrift = (rng.nextDouble() - 0.5) * 0.04
             currentTrend += randomDrift
-            
+
             // 3. Günlük olay etkisi
             if (event != null && (event.affectedCategory == null || event.affectedCategory == category)) {
                 currentTrend += event.effectPercent / 100.0
             }
-            
+
             // Limit the multiplier between 0.5 (çöküş) and 2.0 (balon)
             newMarketTrends[category] = currentTrend.coerceIn(0.5, 2.0)
         }
@@ -161,16 +164,19 @@ object EconomyEngine {
      * Toplam portföy değerini hesaplar.
      */
     fun calculatePortfolioValue(inventory: List<MarketItem>): Double =
-        inventory.sumOf { it.estimatedValue.toDoubleOrNull() ?: 0.0 }
+        inventory.sumOf { it.estimatedValue.toDouble() }
 
     /**
      * Toplam yatırılan para.
      */
     fun calculateTotalInvestment(inventory: List<MarketItem>): Double =
-        inventory.sumOf { it.purchasePrice.ifEmpty { it.salesValue }.toDoubleOrNull() ?: 0.0 }
+        inventory.sumOf {
+            if (it.purchasePrice > 0L) it.purchasePrice.toDouble()
+            else it.salesValue.toDouble()
+        }
 
     /**
-     * Portföy kâr/zarar yüzdesi.....
+     * Portföy kâr/zarar yüzdesi.
      */
     fun calculatePortfolioROI(inventory: List<MarketItem>): Double {
         val investment = calculateTotalInvestment(inventory)

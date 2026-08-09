@@ -184,15 +184,13 @@ fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingV
     }
 }
 
-// ... (Kalan yardımcı Composable'lar aşağıda) ...
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
-    val baseValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
+    val baseValue = item.estimatedValue.toDouble()
     val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
     val estimatedValue = baseValue * currentMultiplier
-    val purchasePrice = item.purchasePrice.ifEmpty { item.salesValue }.toDoubleOrNull() ?: 0.0
+    val purchasePrice = (if ((item.purchasePrice.toLong() ?: 0L) > 0L) item.purchasePrice else item.salesValue).toDouble()
     
     var priceStr by remember { mutableStateOf(estimatedValue.toLong().toString()) }
     val price = priceStr.toDoubleOrNull() ?: 0.0
@@ -311,8 +309,8 @@ fun CreateListingDialog(item: MarketItem, onDismiss: () -> Unit, onConfirm: (Str
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("₺${formatBalance((estimatedValue * 0.5).toString())}", color = MarketTextSecondary, fontSize = 10.sp)
-                        Text("₺${formatBalance((estimatedValue * 1.5).toString())}", color = MarketTextSecondary, fontSize = 10.sp)
+                        Text("₺${formatBalance(estimatedValue * 0.5)}", color = MarketTextSecondary, fontSize = 10.sp)
+                        Text("₺${formatBalance(estimatedValue * 1.5)}", color = MarketTextSecondary, fontSize = 10.sp)
                     }
                     Slider(
                         value = price.toFloat(),
@@ -453,8 +451,8 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
         item.condition.contains("Tamir") || item.condition.contains("Bantlı")   -> ConditionRepairBg to ConditionRepair
         else -> ConditionScratchBg to ConditionScratch
     }
-    val purchasePrice = item.purchasePrice.ifEmpty { item.salesValue }.toDoubleOrNull() ?: 0.0
-    val baseValue = item.estimatedValue.toDoubleOrNull() ?: 0.0
+    val purchasePrice = (if (item.purchasePrice > 0L) item.purchasePrice else item.salesValue).toDouble()
+    val baseValue = item.estimatedValue.toDouble()
     val currentMultiplier = MarketGenerator.getConditionMultiplier(item.condition) ?: 1.0
     val estimatedValue = baseValue * currentMultiplier
     val profit = estimatedValue - purchasePrice
@@ -526,13 +524,13 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
                         Text("⚠️ Kazıklandın!", color = Color(0xFFFF8C00), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     }
                 }
-                Text("Alış: ₺${formatBalance(purchasePrice.toString())}", color = TextSecondary, fontSize = 12.sp)
-                Text("Kusursuz: ₺${formatBalance(baseValue.toString())}", color = MarketTextSecondary, fontSize = 11.sp)
+                Text("Alış: ₺${formatBalance(purchasePrice)}", color = TextSecondary, fontSize = 12.sp)
+                Text("Kusursuz: ₺${formatBalance(baseValue)}", color = MarketTextSecondary, fontSize = 11.sp)
 
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text("Güncel: ₺${formatBalance(estimatedValue.toString())}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Text("Güncel: ₺${formatBalance(estimatedValue)}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                     Text(
-                        "${if (isProfit) "+" else ""}${formatBalance(profit.toString())}₺",
+                        "${if (isProfit) "+" else ""}${formatBalance(profit)}₺",
                         color = if (isProfit) MoneyGreen else RED,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,

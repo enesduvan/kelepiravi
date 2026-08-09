@@ -2,7 +2,7 @@ package com.enesduvan.kelepiravi.data
 
 object GameConstants {
     const val DEFAULT_USER_ID = 1
-    const val INITIAL_BALANCE = "25000.0"
+    const val INITIAL_BALANCE = 25000L
     const val INITIAL_DAY = 1
 
     const val MARKET_BATCH_SIZE = 50

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import com.enesduvan.kelepiravi.data.listing.ListingEngine
+import com.enesduvan.kelepiravi.data.listing.ListingUseCase
 
 class ListingViewModel(
     private val listingUseCase: ListingUseCase,
@@ -25,18 +26,7 @@ class ListingViewModel(
             initialValue = emptyList()
         )
 
-    init {
-        viewModelScope.launch {
-            while (true) {
-                delay(3000) // 3 saniyede bir piyasa hareketlenir
-                val currentListings = activeListings.value
-                if (currentListings.isNotEmpty()) {
-                    val updatedListings = currentListings.map { ListingEngine.processTick(it) }
-                    listingUseCase.updateActiveListings(updatedListings)
-                }
-            }
-        }
-    }
+
 
     val isFastSellEnabled = settingsManager.isFastSellEnabled
     val isSoundEnabled = settingsManager.isSoundEnabled

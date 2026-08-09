@@ -73,11 +73,11 @@ fun EmptyStateIndicator(
  */
 @Composable
 fun AnimatedBalanceText(
-    balance: String,
+    balance: Long,
     fontSize: androidx.compose.ui.unit.TextUnit = 28.sp,
     modifier: Modifier = Modifier
 ) {
-    var previousBalance by remember { mutableStateOf(balance) }
+    var previousBalance by remember { mutableLongStateOf(balance) }
     var isFlashing by remember { mutableStateOf(false) }
 
     LaunchedEffect(balance) {
@@ -91,9 +91,7 @@ fun AnimatedBalanceText(
 
     val flashColor by animateColorAsState(
         targetValue = if (isFlashing) {
-            val prev = previousBalance.toDoubleOrNull() ?: 0.0
-            val curr = balance.toDoubleOrNull() ?: 0.0
-            if (curr >= prev) Color(0xFF54D548) else Color(0xFFFF6B6B)
+            if (balance >= previousBalance) Color(0xFF54D548) else Color(0xFFFF6B6B)
         } else Color.White,
         animationSpec = tween(300),
         label = "balanceFlash"

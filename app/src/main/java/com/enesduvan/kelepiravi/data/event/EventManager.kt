@@ -1,6 +1,6 @@
 package com.enesduvan.kelepiravi.data.event
 
-import com.enesduvan.kelepiravi.data.local.entity.UserInventoryEntity
+import com.enesduvan.kelepiravi.database.entity.UserInventoryEntity
 import kotlinx.serialization.json.Json
 
 object EventManager {
@@ -26,7 +26,7 @@ object EventManager {
                     "MAX_DAY" -> player.currentDay <= condition.value.toInt()
                     "HAS_FLAG" -> flags.contains(condition.value)
                     "NOT_HAS_FLAG" -> !flags.contains(condition.value)
-                    "MIN_MONEY" -> (player.balance.toDoubleOrNull() ?: 0.0) >= condition.value.toDouble()
+                    "MIN_MONEY" -> player.balance.toDouble() >= condition.value.toDouble()
                     "MIN_LEVEL" -> player.level >= condition.value.toInt()
                     else -> true
                 }

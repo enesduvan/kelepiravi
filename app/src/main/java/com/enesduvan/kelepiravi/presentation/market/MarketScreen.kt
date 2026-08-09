@@ -41,6 +41,7 @@ import com.enesduvan.kelepiravi.presentation.seller.SellerProfileDialog
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
 import com.enesduvan.kelepiravi.ui.shared.bounceClick
+import com.enesduvan.kelepiravi.presentation.market.components.*
 import com.enesduvan.kelepiravi.ui.theme.*
 import java.util.Locale
 
@@ -265,7 +266,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
         }
 
         if (uiState.isLootBoxSheetOpen) {
-            val balance = playerState.balance.toDoubleOrNull() ?: 0.0
+            val balance = playerState.balance.toDouble()
             LootBoxBottomSheet(
                 playerBalance = balance,
                 inventorySize = playerState.inventory.size,
@@ -462,178 +463,12 @@ fun DailySummaryDialog(summary: DailySummaryState, onDismiss: () -> Unit) {
     }
 }
 
-@Composable
-fun ItemCard(item: MarketItem, onClick: (MarketItem) -> Unit, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
-            .bounceClick { onClick(item) },
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(CardSecondary)
-            ) {
-                val context = LocalContext.current
-                val resId = remember(item.imageName) {
-                    context.resources.getIdentifier(item.imageName, "drawable", context.packageName)
-                }
-                if (resId != 0) {
-                    Image(
-                        painter = painterResource(id = resId),
-                        contentDescription = item.itemName,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xAA000000))))
-                )
-            }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(item.itemName, color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(4.dp))
-                val (bgColor, textColor) = when {
-                    item.condition.contains("Kusursuz") -> ConditionPerfectBg to ConditionPerfect
-                    item.condition.contains("Çizik") -> ConditionScratchBg to ConditionScratch
-                    item.condition.contains("Hasar") -> ConditionRepairBg to ConditionRepair
-                    else -> ConditionBrokenBg to ConditionBrokenText
-                }
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(bgColor)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(item.condition, color = textColor, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text("Satıcı: ${item.sellerName}", color = TextMuted, fontSize = 12.sp)
-            }
-
-            Column(horizontalAlignment = Alignment.End) {
-                Text("İstenen", color = TextSecondary, fontSize = 10.sp)
-                Text("₺${item.salesValue}", color = MoneyGreen, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
-            }
-        }
-    }
-}
-
-// Ch6: İnteraktif Event Dialogu
-@Composable
-fun InteractiveEventDialog(
-    event: EventDefinition,
-    onChoiceSelected: (EventChoice) -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xEE000000)),
-        contentAlignment = Alignment.Center
-    ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(0.9f).padding(16.dp),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2A2A))
-        ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("👀 OLAY", color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(event.title, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Text(
-                    event.description,
-                    color = TextPrimary,
-                    fontSize = 15.sp,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 22.sp
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                event.choices.forEach { choice ->
-                    Button(
-                        onClick = { onChoiceSelected(choice) },
-                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(choice.text, color = Color.Black, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                    }
-                }
-            }
-        }
-    }
-}
-
-// Ch6: Olay Sonucu Dialogu
-@Composable
-fun EventResultDialog(resultText: String, onDismiss: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xEE000000))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = {}
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A))
-        ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("📌 OLAY SONUCU", color = PrimaryOrange, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Text(
-                    text = resultText,
-                    color = Color.White,
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp,
-                    textAlign = TextAlign.Center
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                Button(
-                    onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
-                    modifier = Modifier.fillMaxWidth(0.6f).height(48.dp)
-                ) {
-                    Text("Devam Et", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                }
-            }
-        }
-    }
-}
 /*
 @Preview
 @Composable
 fun PreviewMarketScreen() {
-    val dummyViewModel = MarketViewModel(repository = com.enesduvan.kelepiravi.data.repository.KelepiraviRepository(database = com.enesduvan.kelepiravi.data.local.AppDatabaseProvider.getDatabase(androidx.compose.ui.platform.LocalContext.current), context = androidx.compose.ui.platform.LocalContext.current), settingsManager = com.enesduvan.kelepiravi.data.local.SettingsManager(androidx.compose.ui.platform.LocalContext.current), soundManager = com.enesduvan.kelepiravi.data.local.SoundManager(androidx.compose.ui.platform.LocalContext.current, com.enesduvan.kelepiravi.data.local.SettingsManager(androidx.compose.ui.platform.LocalContext.current).isSoundEnabled))
+    val dummyViewModel = MarketViewModel(repository = com.enesduvan.kelepiravi.data.repository.KelepiraviRepository(database = com.enesduvan.kelepiravi.database.AppDatabaseProvider.getDatabase(androidx.compose.ui.platform.LocalContext.current), context = androidx.compose.ui.platform.LocalContext.current), settingsManager = com.enesduvan.kelepiravi.data.local.SettingsManager(androidx.compose.ui.platform.LocalContext.current), soundManager = com.enesduvan.kelepiravi.ui.shared.SoundManager(androidx.compose.ui.platform.LocalContext.current, com.enesduvan.kelepiravi.data.local.SettingsManager(androidx.compose.ui.platform.LocalContext.current).isSoundEnabled))
     KelepiraviTheme {
         MarketScreen(viewModel = dummyViewModel)
     }

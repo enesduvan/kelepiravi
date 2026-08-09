@@ -205,7 +205,7 @@ fun MarketBottomSheetContent(
             ) {
                 Column {
                     Text(text = "Fiyat", color = MarketTextSecondary, fontSize = 12.sp)
-                    Text(text = "₺ ${item.salesValue}", color = PriceText, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+                    Text(text = "₺ ${formatBalance(item.salesValue)}", color = PriceText, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(id = R.drawable.ic_money), contentDescription = null, tint = BalanceGreen, modifier = Modifier.size(28.dp))

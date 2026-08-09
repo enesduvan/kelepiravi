@@ -68,7 +68,7 @@ fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingVi
                         onCancelClick = { listingViewModel.cancelListing(it) },
                         onAcceptOffer = { l, amount -> 
                             if (Random.nextDouble() < 0.10) {
-                                val offer = l.offers.find { it.offerAmount.toDoubleOrNull() == amount }
+                                val offer = l.offers.find { it.offerAmount.toDouble() == amount }
                                 if (offer != null) {
                                     lastMinuteBargainOffer = Triple(l, offer, amount)
                                 } else {
@@ -89,7 +89,7 @@ fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingVi
     }
 
     if (editingListing != null) {
-        var newPriceStr by remember { mutableStateOf(editingListing!!.listedPrice) }
+        var newPriceStr by remember { mutableStateOf(editingListing!!.listedPrice.toString()) }
         AlertDialog(
             onDismissRequest = { editingListing = null },
             title = { Text("İlanı Düzenle", color = TextPrimary) },
@@ -153,9 +153,9 @@ fun ListingCard(
     onBargainClick: (Listing, Offer) -> Unit,
     onEditClick: (Listing) -> Unit
 ) {
-    val estimatedValue = listing.item.estimatedValue.toDoubleOrNull() ?: 0.0
-    val listedPrice = listing.listedPrice.toDoubleOrNull() ?: 0.0
-    val diffPercent = ((listedPrice - estimatedValue) / estimatedValue) * 100
+    val estimatedValue = listing.item.estimatedValue.toDouble()
+    val listedPrice = listing.listedPrice.toDouble()
+    val diffPercent = if (estimatedValue > 0) ((listedPrice - estimatedValue) / estimatedValue) * 100 else 0.0
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -179,7 +179,7 @@ fun ListingCard(
                 Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
                     Text(listing.item.itemName, color = TextPrimary, fontWeight = FontWeight.Bold)
                     Text("İlan Fiyatı: ₺${formatBalance(listing.listedPrice)}", color = PrimaryOrange, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    Text("Piyasa: ₺${formatBalance(estimatedValue.toString())} (${if (diffPercent > 0) "+" else ""}${"%.0f".format(diffPercent)}%)", color = TextSecondary, fontSize = 12.sp)
+                    Text("Piyasa: ₺${formatBalance(estimatedValue)} (${if (diffPercent > 0) "+" else ""}${"%.0f".format(diffPercent)}%)", color = TextSecondary, fontSize = 12.sp)
                 }
                 IconButton(onClick = { onEditClick(listing) }) {
                     Icon(Icons.Default.Edit, contentDescription = "Düzenle", tint = TextSecondary)

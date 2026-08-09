@@ -36,10 +36,10 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import com.enesduvan.kelepiravi.presentation.settings.SettingsDialog
-import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
+import com.enesduvan.kelepiravi.viewmodel.profile.ProfileViewModel
 
 @Composable
-fun ProfilEkrani(viewModel: MarketViewModel, listingViewModel: ListingViewModel) {
+fun ProfilEkrani(viewModel: ProfileViewModel, listingViewModel: ListingViewModel) {
     var showSettings by remember { mutableStateOf(false) }
     val isSoundEnabled by listingViewModel.isSoundEnabled.collectAsState()
     val isHapticEnabled by listingViewModel.isHapticEnabled.collectAsState()
@@ -310,7 +310,7 @@ fun ProfilEkrani(viewModel: MarketViewModel, listingViewModel: ListingViewModel)
             
             // Dükkanı Yükselt Kartı
             val shopCost = viewModel.getShopUpgradeCost(playerState.shopLevel)
-            val canAfford = (playerState.balance.toDoubleOrNull() ?: 0.0) >= shopCost
+            val canAfford = playerState.balance.toDouble() >= shopCost
             val isMaxed = playerState.shopLevel >= 3
 
             Box(

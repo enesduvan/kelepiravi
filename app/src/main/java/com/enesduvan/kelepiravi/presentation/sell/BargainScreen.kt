@@ -45,9 +45,11 @@ import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.theme.*
 
+import com.enesduvan.kelepiravi.viewmodel.bargain.BargainViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
+fun BargainScreen(viewModel: BargainViewModel, bargainState: BargainState) {
     val listState = rememberLazyListState()
     var offerText by remember { mutableStateOf(bargainState.suggestedPrice.toInt().toString()) }
 
@@ -68,9 +70,8 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
     )
 
     val haptic = LocalHapticFeedback.current
-    val isHapticEnabled by viewModel.isHapticEnabled.collectAsState()
     val performHaptic = {
-        if (isHapticEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
     Scaffold(
@@ -142,7 +143,7 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice.toString())}", color = MoneyGreen, fontWeight = FontWeight.Bold)
+                        Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice)}", color = MoneyGreen, fontWeight = FontWeight.Bold)
                         Button(
                             onClick = { 
                                 performHaptic()
@@ -188,27 +189,83 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text("Teklifinizi girin", color = TextSecondary, fontSize = 13.sp)
-                        Text("Önerilen: ₺${formatBalance(bargainState.suggestedPrice.toString())}", color = MoneyGreen, fontSize = 13.sp)
+                    if (bargainState.isDealClosed) {
+                        Text("Anlaştınız!\n₺${formatBalance(bargainState.agreedPrice)}", color = MoneyGreen, fontWeight = FontWeight.Bold)
+                    } else if (bargainState.isFailed) {
+                        Text("Pazarlık Çöktü!", color = Color(0xFFFF6B6B), fontWeight = FontWeight.Bold)
+                    } else {
+                        Text("Pazarlık Devam Ediyor...", color = TextSecondary)
+                    }
+                }
+
+                if (!bargainState.isDealClosed && !bargainState.isFailed) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Satıcı Sabrı: %${bargainState.sellerPatience}", color = TextSecondary, fontSize = 13.sp)
+                        Text("Önerilen: ₺${formatBalance(bargainState.suggestedPrice)}", color = MoneyGreen, fontSize = 13.sp)
                     }
 
-                    OutlinedTextField(
-                        value = offerText,
-                        onValueChange = { offerText = it.filter { char -> char.isDigit() } },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        leadingIcon = { Text("₺", color = TextSecondary) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = PrimaryOrange,
-                            unfocusedBorderColor = SurfaceVariant,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            cursorColor = PrimaryOrange
-                        ),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            QuickOfferButton("₺${formatBalance(bargainState.suggestedPrice * 0.70)}", modifier = Modifier.weight(1f)) {
+                                offerText = (bargainState.suggestedPrice * 0.70).toLong().toString()
+                            }
+                            QuickOfferButton("₺${formatBalance(bargainState.suggestedPrice * 0.85)}", modifier = Modifier.weight(1f)) {
+                                offerText = (bargainState.suggestedPrice * 0.85).toLong().toString()
+                            }
+                            QuickOfferButton("₺${formatBalance(bargainState.suggestedPrice * 0.95)}", modifier = Modifier.weight(1f)) {
+                                offerText = (bargainState.suggestedPrice * 0.95).toLong().toString()
+                            }
+                        }
+
+                        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                            OutlinedTextField(
+                                value = offerText,
+                                onValueChange = { offerText = it },
+                                label = { Text("Teklifin (₺)", color = TextSecondary) },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.weight(1f),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = MoneyGreen,
+                                    unfocusedBorderColor = SurfaceVariant,
+                                    focusedLabelColor = MoneyGreen,
+                                    unfocusedLabelColor = TextSecondary,
+                                    focusedTextColor = TextPrimary,
+                                    unfocusedTextColor = TextPrimary
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = {
+                                    val offer = offerText.toDoubleOrNull() ?: 0.0
+                                    if (offer > 0) {
+                                        viewModel.sendOffer(offer)
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = MoneyGreen),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text("Gönder", color = Color.Black, fontWeight = FontWeight.Bold)
+                            }
+                        }
+
+                        if (bargainState.lastSellerOffer != null) {
+                            Button(
+                                onClick = {
+                                    viewModel.sendOffer(bargainState.lastSellerOffer)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text("Kabul Et (₺${formatBalance(bargainState.lastSellerOffer)})", color = Color.White, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
 
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
@@ -380,9 +437,9 @@ fun BargainScreen(viewModel: MarketViewModel, bargainState: BargainState) {
 }
 
 @Composable
-fun QuickOfferButton(text: String, onClick: () -> Unit) {
+fun QuickOfferButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(SurfaceVariant)
             .clickable(onClick = onClick)

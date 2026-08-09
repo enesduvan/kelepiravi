@@ -1,6 +1,6 @@
 package com.enesduvan.kelepiravi.data.npc
 
-import com.enesduvan.kelepiravi.data.local.entity.UserInventoryEntity
+import com.enesduvan.kelepiravi.database.entity.UserInventoryEntity
 
 data class Npc(
     val id: String,

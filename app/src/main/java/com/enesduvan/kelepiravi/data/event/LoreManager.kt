@@ -1,6 +1,6 @@
 package com.enesduvan.kelepiravi.data.event
 
-import com.enesduvan.kelepiravi.data.local.entity.UserInventoryEntity
+import com.enesduvan.kelepiravi.database.entity.UserInventoryEntity
 
 object LoreManager {
     /**

@@ -2,65 +2,76 @@ package com.enesduvan.kelepiravi.ui.shared
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.Alignment
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.width
 import androidx.compose.ui.unit.sp
 import com.enesduvan.kelepiravi.R
 import com.enesduvan.kelepiravi.presentation.inventory.InventoryScreen
 import com.enesduvan.kelepiravi.presentation.inventory.ListingsScreen
+import com.enesduvan.kelepiravi.presentation.market.MarketScreen
+import com.enesduvan.kelepiravi.presentation.profile.ProfilEkrani
+import com.enesduvan.kelepiravi.presentation.repair.TamirEkrani
 import com.enesduvan.kelepiravi.presentation.sell.BargainScreen
 import com.enesduvan.kelepiravi.presentation.sell.SellBargainScreen
-import com.enesduvan.kelepiravi.presentation.market.MarketScreen
-import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
-import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
-import com.enesduvan.kelepiravi.presentation.repair.TamirEkrani
-import com.enesduvan.kelepiravi.presentation.profile.ProfilEkrani
 import com.enesduvan.kelepiravi.ui.theme.Background
+import com.enesduvan.kelepiravi.ui.theme.MoneyGreen
 import com.enesduvan.kelepiravi.ui.theme.NavSelected
 import com.enesduvan.kelepiravi.ui.theme.NavUnselected
+import com.enesduvan.kelepiravi.ui.theme.ReputationGold
 import com.enesduvan.kelepiravi.ui.theme.Surface
 import com.enesduvan.kelepiravi.ui.theme.SurfaceVariant
-import com.enesduvan.kelepiravi.ui.theme.MoneyGreen
-import com.enesduvan.kelepiravi.ui.theme.ReputationGold
+import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
+import com.enesduvan.kelepiravi.viewmodel.bargain.BargainViewModel
+import com.enesduvan.kelepiravi.viewmodel.game.GameViewModel
+import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
+import com.enesduvan.kelepiravi.viewmodel.profile.ProfileViewModel
+import com.enesduvan.kelepiravi.viewmodel.repair.RepairViewModel
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppRoot(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel) {
+fun AppRoot(
+    marketViewModel: MarketViewModel,
+    bargainViewModel: BargainViewModel,
+    repairViewModel: RepairViewModel,
+    profileViewModel: ProfileViewModel,
+    gameViewModel: GameViewModel,
+    listingViewModel: ListingViewModel
+) {
     var selectedTab by remember { mutableStateOf(0) }
     val isOnboardingCompleted by listingViewModel.isOnboardingCompleted.collectAsState()
-    val bargainState by marketViewModel.bargainState.collectAsState()
-    val sellBargainState by marketViewModel.sellBargainState.collectAsState()
+    val bargainState by bargainViewModel.bargainState.collectAsState()
+    val sellBargainState by bargainViewModel.sellBargainState.collectAsState()
     val uiState by marketViewModel.uiState.collectAsState()
     val latestAchievement = uiState.latestAchievement
 
@@ -86,8 +97,8 @@ fun AppRoot(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel
         label = "rootTransition"
     ) { (currentBargain, currentSell) ->
         when {
-            currentBargain != null -> BargainScreen(viewModel = marketViewModel, bargainState = currentBargain)
-            currentSell != null -> SellBargainScreen(viewModel = marketViewModel, sellBargainState = currentSell)
+            currentBargain != null -> BargainScreen(viewModel = bargainViewModel, bargainState = currentBargain)
+            currentSell != null -> SellBargainScreen(viewModel = bargainViewModel, sellBargainState = currentSell)
             else -> {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -144,8 +155,8 @@ fun AppRoot(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel
                                     marketViewModel = marketViewModel,
                                     listingViewModel = listingViewModel
                                 )
-                                3 -> TamirEkrani(viewModel = marketViewModel)
-                                4 -> ProfilEkrani(viewModel = marketViewModel, listingViewModel = listingViewModel)
+                                3 -> TamirEkrani(viewModel = repairViewModel)
+                                4 -> ProfilEkrani(viewModel = profileViewModel, listingViewModel = listingViewModel)
                             }
                         }
                     }
@@ -202,7 +213,7 @@ fun AppRoot(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel
             }
         }
     }
-    } // Box sonu
+    }
 }
 
 @Composable
