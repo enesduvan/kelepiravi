@@ -13,7 +13,12 @@
 .externalNativeBuild
 .cxx
 local.properties
+.kotlin/
 /anaprojeyedahilolmayan
 /gorselveuygulama
 /plan
 /sonplan.txt
+event.docx
+event.txt
+extract.py
+*.py
