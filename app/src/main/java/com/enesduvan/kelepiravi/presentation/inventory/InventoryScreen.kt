@@ -38,12 +38,14 @@ import androidx.compose.ui.window.DialogProperties
 import com.enesduvan.kelepiravi.R
 import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.model.MarketItem
+import com.enesduvan.kelepiravi.viewmodel.bargain.BargainViewModel
 import com.enesduvan.kelepiravi.viewmodel.listing.ListingViewModel
 import com.enesduvan.kelepiravi.viewmodel.MarketViewModel
 import com.enesduvan.kelepiravi.ui.shared.EmptyStateIndicator
 import com.enesduvan.kelepiravi.ui.shared.formatBalance
 import com.enesduvan.kelepiravi.ui.shared.getPainterResourceByName
 import com.enesduvan.kelepiravi.ui.shared.marketItemKey
+import com.enesduvan.kelepiravi.ui.shared.bounceClick
 import com.enesduvan.kelepiravi.ui.theme.*
 import kotlin.math.abs
 
@@ -54,7 +56,7 @@ private val RED_DARK = Color(0xFF3A1A1A)
 private val GREEN_DARK = Color(0xFF1A3A1A)
 
 @Composable
-fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel) {
+fun InventoryScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainViewModel, listingViewModel: ListingViewModel) {
     val playerState by marketViewModel.playerState.collectAsState()
     val isFastSell by listingViewModel.isFastSellEnabled.collectAsState()
     val activeListings by listingViewModel.activeListings.collectAsState()
@@ -160,7 +162,7 @@ fun InventoryScreen(marketViewModel: MarketViewModel, listingViewModel: ListingV
                                 isFastSell = isFastSell,
                                 onActionClick = { 
                                     if (isFastSell) {
-                                        marketViewModel.startSellBargain(it)
+                                        bargainViewModel.startSellBargain(it)
                                     } else {
                                         itemForListing = it
                                     }

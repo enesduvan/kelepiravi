@@ -33,10 +33,11 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.ui.text.font.FontStyle
 import com.enesduvan.kelepiravi.R
 import com.enesduvan.kelepiravi.data.model.Offer
+import com.enesduvan.kelepiravi.viewmodel.bargain.BargainViewModel
 import kotlin.random.Random
 
 @Composable
-fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingViewModel) {
+fun ListingsScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainViewModel, listingViewModel: ListingViewModel) {
     val activeListings by listingViewModel.activeListings.collectAsState()
     var lastMinuteBargainOffer by remember { mutableStateOf<Triple<Listing, Offer, Double>?>(null) }
     var editingListing by remember { mutableStateOf<Listing?>(null) }
@@ -79,7 +80,7 @@ fun ListingsScreen(marketViewModel: MarketViewModel, listingViewModel: ListingVi
                             }
                         },
                         onBargainClick = { l, offer ->
-                            marketViewModel.startSellBargainWithOffer(l.item, offer.npcName, offer.offerAmount.toDouble())
+                            bargainViewModel.startSellBargainWithOffer(l.item, offer.npcName, offer.offerAmount.toDouble())
                         },
                         onEditClick = { editingListing = it }
                     )

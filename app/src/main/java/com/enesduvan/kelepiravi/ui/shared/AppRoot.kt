@@ -149,10 +149,18 @@ fun AppRoot(
                             label = "tabCrossfade"
                         ) { tab ->
                             when (tab) {
-                                0 -> MarketScreen(viewModel = marketViewModel)
-                                1 -> InventoryScreen(marketViewModel = marketViewModel, listingViewModel = listingViewModel)
+                                0 -> MarketScreen(
+                                    viewModel = marketViewModel,
+                                    onItemClick = { item -> bargainViewModel.startBargain(item) }
+                                )
+                                1 -> InventoryScreen(
+                                    marketViewModel = marketViewModel,
+                                    bargainViewModel = bargainViewModel,
+                                    listingViewModel = listingViewModel
+                                )
                                 2 -> ListingsScreen(
                                     marketViewModel = marketViewModel,
+                                    bargainViewModel = bargainViewModel,
                                     listingViewModel = listingViewModel
                                 )
                                 3 -> TamirEkrani(viewModel = repairViewModel)

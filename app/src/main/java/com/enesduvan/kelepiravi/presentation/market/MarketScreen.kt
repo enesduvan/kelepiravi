@@ -47,7 +47,10 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MarketScreen(viewModel: MarketViewModel) {
+fun MarketScreen(
+    viewModel: MarketViewModel,
+    onItemClick: (MarketItem) -> Unit = {}
+) {
     val uiState by viewModel.uiState.collectAsState()
     val playerState by viewModel.playerState.collectAsState()
     val dailySummary by viewModel.dailySummary.collectAsState()
@@ -219,7 +222,7 @@ fun MarketScreen(viewModel: MarketViewModel) {
                 items(items = visibleItems, key = { marketItemKey(it) }) { item ->
                     ItemCard(
                         item = item,
-                        onClick = { viewModel.startBargain(it) },
+                        onClick = { onItemClick(it) },
                         modifier = Modifier.animateItem()
                     )
                 }
