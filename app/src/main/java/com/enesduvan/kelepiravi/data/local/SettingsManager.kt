@@ -25,7 +25,7 @@ class SettingsManager(context: Context) {
     val isOnboardingCompleted: StateFlow<Boolean> = _isOnboardingCompleted.asStateFlow()
 
     private val _language = MutableStateFlow(
-        AppLanguage.fromTag(prefs.getString(KEY_LANGUAGE, null) ?: java.util.Locale.getDefault().language)
+        AppLanguage.fromTag(prefs.getString(KEY_LANGUAGE, null) ?: "tr")
     )
     val language: StateFlow<AppLanguage> = _language.asStateFlow()
 

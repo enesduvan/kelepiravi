@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <!-- Outer Rim -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M48,4A44,44 0,1 0,92,48,44.05 44.05,0 0,0 48,4Z"/>
+    <!-- Outer Border Detail -->
+    <path
+        android:fillColor="#AA771C"
+        android:pathData="M48,8A40,40 0,1 0,88,48,40.05 40.05,0 0,0 48,8ZM48,84A36,36 0,1 1,84,48,36.04 36.04,0 0,1 48,84Z"/>
+    <!-- Inner Coin Face -->
+    <path
+        android:fillColor="#E6CA65"
+        android:pathData="M48,12A36,36 0,1 0,84,48,36.04 36.04,0 0,0 48,12Z"/>
+    <!-- Dotted Beaded Edge -->
+    <path
+        android:fillColor="#8C5A0D"
+        android:pathData="M48,16 A32,32 0,0,1 80,48 A32,32 0,0,1 48,80 A32,32 0,0,1 16,48 A32,32 0,0,1 48,16 M48,19 A29,29 0,0,0 19,48 A29,29 0,0,0 48,77 A29,29 0,0,0 77,48 A29,29 0,0,0 48,19 Z"/>
+    <!-- Roman Bust / Emblem Profile -->
+    <path
+        android:fillColor="#8C5A0D"
+        android:pathData="M44,30 C40,30 36,34 36,40 C36,44 38,47 41,49 C40,52 38,55 35,57 C39,57 43,56 46,54 C48,56 51,57 55,57 C53,54 52,52 51,50 C54,48 56,44 56,40 C56,34 52,30 44,30 Z M46,36 C48,36 50,38 50,40 C50,42 48,44 46,44 C44,44 42,42 42,40 C42,38 44,36 46,36 Z"/>
+</vector>

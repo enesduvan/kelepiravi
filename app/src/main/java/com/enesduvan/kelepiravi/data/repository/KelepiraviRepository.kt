@@ -627,13 +627,16 @@ class KelepiraviRepository(
                     }
                 }
 
-                // İnteraktif event çekimi
+                // İnteraktif ve pasif event çekimi
                 val allEvents = EventLoader.loadEvents(context)
                 val availableEvents = EventManager.getAvailableEvents(finalPlayer, allEvents)
-                val pickedEvent = if (Math.random() < 0.3)
+                val pickedEvent = if (Math.random() < GameConstants.DAILY_EVENT_CHANCE)
                     EventManager.pickRandomEvent(availableEvents) else null
 
-                AdvanceDayResult(null, pickedEvent, rent, tax)
+                val dailyPassiveEvent = if (Math.random() < GameConstants.DAILY_EVENT_CHANCE)
+                    com.enesduvan.kelepiravi.data.market.EconomyEngine.getRandomDailyEvent() else null
+
+                AdvanceDayResult(dailyPassiveEvent, pickedEvent, rent, tax)
             }
         }
     }

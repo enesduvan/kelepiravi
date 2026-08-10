@@ -2,7 +2,7 @@ package com.enesduvan.kelepiravi.data
 
 object GameConstants {
     const val DEFAULT_USER_ID = 1
-    const val INITIAL_BALANCE = 25000L
+    const val INITIAL_BALANCE = 5000L
     const val INITIAL_DAY = 1
 
     const val MARKET_BATCH_SIZE = 50
@@ -30,7 +30,7 @@ object GameConstants {
     // Ch6: Dolandırıcı üretim şansı
     const val SCAMMER_CHANCE = 0.05            // %5 ihtimalle dolandırıcı satıcı
 
-    const val DAILY_EVENT_CHANCE = 0.25
+    const val DAILY_EVENT_CHANCE = 0.60
     const val DEFAULT_CONDITION_BIAS = -0.02
     const val MIN_DAILY_CHANGE = -0.35
     const val MAX_DAILY_CHANGE = 0.50
@@ -42,7 +42,7 @@ object GameConstants {
     const val REPAIR_FAILURE_CHANCE = 0.40
 
     // Ch8: Ekonomi Dengesi
-    const val DAILY_RENT_COST = 500.0
+    const val DAILY_RENT_COST = 200.0
     const val DAILY_TAX_RATE = 0.05
 }
 

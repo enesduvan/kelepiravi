@@ -135,22 +135,22 @@ class NegotiationEngine(
         if (state.lastSellerOffer > 0.0 && abs(state.lastSellerOffer - offerAmount) < 1.0) {
             sellerResponseText = personality.dialogs.getBuyAccept()
             isDealClosed = true
-            agreedPrice = offerAmount
+            agreedPrice = kotlin.math.round(offerAmount)
             newPatience += BargainConstants.PATIENCE_REWARD
         }
         else if (ratio >= modifiedAcceptRatio) {
             sellerResponseText = personality.dialogs.getBuyAccept()
             isDealClosed = true
-            agreedPrice = offerAmount
+            agreedPrice = kotlin.math.round(offerAmount)
             newPatience += BargainConstants.PATIENCE_REWARD
         } else if (ratio >= BargainConstants.BUY_MAYBE_RATIO + personality.buyAcceptRatioModifier) {
             val chance = Random.nextDouble()
             if (chance > BargainConstants.BUY_COUNTER_ACCEPT_CHANCE) {
-                sellerResponseText = "Tamam abi, anlaşalım ₺${formatBalance(offerAmount)} olsun."
+                agreedPrice = kotlin.math.round(offerAmount)
+                sellerResponseText = "Tamam abi, anlaşalım ₺${formatBalance(agreedPrice)} olsun."
                 isDealClosed = true
-                agreedPrice = offerAmount
             } else {
-                val counterOffer = (originalPrice * BargainConstants.BUY_COUNTER_RATIO).toInt().toDouble()
+                val counterOffer = kotlin.math.round(originalPrice * BargainConstants.BUY_COUNTER_RATIO)
                 lastSellerOffer = counterOffer
                 sellerResponseText = personality.dialogs.getBuyCounter() + " ₺${formatBalance(counterOffer)} yapalım ortası olsun."
                 newPatience -= (BargainConstants.PATIENCE_SMALL_PENALTY * personality.patiencePenaltyMultiplier).toInt()
@@ -223,8 +223,8 @@ class NegotiationEngine(
             isDealClosed = finalDealClosed,
             isScamPromptActive = finalScamPrompt,
             isFailed = isFailed,
-            agreedPrice = agreedPrice,
-            lastSellerOffer = lastSellerOffer ?: 0.0,
+            agreedPrice = if (finalDealClosed || finalScamPrompt) agreedPrice else state.agreedPrice,
+            lastSellerOffer = lastSellerOffer ?: state.lastSellerOffer,
             lastPlayerOfferAmount = offerAmount,
             relationshipDelta = relationshipDelta
         )
@@ -238,7 +238,8 @@ class NegotiationEngine(
         val state = _bargainState.value ?: return
         if (!state.isScamPromptActive) return
 
-        val itemToBuy = state.item.copy(salesValue = state.agreedPrice.toLong())
+        val agreedLong = kotlin.math.round(state.agreedPrice).toLong()
+        val itemToBuy = state.item.copy(salesValue = agreedLong)
 
         scope.launch {
             val success = repository.purchaseItem(itemToBuy)
@@ -287,7 +288,8 @@ class NegotiationEngine(
         val state = _bargainState.value ?: return
         if (!state.isDealClosed) return
 
-        val itemToBuy = state.item.copy(salesValue = state.agreedPrice.toLong())
+        val agreedLong = kotlin.math.round(state.agreedPrice).toLong()
+        val itemToBuy = state.item.copy(salesValue = agreedLong)
 
         scope.launch {
             val success = repository.purchaseItem(itemToBuy)

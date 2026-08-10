@@ -340,6 +340,10 @@ object MarketGenerator {
         "iphone" to ImagePool(
             clean = listOf("iphone"),
             damaged = listOf("iphone")
+        ),
+        "ancient_coin" to ImagePool(
+            clean = listOf("ancient_coin"),
+            damaged = listOf("ancient_coin")
         )
     )
 
@@ -439,16 +443,31 @@ object MarketGenerator {
     fun generateItems(
         count: Int = GameConstants.MARKET_BATCH_SIZE,
         marketTrends: Map<String, Double> = emptyMap(),
-        activeModifiers: Map<String, Int> = emptyMap()
+        activeModifiers: Map<String, Int> = emptyMap(),
+        shopLevel: Int = 1
     ): List<MarketItem> {
         if (activeModifiers.containsKey("NO_SALES")) return emptyList()
-        return (1..count).map { generateOne(marketTrends) }
+        return (1..count).map { generateOne(marketTrends, shopLevel) }
     }
 
-    private fun generateOne(marketTrends: Map<String, Double>): MarketItem {
+    private fun generateOne(marketTrends: Map<String, Double>, shopLevel: Int = 1): MarketItem {
         val rng = Random.Default
-        val isAbsurd = rng.nextDouble() < 0.10 // %10 şansla absürt ilan
-        val product = if (isAbsurd) ABSURD_PRODUCTS.random(rng) else NORMAL_PRODUCTS.random(rng)
+        val absurdChance = when {
+            shopLevel >= 3 -> 0.10
+            shopLevel == 2 -> 0.03
+            else -> 0.0
+        }
+        val isAbsurd = rng.nextDouble() < absurdChance
+        val pool = if (isAbsurd) ABSURD_PRODUCTS else {
+            NORMAL_PRODUCTS.filter { product ->
+                when (shopLevel) {
+                    1 -> product.baseMinValue <= 4000
+                    2 -> product.baseMinValue <= 12000
+                    else -> true
+                }
+            }.ifEmpty { NORMAL_PRODUCTS }
+        }
+        val product = pool.random(rng)
         val isScammer = rng.nextDouble() < GameConstants.SCAMMER_CHANCE
 
         return if (isScammer) {

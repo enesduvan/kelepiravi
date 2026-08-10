@@ -212,7 +212,8 @@ class MarketViewModel(
             val newItems = MarketGenerator.generateItems(
                 count = count,
                 marketTrends = state.marketTrends,
-                activeModifiers = state.activeModifiers
+                activeModifiers = state.activeModifiers,
+                shopLevel = state.shopLevel
             )
             _uiState.value = _uiState.value.copy(
                 marketItems = newItems,
@@ -227,7 +228,8 @@ class MarketViewModel(
             val moreItems = MarketGenerator.generateItems(
                 count = 4,
                 marketTrends = state.marketTrends,
-                activeModifiers = state.activeModifiers
+                activeModifiers = state.activeModifiers,
+                shopLevel = state.shopLevel
             )
             _uiState.value = _uiState.value.copy(
                 marketItems = _uiState.value.marketItems + moreItems
@@ -414,6 +416,7 @@ class MarketViewModel(
             val (summary, result) = advanceDayUseCase.advance(playerState.value.currentDay)
             _dailySummary.value = summary
             _interactiveEvent.value = result.interactiveEvent
+            refreshMarket()
             onDayAdvanced()
         }
     }

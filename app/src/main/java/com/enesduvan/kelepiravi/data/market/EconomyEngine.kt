@@ -44,7 +44,7 @@ object EconomyEngine {
     )
 
     // ─── Günlük Olay Havuzu ─────────────────────────────────────────────────
-    private val EVENTS = listOf(
+    val EVENTS = listOf(
         DailyEvent("💥", "Teknoloji Devi İflas Etti!",
             "Sektör güveni sarsıldı — elektronik ürünler değer kaybetti.", "Elektronik", -18.0),
         DailyEvent("🚀", "Teknoloji Fuarı!",
@@ -74,6 +74,8 @@ object EconomyEngine {
         DailyEvent("🏆", "Koleksiyoner Rekoru!",
             "Nadir parça rekor fiyata satıldı, piyasa hareketlendi.", "Koleksiyon", +30.0),
     )
+
+    fun getRandomDailyEvent(): DailyEvent = EVENTS.random()
 
     // ─── Ana Fonksiyon ───────────────────────────────────────────────────────
 
