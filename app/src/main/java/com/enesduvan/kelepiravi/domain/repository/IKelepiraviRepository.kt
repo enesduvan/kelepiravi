@@ -35,4 +35,5 @@ interface IKelepiraviRepository {
     suspend fun sellListing(listing: Listing, agreedPrice: Double): Boolean
     suspend fun sellItem(item: MarketItem, agreedPrice: Double? = null): Boolean
     suspend fun updateNpcRelationship(npcName: String, delta: Int)
+    suspend fun processListingTicks()
 }

@@ -17,6 +17,7 @@ import com.enesduvan.kelepiravi.data.market.MarketGenerator
 import com.enesduvan.kelepiravi.data.market.LootBoxGenerator
 import com.enesduvan.kelepiravi.data.market.LootBoxType
 import com.enesduvan.kelepiravi.data.model.Listing
+import com.enesduvan.kelepiravi.data.listing.ListingEngine
 import com.enesduvan.kelepiravi.data.model.MarketItem
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
@@ -383,8 +384,10 @@ class KelepiraviRepository(
                 val inventoryEntity = findOwnedItem(item) ?: return@withTransaction false
                 val sellPrice = agreedPrice ?: calculateSellPrice(item)
                 if (!sellPrice.isFinite() || sellPrice <= 0.0) return@withTransaction false
-                if (listingDao.getActiveListings(player.playerId).any { it.itemId == inventoryEntity.id }) {
-                    return@withTransaction false
+                // Aktif bir ilanı varsa sil ve satışı tamamla
+                val activeListing = listingDao.getActiveListings(player.playerId).find { it.itemId == inventoryEntity.id }
+                if (activeListing != null) {
+                    listingDao.deleteListing(activeListing.id)
                 }
 
                 val xpGain    = GameConstants.SELL_BASE_XP +
@@ -602,6 +605,28 @@ class KelepiraviRepository(
                 )
                 dao.updateInventory(finalPlayer)
 
+                // Active listing day transition (offers, views, favorites generation)
+                val activeEntities = listingDao.getActiveListings(player.playerId)
+                if (activeEntities.isNotEmpty()) {
+                    val decodedListings = activeEntities.mapNotNull { decodeListing(it) }
+                    val processedListings = ListingEngine.processDay(decodedListings)
+                    processedListings.forEach { updated ->
+                        val entityId = updated.id.toLongOrNull()
+                        if (entityId != null) {
+                            val existing = activeEntities.find { it.id == entityId }
+                            if (existing != null) {
+                                listingDao.updateListing(
+                                    existing.copy(
+                                        askingPrice = updated.listedPrice.toDouble(),
+                                        listedDay = updated.listedDay,
+                                        listingJson = json.encodeToString(updated)
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+
                 // İnteraktif event çekimi
                 val allEvents = EventLoader.loadEvents(context)
                 val availableEvents = EventManager.getAvailableEvents(finalPlayer, allEvents)
@@ -609,6 +634,26 @@ class KelepiraviRepository(
                     EventManager.pickRandomEvent(availableEvents) else null
 
                 AdvanceDayResult(null, pickedEvent, rent, tax)
+            }
+        }
+    }
+
+    override suspend fun processListingTicks() {
+        mutex.withLock {
+            database.withTransaction {
+                val player = getPlayerOrCreate()
+                val activeEntities = listingDao.getActiveListings(player.playerId)
+                if (activeEntities.isEmpty()) return@withTransaction
+                activeEntities.forEach { entity ->
+                    val decoded = decodeListing(entity) ?: return@forEach
+                    val updated = ListingEngine.processTick(decoded)
+                    listingDao.updateListing(
+                        entity.copy(
+                            askingPrice = updated.listedPrice.toDouble(),
+                            listingJson = json.encodeToString(updated)
+                        )
+                    )
+                }
             }
         }
     }

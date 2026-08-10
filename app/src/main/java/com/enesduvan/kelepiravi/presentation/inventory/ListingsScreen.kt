@@ -43,6 +43,16 @@ fun ListingsScreen(marketViewModel: MarketViewModel, bargainViewModel: BargainVi
     var lastMinuteBargainOffer by remember { mutableStateOf<Triple<Listing, Offer, Double>?>(null) }
     var editingListing by remember { mutableStateOf<Listing?>(null) }
 
+    LaunchedEffect(activeListings.isNotEmpty()) {
+        if (activeListings.isNotEmpty()) {
+            listingViewModel.processTick()
+            while (true) {
+                kotlinx.coroutines.delay(8000)
+                listingViewModel.processTick()
+            }
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize().weight(1f),
@@ -235,7 +245,7 @@ Icon(Icons.Default.Edit, contentDescription = localized("Düzenle", "Edit"), tin
                     Box(
                         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).background(Color(0xFF1E1E1E)).border(1.dp, Color(0xFF333333), RoundedCornerShape(8.dp)).padding(10.dp)
                     ) {
-                        Text("💬 \"$comment\"", color = TextMuted, fontSize = 12.sp, fontStyle = FontStyle.Italic)
+                        Text("💬 \"${localized(comment)}\"", color = TextMuted, fontSize = 12.sp, fontStyle = FontStyle.Italic)
                     }
                 }
             }

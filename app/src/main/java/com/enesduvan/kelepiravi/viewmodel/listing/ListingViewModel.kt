@@ -10,8 +10,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
-import com.enesduvan.kelepiravi.data.listing.ListingEngine
 import com.enesduvan.kelepiravi.data.listing.ListingUseCase
 import com.enesduvan.kelepiravi.ui.localization.AppLanguage
 
@@ -23,11 +21,9 @@ class ListingViewModel(
     val activeListings: StateFlow<List<Listing>> = listingUseCase.activeListings
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Lazily,
             initialValue = emptyList()
         )
-
-
 
     val isFastSellEnabled = settingsManager.isFastSellEnabled
     val isSoundEnabled = settingsManager.isSoundEnabled
@@ -88,6 +84,12 @@ class ListingViewModel(
             viewModelScope.launch {
                 listingUseCase.updateActiveListings(currentListings)
             }
+        }
+    }
+
+    fun processTick() {
+        viewModelScope.launch {
+            listingUseCase.processTick()
         }
     }
 }

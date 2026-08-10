@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -61,7 +62,7 @@ fun MarketScreen(
     val flashNotification by viewModel.flashNotification.collectAsState()
 
     val balanceText = remember(playerState.balance) { formatBalance(playerState.balance) }
-    val visibleItems by remember(uiState.marketItems, uiState.selectedCategory) {
+    val visibleItems by remember(uiState.marketItems, uiState.selectedCategory, uiState.searchQuery) {
         derivedStateOf { viewModel.filteredMarketItems(uiState) }
     }
 
@@ -77,7 +78,7 @@ fun MarketScreen(
             modifier = Modifier.fillMaxSize(),
             containerColor = Background,
             topBar = {
-                Column {
+                Column(modifier = Modifier.background(Background)) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -205,26 +206,28 @@ fun MarketScreen(
                 }
             },
             floatingActionButton = {
-                // Ch9: Zamazon Kutu FAB
-                ExtendedFloatingActionButton(
+                // Compact Zamazon Box FAB
+                FloatingActionButton(
                     onClick = { viewModel.setLootBoxSheetVisible(true) },
                     containerColor = FAB,
                     contentColor = FABIcon,
-                    shape = RoundedCornerShape(16.dp)
+                    shape = CircleShape,
+                    modifier = Modifier.size(52.dp)
                 ) {
-                    Text(localized("📦 Zamazon", "📦 Zamazon"), fontWeight = FontWeight.Bold)
+                    Text("📦", fontSize = 24.sp)
                 }
             }
         ) { innerPadding ->
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding()),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 86.dp)
             ) {
                 items(items = visibleItems, key = { marketItemKey(it) }) { item ->
                     ItemCard(
                         item = item,
-                        onClick = { onItemClick(it) },
-                        modifier = Modifier.animateItem()
+                        onClick = { onItemClick(it) }
                     )
                 }
             }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
@@ -46,7 +47,9 @@ fun TamirEkrani(viewModel: RepairViewModel) {
     val repairResult by viewModel.repairResult.collectAsState()
     
     val repairableItems = playerState.inventory.filter { it.condition != "Kusursuz Temiz" }
-    val remainingRepairs = viewModel.getRemainingRepairs()
+    val remainingRepairs = remember(playerState.dailyRepairsUsed) {
+        (GameConstants.DAILY_REPAIR_LIMIT - playerState.dailyRepairsUsed).coerceAtLeast(0)
+    }
 
     var selectedItem by remember { mutableStateOf<MarketItem?>(null) }
     var selectedOption by remember { mutableStateOf<String>("Cirak") } // "Cirak" veya "Usta"
@@ -129,7 +132,12 @@ Text("${localized("Değer:", "Value:")} ₺${formatBalance(currentVal)}", color 
                 else -> listOf("Çırak", "Ucuz ama riskli", "Usta", "Pahalı ama garantili")
             }
 
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(androidx.compose.foundation.rememberScrollState())
+                    .padding(16.dp)
+            ) {
                 // Header
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { selectedItem = null }) {

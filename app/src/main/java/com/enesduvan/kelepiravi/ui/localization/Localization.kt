@@ -108,37 +108,104 @@ private val commonTranslations = mapOf(
     "Favori" to "Favorite",
     "Kişi Baktı" to "Views",
     "Gün" to "Day",
-    "Henüz teklif yok. Müşteri bekleniyor..." to "No offers yet. Waiting for a buyer..."
-    ,"Mutlu" to "Happy"
-    ,"Kararsız" to "Undecided"
-    ,"Gergin" to "Tense"
-    ,"Kızgın" to "Angry"
-    ,"Dost" to "Friend"
-    ,"Tanıdık" to "Acquaintance"
-    ,"Yabancı" to "Stranger"
-    ,"Anlaştınız!" to "Deal agreed!"
-    ,"Teklifin (₺)" to "Your Offer (₺)"
-    ,"İlan Fiyatı" to "Listing Price"
-    ,"Pazarlık Masası" to "Bargaining Table"
-    ,"Hoşgeldin Kelepir Avcısı!" to "Welcome, Bargain Hunter!"
-    ,"Toplam Kâr" to "Total Profit"
-    ,"Net Kâr" to "Net Profit"
-    ,"En Büyük Kâr" to "Largest Profit"
-    ,"Tek Satışta" to "Single Sale"
-    ,"Pazarlık" to "Bargaining"
-    ,"Başarı Oranı" to "Success Rate"
-    ,"Toplam Satış" to "Total Sales"
-    ,"Alınan Ürün" to "Items Bought"
-    ,"Favori" to "Favorite"
-    ,"Sokak" to "Street"
-    ,"Dükkan" to "Shop"
-    ,"Galeri" to "Gallery"
-    ,"Gecildi" to "Completed"
-    ,"Gizemli Görev" to "Mystery Task"
-    ,"Nasıl açılacağı bilinmiyor..." to "How to unlock it is unknown..."
-    ,"Alış:" to "Purchase:"
-    ,"Kusursuz:" to "Perfect:"
-    ,"Güncel:" to "Current:"
+    "Henüz teklif yok. Müşteri bekleniyor..." to "No offers yet. Waiting for a buyer...",
+    "Mutlu" to "Happy",
+    "Kararsız" to "Undecided",
+    "Gergin" to "Tense",
+    "Kızgın" to "Angry",
+    "Dost" to "Friend",
+    "Tanıdık" to "Acquaintance",
+    "Yabancı" to "Stranger",
+    "Anlaştınız!" to "Deal agreed!",
+    "Teklifin (₺)" to "Your Offer (₺)",
+    "İlan Fiyatı" to "Listing Price",
+    "Pazarlık Masası" to "Bargaining Table",
+    "Hoşgeldin Kelepir Avcısı!" to "Welcome, Bargain Hunter!",
+    "Toplam Kâr" to "Total Profit",
+    "Net Kâr" to "Net Profit",
+    "En Büyük Kâr" to "Largest Profit",
+    "Tek Satışta" to "Single Sale",
+    "Pazarlık" to "Bargaining",
+    "Başarı Oranı" to "Success Rate",
+    "Toplam Satış" to "Total Sales",
+    "Alınan Ürün" to "Items Bought",
+    "Sokak" to "Street",
+    "Dükkan" to "Shop",
+    "Galeri" to "Gallery",
+    "Gecildi" to "Completed",
+    "Gizemli Görev" to "Mystery Task",
+    "Nasıl açılacağı bilinmiyor..." to "How to unlock it is unknown...",
+    "Alış:" to "Purchase:",
+    "Kusursuz:" to "Perfect:",
+    "Güncel:" to "Current:",
+    "İlanda" to "Listed",
+    "Aktif İlanın Yok" to "No Active Listings",
+    "Depondaki eşyaları satmak için ilan ver." to "Create a listing to sell items from your inventory.",
+    "Aktif İlanlar" to "Active Listings",
+    "Kelepir fırsatlarına gelen teklifler." to "Offers on your bargain listings.",
+    "Satın aldığın fırsatlar." to "The bargains you bought.",
+    "Envanterin Tam Takır!" to "Your Inventory is Empty!",
+    "Hemen Market'e git ve kelepir eşyalar avla." to "Go to Market and hunt for bargain items.",
+    "Eşyaları tamir ederek değerlerini artırabilirsiniz." to "Repair items to increase their value.",
+    "Envanterde bozuk eşya yok." to "No damaged items in your inventory.",
+    "Son Saniye Pazarlığı!" to "Last-Minute Bargain!",
+    "Ölücü Burak" to "Lowballer Burak",
+    "Dürüst Esnaf Ali" to "Honest Merchant Ali",
+    "Öğrenci Kardeşimiz" to "Student Brother",
+    "Koleksiyoncu Cem" to "Collector Cem",
+    "VIP Müşteri" to "VIP Customer",
+    "Mahalle Esnafı" to "Local Merchant",
+    "Profesyonel Flipper" to "Professional Flipper",
+    "Tüccar" to "Trader",
+    "Flipping Master" to "Flipping Master",
+    "Seviye Yükselt" to "Upgrade Level",
+    "Seviye" to "Level",
+    "Dükkan Seviyesi" to "Shop Level",
+    "Usta Seviyesi" to "Mechanic Level",
+    "Maksimum Seviye" to "Max Level",
+    "Ayarlar & Hakkında" to "Settings & About",
+    "Piyasa:" to "Market:",
+    "Eşyayı Sat" to "Sell Item",
+    "🤝 Anlaşma Sağlandı!" to "🤝 Deal Closed!",
+    "Anlaşılan Fiyat:" to "Agreed Price:",
+    "💥 Pazarlık Çöktü" to "💥 Bargain Failed",
+    "Alıcı masadan kalktı. Artık bu kişiye satamazsınız." to "The buyer walked away. You can no longer sell to this person.",
+    "Bu fiyata asla alınmaz!" to "No way at this price!",
+    "Serbest piyasa dedikleri bu mu?" to "Is this what they call free market?",
+    "Kazık!" to "Rip-off!",
+    "Müzeye koysaydın." to "You should put it in a museum.",
+    "Kardeşim sıfırı daha ucuz bunun." to "Bro, brand new is cheaper than this.",
+    "Altın kaplama galiba?" to "Is it gold plated?",
+    "Sen bunu satmak istemiyorsun herhalde." to "You probably don't want to sell this.",
+    "Gözüm kanadı fiyata bakınca." to "My eyes bled seeing this price.",
+    "Bu parayla dükkanı alırım ben." to "I could buy the whole shop with this money.",
+    "Biraz pahalı geldi." to "A bit expensive.",
+    "Fiyatı şişirmiş." to "Inflated price.",
+    "İndirim yaparsan düşünürüm." to "I'll consider if you discount.",
+    "Pazarlık payı var mı?" to "Is price negotiable?",
+    "Öğrenciye bir şeyler yapmaz mısın?" to "Any student discount?",
+    "Nakit versem kaça bırakırsın?" to "How much for cash?",
+    "Bence bu para etmez." to "Not worth this money imo.",
+    "Sudan ucuz!" to "Dirt cheap!",
+    "Kesin defoludur bu." to "Definitely defective.",
+    "Hemen çök, bedava!" to "Grab it now, it's free!",
+    "Şaka gibi fiyat." to "Joke of a price.",
+    "Çalıntı falan değil dimi?" to "Not stolen, right?",
+    "Adam kafayı yemiş zararına satıyor." to "Guy went crazy selling at a loss.",
+    "Bu fırsat kaçmaz, çökelim." to "Can't miss this deal, let me buy.",
+    "Fiyatı fena değil." to "Price isn't bad.",
+    "Güzel fırsat." to "Good deal.",
+    "Uygun yazmışsın." to "Fairly priced.",
+    "Al-sat için ideal." to "Ideal for reselling.",
+    "Temiz mal, fiyatı da iyi." to "Clean item, good price too.",
+    "Favoriye attım, yarın alırım." to "Saved to favorites, buying tomorrow.",
+    "Hemen alınır bu." to "Must buy immediately.",
+    "Piyasa fiyatı." to "Market price.",
+    "Normal." to "Normal.",
+    "Makul, düşünülebilir." to "Reasonable, worth considering.",
+    "Temiz ürün, ederinde." to "Clean product, worth its value.",
+    "Ortalama fiyat yazmışsın." to "Average price.",
+    "Ne öldürmüş ne diriltmiş, tam ayarında." to "Just right, neither high nor low."
 )
 
 fun localized(text: String, language: AppLanguage): String =
@@ -147,6 +214,15 @@ fun localized(text: String, language: AppLanguage): String =
     } else text
 
 private val dynamicTranslations = mapOf(
+    "Akıllı Telefon (Özel Baskı)" to "Smartphone (Special Edition)",
+    "Mekanik Klavye (Tuşsuz)" to "Mechanical Keyboard (Keyless)",
+    "Gümüş İşlemeli Pusula" to "Silver Engraved Compass",
+    "Elma Telefon 15" to "Elma Phone 15",
+    "Eski Parşömen Harita" to "Ancient Parchment Map",
+    "Antika Köstekli Saat" to "Antique Pocket Watch",
+    "Folyolu Altın Sikke" to "Foil Gold Coin",
+    "Bozuk Gramofon" to "Broken Gramophone",
+    "Deri Kordonlu Saat" to "Leather Strap Watch",
     "Akıllı Telefon" to "Smartphone",
     "Android Tablet" to "Android Tablet",
     "Oyuncu Laptopu" to "Gaming Laptop",
@@ -216,23 +292,23 @@ private val dynamicTranslations = mapOf(
     "Koleksiyoncu" to "Collector",
     "Dürüst görünümlü" to "Trustworthy-looking",
     "Teknik bilgili" to "Technically Skilled",
-    "Piyasa uzmanı" to "Market Expert"
-    ,"Siftah Benden" to "First Sale of the Day"
-    ,"Ticaretin Kanunu" to "The Law of Trade"
-    ,"İşler Tıkırında" to "Business Is Booming"
-    ,"Tamirci Çırağı" to "Apprentice Mechanic"
-    ,"Usta Eller" to "Skilled Hands"
-    ,"Milyoner!" to "Millionaire!"
-    ,"Soğuk Su İç" to "Take the Loss"
-    ,"Absürt Koleksiyoncu" to "Absurd Collector"
-    ,"İlk eşyanı satın aldın. Ticarete hoş geldin!" to "You bought your first item. Welcome to trading!"
-    ,"İlk eşyanı sattın. Para akışı başladı!" to "You sold your first item. The money is flowing!"
-    ,"Toplam 10 eşya sattın." to "You sold 10 items in total."
-    ,"İlk eşyanı tamir ettin. Değer kattın!" to "You repaired your first item. You added value!"
-    ,"Toplam 5 eşya tamir ettin." to "You repaired 5 items in total."
-    ,"Bakiye 1.000.000₺'ye ulaştı." to "Your balance reached ₺1,000,000."
-    ,"Kazıklanarak sahte bir ürün satın aldın." to "You bought a fake item and got scammed."
-    ,"NASA Bilgisayarı veya F-16 satın aldın." to "You bought a NASA computer or an F-16."
+    "Piyasa uzmanı" to "Market Expert",
+    "Siftah Benden" to "First Sale of the Day",
+    "Ticaretin Kanunu" to "The Law of Trade",
+    "İşler Tıkırında" to "Business Is Booming",
+    "Tamirci Çırağı" to "Apprentice Mechanic",
+    "Usta Eller" to "Skilled Hands",
+    "Milyoner!" to "Millionaire!",
+    "Soğuk Su İç" to "Take the Loss",
+    "Absürt Koleksiyoncu" to "Absurd Collector",
+    "İlk eşyanı satın aldın. Ticarete hoş geldin!" to "You bought your first item. Welcome to trading!",
+    "İlk eşyanı sattın. Para akışı başladı!" to "You sold your first item. The money is flowing!",
+    "Toplam 10 eşya sattın." to "You sold 10 items in total.",
+    "İlk eşyanı tamir ettin. Değer kattın!" to "You repaired your first item. You added value!",
+    "Toplam 5 eşya tamir ettin." to "You repaired 5 items in total.",
+    "Bakiye 1.000.000₺'ye ulaştı." to "Your balance reached ₺1,000,000.",
+    "Kazıklanarak sahte bir ürün satın aldın." to "You bought a fake item and got scammed.",
+    "NASA Bilgisayarı veya F-16 satın aldın." to "You bought a NASA computer or an F-16."
 )
 
 private fun translateDynamicText(text: String): String {

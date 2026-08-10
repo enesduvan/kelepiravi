@@ -156,7 +156,7 @@ class MarketViewModel(
     val playerState: StateFlow<PlayerState> = getPlayerStateUseCase()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.Lazily,
             initialValue = PlayerState()
         )
 
@@ -274,7 +274,7 @@ class MarketViewModel(
             if (success) {
                 soundManager.playCoinSound()
                 _uiState.value = _uiState.value.copy(
-                    marketItems = _uiState.value.marketItems.filterNot { it.itemName == item.itemName && it.sellerName == item.sellerName },
+                    marketItems = _uiState.value.marketItems.filterNot { it.id == item.id || (it.itemName == item.itemName && it.sellerName == item.sellerName) },
                     selectedItem = null
                 )
 

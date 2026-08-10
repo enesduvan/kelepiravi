@@ -31,4 +31,8 @@ class ListingUseCase(
     suspend fun updateActiveListings(newListings: List<Listing>) {
         repository.updateActiveListings(newListings)
     }
+
+    suspend fun processTick() {
+        repository.processListingTicks()
+    }
 }

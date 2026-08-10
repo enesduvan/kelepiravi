@@ -294,7 +294,7 @@ class NegotiationEngine(
             if (success) {
                 uiStateFlow.value = uiStateFlow.value.copy(
                     marketItems = uiStateFlow.value.marketItems.filterNot {
-                        it.itemName == itemToBuy.itemName && it.sellerName == itemToBuy.sellerName
+                        it.id == state.item.id || (it.itemName == itemToBuy.itemName && it.sellerName == itemToBuy.sellerName)
                     }
                 )
                 if (state.item.isScammer && state.item.hiddenCondition.isNotEmpty()) {

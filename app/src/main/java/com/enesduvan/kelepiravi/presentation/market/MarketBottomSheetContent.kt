@@ -66,6 +66,9 @@ import com.enesduvan.kelepiravi.ui.theme.PriceText
 import com.enesduvan.kelepiravi.ui.theme.TipBg
 import com.enesduvan.kelepiravi.ui.theme.TipBorder
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 /**
  * Ürün detay bottom sheet içeriği.
  * ViewModel'den bağımsız — saf composable, sadece callback alır.
@@ -96,6 +99,7 @@ fun MarketBottomSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -125,14 +129,14 @@ fun MarketBottomSheetContent(
                 modifier = Modifier.weight(0.60f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = item.itemName, color = MarketTextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp)
+                Text(text = localized(item.itemName), color = MarketTextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp)
 
                 Box(
                     modifier = Modifier
                         .background(badgeBg, shape = RoundedCornerShape(6.dp))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-                    Text(text = item.condition, color = badgeText, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(text = localized(item.condition), color = badgeText, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Spacer(modifier = Modifier.height(2.dp))
@@ -236,7 +240,7 @@ Text(text = localized("Bakiye", "Balance"), color = MarketTextSecondary, fontSiz
 Text(text = localized("İpucu", "Tip"), color = BalanceGreen, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${item.itemName} tamir edilirse veya satılırsa güzel kâr bırakabilir.",
+                    text = localized("${localized(item.itemName)} tamir edilirse veya satılırsa güzel kâr bırakabilir.", "If ${localized(item.itemName)} is repaired or sold, it can leave a nice profit."),
                     color = MarketTextSecondary,
                     fontSize = 13.sp,
                     lineHeight = 18.sp

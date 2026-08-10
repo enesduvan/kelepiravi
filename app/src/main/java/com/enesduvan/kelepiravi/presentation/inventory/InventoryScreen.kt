@@ -149,6 +149,7 @@ Text(localized("Portföy Özeti", "Portfolio Summary"), color = TextSecondary, f
                     }
                 } else {
                     items(items = inventoryItems, key = { marketItemKey(it) }) { item ->
+                        val isListed = activeListings.any { it.item.id == item.id }
                         var isVisible by remember { mutableStateOf(false) }
                         LaunchedEffect(Unit) { isVisible = true }
                         AnimatedVisibility(
@@ -161,11 +162,14 @@ Text(localized("Portföy Özeti", "Portfolio Summary"), color = TextSecondary, f
                             InventoryItemCard(
                                 item = item,
                                 isFastSell = isFastSell,
+                                isListed = isListed,
                                 onActionClick = { 
-                                    if (isFastSell) {
-                                        bargainViewModel.startSellBargain(it)
-                                    } else {
-                                        itemForListing = it
+                                    if (!isListed) {
+                                        if (isFastSell) {
+                                            bargainViewModel.startSellBargain(it)
+                                        } else {
+                                            itemForListing = it
+                                        }
                                     }
                                 }
                             )
@@ -237,8 +241,8 @@ Icon(Icons.Default.HelpOutline, contentDescription = localized("Yardım", "Help"
                         Image(painter = getPainterResourceByName(item.imageName), contentDescription = null, modifier = Modifier.fillMaxSize())
                     }
                     Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(item.itemName, color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(localized(item.itemName), color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(4.dp))
                         val (badgeBg, badgeText) = when {
                             item.condition.contains("Kusursuz") || item.condition.contains("Temiz") -> ConditionPerfectBg to ConditionPerfect
@@ -246,7 +250,7 @@ Icon(Icons.Default.HelpOutline, contentDescription = localized("Yardım", "Help"
                             else -> ConditionScratchBg to ConditionScratch
                         }
                         Box(modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
-                            Text(item.condition, color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            Text(localized(item.condition), color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(12.dp))
 Text(localized("Sıfır/Kusursuz Değeri: ₺${formatBalance(baseValue.toString())}", "New/Perfect Value: ₺${formatBalance(baseValue.toString())}"), color = MarketTextSecondary, fontSize = 11.sp)
@@ -448,7 +452,7 @@ private fun InventoryStatBox(title: String, value: String, valueColor: Color, mo
 }
 
 @Composable
-private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionClick: (MarketItem) -> Unit) {
+private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, isListed: Boolean = false, onActionClick: (MarketItem) -> Unit) {
     val (badgeBg, badgeText) = when {
         item.condition.contains("Kusursuz") || item.condition.contains("Temiz") -> ConditionPerfectBg to ConditionPerfect
         item.condition.contains("Tamir") || item.condition.contains("Bantlı")   -> ConditionRepairBg to ConditionRepair
@@ -498,15 +502,14 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
                 if (hasDailyChange) {
                     Box(
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
+                            .align(Alignment.TopStart)
                             .padding(4.dp)
                             .clip(RoundedCornerShape(6.dp))
-                            .background(if (isDailyPositive) GREEN_DARK else RED_DARK)
-                            .border(1.dp, if (isDailyPositive) MoneyGreen.copy(0.4f) else RED.copy(0.4f), RoundedCornerShape(6.dp))
-                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                            .background(Color.Black.copy(alpha = 0.7f))
+                            .padding(horizontal = 4.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = "${if (isDailyPositive) "▲" else "▼"} ${"%.1f".format(abs(dailyChange))}%",
+                            text = "${if (isDailyPositive) "▲" else "▼"}${abs(dailyChange).toInt()}%",
                             color = if (isDailyPositive) MoneyGreen else RED,
                             fontSize = 9.sp,
                             fontWeight = FontWeight.ExtraBold
@@ -517,8 +520,15 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
 
             Column(modifier = Modifier.weight(1f).padding(start = 14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(localized(item.itemName), color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Box(modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
-                    Text(localized(item.condition), color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Box(modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(badgeBg).padding(horizontal = 8.dp, vertical = 2.dp)) {
+                        Text(localized(item.condition), color = badgeText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+                    if (isListed) {
+                        Box(modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(PrimaryOrange.copy(alpha = 0.2f)).padding(horizontal = 8.dp, vertical = 2.dp)) {
+                            Text(localized("İlanda", "Listed"), color = PrimaryOrange, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
                 if (wasScam) {
                     Box(
@@ -529,29 +539,39 @@ private fun InventoryItemCard(item: MarketItem, isFastSell: Boolean, onActionCli
                 }
                 Text("${localized("Alış:", "Purchase:")} ₺${formatBalance(purchasePrice)}", color = TextSecondary, fontSize = 12.sp)
                 Text("${localized("Kusursuz:", "Perfect:")} ₺${formatBalance(baseValue)}", color = MarketTextSecondary, fontSize = 11.sp)
-
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text("${localized("Güncel:", "Current:")} ₺${formatBalance(estimatedValue)}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                    Text(
-                        "${if (isProfit) "+" else ""}${formatBalance(profit)}₺",
-                        color = if (isProfit) MoneyGreen else RED,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clip(RoundedCornerShape(6.dp))
-                            .background(if (isProfit) GREEN_BG else RED_BG)
-                            .padding(horizontal = 5.dp, vertical = 1.dp)
-                    )
-                }
+                Text("${localized("Güncel:", "Current:")} ₺${formatBalance(estimatedValue)}", color = MoneyGreen, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "${if (isProfit) "+" else ""}${formatBalance(profit)}₺",
+                    color = if (isProfit) MoneyGreen else RED,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (isProfit) GREEN_BG else RED_BG)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(
-                    onClick = { onActionClick(item) },
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryOrange),
+                    onClick = { if (!isListed) onActionClick(item) },
+                    enabled = !isListed,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isListed) PrimaryOrange.copy(alpha = 0.4f) else PrimaryOrange
+                    ),
                     shape = RoundedCornerShape(14.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     modifier = Modifier.height(36.dp)
-) { Text(localized(if (isFastSell) "Pazarlık Yap" else "İlan Ver"), color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                ) {
+                    Text(
+                        text = if (isListed) localized("İlanda", "Listed") else localized(if (isFastSell) "Pazarlık Yap" else "İlan Ver"),
+                        color = Color.Black,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

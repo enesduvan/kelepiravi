@@ -26,7 +26,7 @@ class ProfileViewModel(
     val playerState: StateFlow<PlayerState> = getPlayerStateUseCase()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.Lazily,
             initialValue = PlayerState()
         )
 
